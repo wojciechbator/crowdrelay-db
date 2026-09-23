@@ -340,3 +340,7 @@ def main() -> None:
 
     wb.save(REPO_DB)
     print(f"PEER_AUDIT_APPLIED kept={len(kept)} removed={len(remove)}")
+
+
+if __name__ == "__main__":
+    main()

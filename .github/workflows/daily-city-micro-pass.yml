@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: crowdrelay-city-micro-pass
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -19,7 +19,7 @@ permissions:
 jobs:
   city-pass:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4

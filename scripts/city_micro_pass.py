@@ -21,6 +21,7 @@ PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
 PASS_FORMAT_VERSION = 4
+FORCED_CITY_MIN_VERSION = {"poland/bydgoszcz": 4}
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
 MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
 MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
@@ -559,27 +560,25 @@ def load_done() -> set[str]:
     for p in PASSES.glob("*.json"):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
+            if payload.get("invalidated"):
+                continue
             version = int(payload.get("research_version", 1) or 1)
             valid = set()
             for x in payload.get("summary", []):
+                key = city_key(x.get("country", ""), x.get("city", ""))
                 raw = int(x.get("raw_results", 0) or 0)
                 direct = int(x.get("direct_leads", 0) or 0)
-                useful = int(x.get("useful", x.get("useful_leads", 0)) or 0)
-                families = x.get("source_families", []) or []
-                social = x.get("social_families", []) or []
-                media = x.get("media_families", []) or []
-                quality_ok = (
-                    version >= PASS_FORMAT_VERSION
-                    and bool(x.get("quality_ok", False))
-                    and raw >= MIN_RAW_RESULTS
-                    and direct >= MIN_DIRECT_LEADS
-                    and useful >= MIN_USEFUL_LEADS
-                    and len(families) >= MIN_SOURCE_FAMILIES
-                    and len(social) >= MIN_SOCIAL_FAMILIES
-                    and len(media) >= MIN_MEDIA_FAMILIES
+                useful = int(
+                    x.get("useful_leads",
+                        (int(x.get("peer_candidates", 0) or 0)
+                         + int(x.get("beacon_candidates", 0) or 0)
+                         + int(x.get("contact_candidates", 0) or 0)))
                 )
-                if quality_ok:
-                    valid.add(city_key(x.get("country", ""), x.get("city", "")))
+                min_version = FORCED_CITY_MIN_VERSION.get(key, 3)
+                quality_ok = bool(x.get("quality_ok", False)) if version >= min_version else False
+                legacy_ok = version < 3 and payload.get("date") != TODAY and key not in FORCED_CITY_MIN_VERSION
+                if raw > 0 and (quality_ok or legacy_ok):
+                    valid.add(key)
             for x in payload.get("cities", []):
                 key = city_key(x["country"], x["city"])
                 if key in valid:

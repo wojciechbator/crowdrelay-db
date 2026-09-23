@@ -21,7 +21,10 @@ permissions:
 
 jobs:
   apply:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'push' && github.actor != 'github-actions[bot]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical database

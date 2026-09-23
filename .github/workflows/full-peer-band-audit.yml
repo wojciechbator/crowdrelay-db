@@ -1,10 +1,7 @@
 name: Full peer band audit
 
 on:
-  push:
-    paths:
-      - "scripts/full_audit.py"
-      - ".github/workflows/full-peer-band-audit.yml"
+  workflow_dispatch:
   workflow_dispatch:
 
 concurrency:

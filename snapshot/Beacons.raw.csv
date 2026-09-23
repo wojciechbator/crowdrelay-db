@@ -1,1001 +1,1000 @@
-index,"press/media registry — context only, no sheet intake",Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12
-0,Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
-1,Marcin,promoter,Wrocław,m.janusin@gmail.com,,,t,t,t,f,100,100.0,100.0
-2,Wojtek test,promoter,Wrocław,wojciech.jan.bator@gmail.com,,,t,t,t,f,100,100.0,100.0
-3,(Ż)aluzje,local_press,,zaluzje.gazeta@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-4,101 WRIF - FM Detroit,radio,,promotions@wrif.com,https://wrif.com,,t,f,f,f,50,50.0,50.0
-5,140dB,local_press,,j.milszewski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-6,17 - Studenckie Radio 17,radio,,redakcja@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
-7,1921 Baliheadbanger Online Radio,radio,,agus_yankky@yahoo.co.id,https://yahoo.co.id,,t,f,f,f,50,50.0,50.0
-8,24Kurier,local_press,,24kurier@kurier.szczecin.pl,https://kurier.szczecin.pl,,t,f,f,f,50,50.0,50.0
-9,3 wymiary gitary,radio,,piotr.baron@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-10,4Ever Music,patron,,promocja@4evermusic.pl,https://4evermusic.pl,,t,f,f,f,50,50.0,50.0
-11,5 Ełk,radio,,suwalki@radio5.com.pl,https://radio5.com.pl,,t,f,f,f,50,50.0,50.0
-12,5kg Kultury,local_press,,redakcja@5kilokultury.pl,https://5kilokultury.pl,,t,f,f,f,50,50.0,50.0
-13,@deathcoredadofficial,creator,,,https://tiktok.com/@deathcoredadofficial,,t,f,f,f,50,50.0,50.0
-14,@metalhammeruk,creator,,,https://tiktok.com/@metalhammeruk,,t,f,f,f,50,50.0,50.0
-15,@metalnews,creator,,,https://tiktok.com/@metalnews,,t,f,f,f,50,50.0,50.0
-16,@mutiilati0n,creator,,,https://tiktok.com/@mutiilati0n,,t,f,f,f,50,50.0,50.0
-17,AAGHR,creator,,hello@aaaghr.com,https://aaaghr.com,,t,f,f,f,50,50.0,50.0
-18,AKVARK0,creator,,akvarko@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-19,ALEXOWO,creator,,alexowo@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-20,AMM Audycja Mocno Muzyczna,radio,,amm@rns.fm,https://rns.fm,,t,f,f,f,50,50.0,50.0
-21,ANAKO - Daria Widermanska-Spala,creator,,daria@anako.pl,https://anako.pl,,t,f,f,f,50,50.0,50.0
-22,ARP - Akademickie Radio Pomorze,radio,,arp@zut.edu.pl,https://zut.edu.pl,,t,f,f,f,50,50.0,50.0
-23,ARTVADERS,creator,,contact@artvaders.com,https://artvaders.com,,t,f,f,f,50,50.0,50.0
-24,ATM Rozrywka,local_press,,telewizja@atmrozrywka.tv,https://atmrozrywka.tv,,t,f,f,f,50,50.0,50.0
-25,Abbey Road,reviewer,,martyna@abbeyroad.pl,https://abbeyroad.pl,,t,f,f,f,50,50.0,50.0
-26,Absynt,reviewer,,absyntsklep@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-27,Ace of Spades,reviewer,,kontakt@aceofspades.com.pl,https://aceofspades.com.pl,,t,f,f,f,50,50.0,50.0
-28,Active Rock Show,radio,,sebastian@activerock.pl,https://activerock.pl,,t,f,f,f,50,50.0,50.0
-29,Ada Buchholc,creator,,ada.buchholc@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-30,Adam Droździk,radio,,rock@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
-31,Adrenalina,reviewer,,sklep@adrenalina.info.pl,https://adrenalina.info.pl,,t,f,f,f,50,50.0,50.0
-32,Aerial Art,creator,,aerialart@aerialart.pl,https://aerialart.pl,,t,f,f,f,50,50.0,50.0
-33,Afera,radio,,piotr.graczyk@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-34,Afro Styl,reviewer,,afrozakupy@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-35,AfterDark,radio,,afterdark@radiooko.pl,https://radiooko.pl,,t,f,f,f,50,50.0,50.0
-36,Agnieszka Barańska,radio,,baranska@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-37,Agnieszka Obszańska,radio,,agnieszka.obszanska@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-38,Agonia Records,patron,,info@agoniarecords.com,https://agoniarecords.com,,t,f,f,f,50,50.0,50.0
-39,AgrAWFka Gazeta Studentów AWF-u,local_press,,agrawfka@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
-40,Akademia Art Rocka,radio,,andrzej@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
-41,Aktivist,local_press,,skawalerowicz@valkea.com,https://valkea.com,,t,f,f,f,50,50.0,50.0
-42,Albatros Records,patron,,albatrosrecords@albatrosrecords.pl,https://albatrosrecords.pl,,t,f,f,f,50,50.0,50.0
-43,Ale Kultura,local_press,,redakcja@alekultura.com,https://alekultura.com,,t,f,f,f,50,50.0,50.0
-44,Ale Lipa!,radio,,lipa@wosp.org.pl,https://wosp.org.pl,,t,f,f,f,50,50.0,50.0
-45,Aleksandra Galant,radio,,aleksandra.galant@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-46,Alex,radio,,sambor@radioalex.pl,https://radioalex.pl,,t,f,f,f,50,50.0,50.0
-47,Alfabet Rockowy,radio,,valdemort1@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-48,All About Music,local_press,,lukasz.mantiuk@allaboutmusic.pl,https://allaboutmusic.pl,,t,f,f,f,50,50.0,50.0
-49,All Seeing Eye Art,patron,,allseeingeyeart@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-50,Alt-itude,radio,,olga.matusik@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-51,AltMundi,local_press,,zapytajnia@altmundi.pl,https://altmundi.pl,,t,f,f,f,50,50.0,50.0
-52,Alter Radio,radio,,redakcja@alteradio.pl,https://alteradio.pl,,t,f,f,f,50,50.0,50.0
-53,Altercore,reviewer,,info@altercore.pl,https://altercore.pl,,t,f,f,f,50,50.0,50.0
-54,Alternator,radio,,alternator@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-55,Amazon Music for Artists new release pitch,creator,,,https://artists.amazonmusic.com/pitch,https://artists.amazonmusic.com/pitch,t,f,f,f,50,50.0,50.0
-56,Ambasada [RIP],radio,,ambasada@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-57,Ampersand Records,patron,,ampersand@ampersandrecords.com,https://ampersandrecords.com,,t,f,f,f,50,50.0,50.0
-58,Amplify the Noise,local_press,,,https://amplifythenoise.com,,t,f,f,f,50,50.0,50.0
-59,Angry Metal Guy,local_press,,contact@angrymetalguy.com,https://angrymetalguy.com,,t,f,f,f,50,50.0,50.0
-60,Ania Maludzińska,radio,,ania.maludzinska@rockserwis.fm,https://rockserwis.fm,,t,f,f,f,50,50.0,50.0
-61,Anioł Beskidów,radio,,radio@diecezja.bielsko.pl,https://diecezja.bielsko.pl,,t,f,f,f,50,50.0,50.0
-62,Anita Brzyszcz,radio,,kultura@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-63,Anna Groblinska,radio,,a.groblinska@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-64,Anna Helena Szymborska,creator,,annahelenaszymborska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-65,"Anna Winkler, Dawid Surdeko",radio,,dawid.surdeko@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-66,Antena Krzyku,patron,,sklep@rockers.pl,https://rockers.pl,,t,f,f,f,50,50.0,50.0
-67,Antidotum Rocknrollowe,radio,,pawulon@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
-68,Antykwariat,radio,,anna.partyka@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-69,Antymuza,local_press,,redakcja@antymuza.pl,https://antymuza.pl,,t,f,f,f,50,50.0,50.0
-70,Antyradio,radio,,joanna.fijalkowska@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
-71,Arcy Radio,radio,,redakcja@arcyradio.pl,https://arcyradio.pl,,t,f,f,f,50,50.0,50.0
-72,Arcyportal,local_press,,redakcja@arcyportal.pl,https://arcyportal.pl,,t,f,f,f,50,50.0,50.0
-73,Art.Rockowy Świat [RIP],radio,,wojciech.lewandowski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-74,Aspekt,radio,,info@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
-75,Asylum Metal Radio,radio,,music@asylummetalradio.com,https://asylummetalradio.com,,t,f,f,f,50,50.0,50.0
-76,Auxun Arts,local_press,,axunarts@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-77,AwG Radio,radio,,saper888@poczta.pl,https://poczta.pl,,t,f,f,f,50,50.0,50.0
-78,Awesome Music Place,patron,,awesomemusicplace@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-79,Azyll,radio,,kontakt@radioazyll.pl,https://radioazyll.pl,,t,f,f,f,50,50.0,50.0
-80,B.e.s.t. Niezależna Gazeta Studentów Uniwersytetu Ekonomicznego,local_press,,best@ue.wroc.pl,https://ue.wroc.pl,,t,f,f,f,50,50.0,50.0
-81,BAD LUCK Arek,creator,,zarazz@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-82,BAS - Bardzo Akademicka Stacja,radio,,bartek.zasieczny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-83,BB365 info,local_press,,darek.m@bb365.info,https://bb365.info,,t,f,f,f,50,50.0,50.0
-84,BDTA,patron,,info@bdta.pl,https://bdta.pl,,t,f,f,f,50,50.0,50.0
-85,BIT - Akademickie Radio BIT,radio,,kontakt.radiobit@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-86,BLACK FITS ME,creator,,gosiajankowska@gmx.com,https://gmx.com,,t,f,f,f,50,50.0,50.0
-87,BLACK MOON DESIGN,creator,,blackmoondsgn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-88,BLACKBIRD ILLUSTRATION - Bartosz Kosowski,creator,,bartosz.kosowski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-89,BSFD records,patron,,bsfd.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-90,Backstage [RIP],radio,,backstage945@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-91,Bajka,radio,,biuro@radiobajka.pl,https://radiobajka.pl,,t,f,f,f,50,50.0,50.0
-92,Bajkonur Records,patron,,bajkonur.rec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-93,Bal X,patron,,hrabia@balx.pl,https://balx.pl,,t,f,f,f,50,50.0,50.0
-94,Band.pl Records,patron,,records@band.pl,https://band.pl,,t,f,f,f,50,50.0,50.0
-95,Baobab,radio,,baobab@radiobaobab.pl,https://radiobaobab.pl,,t,f,f,f,50,50.0,50.0
-96,Barbara Dziadosz,creator,,schreibbarbara@yahoo.de,https://yahoo.de,,t,f,f,f,50,50.0,50.0
-97,Bardzo Uniwersyteckie Czasopismo UAM,local_press,,paulinalubieniecka@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-98,Barock,local_press,,kominek@barock.pl,https://barock.pl,,t,f,f,f,50,50.0,50.0
-99,Bartosz Kicior i Tomasz Gałek / Agnieszki Nasternak i Kamil Barnowski,radio,,strefamuzyki@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
-100,Bartoszyce,radio,,radio@radiobartoszyce.pl,https://radiobartoszyce.pl,,t,f,f,f,50,50.0,50.0
-101,Bartys,radio,,piotrbartys@radioram.pl,https://radioram.pl,,t,f,f,f,50,50.0,50.0
-102,Baryś,radio,,goraca.siedemnastka@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
-103,Bawisz Się PL,local_press,,kontakt@bawiszsie.pl,https://bawiszsie.pl,,t,f,f,f,50,50.0,50.0
-104,Bayer FM,radio,,poczta@bayerfm.eu,https://bayerfm.eu,,t,f,f,f,50,50.0,50.0
-105,Be Controversial,reviewer,,sklep@be-con.pl,https://be-con.pl,,t,f,f,f,50,50.0,50.0
-106,Bear Metal Radio,radio,,djbear@bearmetalradio.com,https://bearmetalradio.com,,t,f,f,f,50,50.0,50.0
-107,Beast of Prey,patron,,beastofprey@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-108,Bezsenność wczesną porą,radio,,bezsennosc@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-109,Białystok,radio,,radiobia@radio.bialystok.pl,https://radio.bialystok.pl,,t,f,f,f,50,50.0,50.0
-110,Biba Info,local_press,,klub@bibainfo.pl,https://bibainfo.pl,,t,f,f,f,50,50.0,50.0
-111,Bielsko,radio,,radio@radio.bielsko.pl,https://radio.bielsko.pl,,t,f,f,f,50,50.0,50.0
-112,Big Flow,patron,,biuro@bigflow.pl,https://bigflow.pl,,t,f,f,f,50,50.0,50.0
-113,Biodro Records,patron,,pr@biodro.pl,https://biodro.pl,,t,f,f,f,50,50.0,50.0
-114,Biznes Music,local_press,,redakcja@biznes-music.pl,https://biznes-music.pl,,t,f,f,f,50,50.0,50.0
-115,Blabbermouth,local_press,,news@roadrunner.com,https://blabbermouth.net,,t,f,f,f,50,50.0,50.0
-116,Black Garden,reviewer,,sklepblackgarden@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-117,Black Wall Magazine,local_press,,black.wall.magazine@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-118,Black Wednesday Records,patron,,info@black-wednesday.pl,https://black-wednesday.pl,,t,f,f,f,50,50.0,50.0
-119,Blast Beat 105,radio,,blastbeat105@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-120,Blog Nawiedzonego,local_press,,nawiedzonestudio@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-121,Bodek Pezda,patron,,bodek247@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-122,Bogoria,radio,,poczta@radiobogoria.pl,https://radiobogoria.pl,,t,f,f,f,50,50.0,50.0
-123,Bogumił Starzyński i Bartek Gruchlik,radio,,gruchlik@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
-124,Bon Ton,radio,,radio@bonton.chelm.pl,https://bonton.chelm.pl,,t,f,f,f,50,50.0,50.0
-125,Bonomuza - Życie Jest Muzyką,local_press,,bonomuza@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-126,Box Music,patron,,biuro@boxmusic.com.pl,https://boxmusic.com.pl,,t,f,f,f,50,50.0,50.0
-127,BraveWords — metal news + Facebook group (9k members),local_press,,,https://facebook.com/groups/bravewordsmetal,https://bravewords.com,t,f,f,f,50,50.0,50.0
-128,Breaking MusicS,local_press,,breakingmusics@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-129,Brennnessel,patron,,contact@brennnessel.pl,https://brennnessel.pl,,t,f,f,f,50,50.0,50.0
-130,Bunkier,radio,,atarzyna.foksinska@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-131,Burlesque Shop,reviewer,,kontakt@sklepburleska.pl,https://sklepburleska.pl,,t,f,f,f,50,50.0,50.0
-132,Bydgoska Scena,local_press,,info@bydgoskascena.pl,https://bydgoskascena.pl,,t,f,f,f,50,50.0,50.0
-133,BziCool,local_press,,redakcja@bzicool.pl,https://bzicool.pl,,t,f,f,f,50,50.0,50.0
-134,Błażej Janusz,radio,,blazej.janusz@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-135,CASSIARAMONE,creator,,cassiaramone.art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-136,CCM,radio,,sekretariat@radioccm.pl,https://radioccm.pl,,t,f,f,f,50,50.0,50.0
-137,CGM,local_press,,redakcja@cgm.pl,https://cgm.pl,,t,f,f,f,50,50.0,50.0
-138,COM TV,local_press,,comtv@comtv.pl,https://comtv.pl,,t,f,f,f,50,50.0,50.0
-139,CUERO Y METAL EN CÓRDOBA,radio,,cueroymetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-140,CUPCAKE Aleksandra Marchocka,creator,,aleksandramarchocka@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-141,CW 24 TV,local_press,,redakcja@cw24.tv,https://cw24.tv,,t,f,f,f,50,50.0,50.0
-142,Can't Tell You Records,patron,,canttellyourecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-143,Cantara Music PL,local_press,,cantara@cantaramusic.pl,https://cantaramusic.pl,,t,f,f,f,50,50.0,50.0
-144,Carton,reviewer,,shop@carton.pl,https://carton.pl,,t,f,f,f,50,50.0,50.0
-145,Centrum Informacji Turystycznej w Łodzi,local_press,,cit@cit.lodz.pl,https://cit.lodz.pl,,t,f,f,f,50,50.0,50.0
-146,Centrum Kalisz,radio,,radio@rc.fm,https://rc.fm,,t,f,f,f,50,50.0,50.0
-147,Chaos Management,patron,,m.pil@chaos.com.pl,https://chaos.com.pl,,t,f,f,f,50,50.0,50.0
-148,ChillSoundsGoodMusic,local_press,,chillsoundsgoodmusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-149,Chillout Arcyszalenczy,local_press,,han.kwasna@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-150,Choszczno,radio,,redakcja@radiochoszczno.pl,https://radiochoszczno.pl,,t,f,f,f,50,50.0,50.0
-151,Chrześcijanin TV,local_press,,biuro@chrzescijanin.tv,https://chrzescijanin.tv,,t,f,f,f,50,50.0,50.0
-152,Ciemna Strona Meteora,radio,,blazej.jelonek@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-153,City of Poznan,local_press,,mim@man.poznan.pl,https://man.poznan.pl,,t,f,f,f,50,50.0,50.0
-154,Co Jest Grane,local_press,,redakcja_portalu@agora.pl,https://agora.pl,,t,f,f,f,50,50.0,50.0
-155,Co Mi w duszy Gra,local_press,,comiwduszygra90@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-156,Co Za Dzień - Radom,local_press,,redakcja@cozadzien.com.pl,https://cozadzien.com.pl,,t,f,f,f,50,50.0,50.0
-157,Co robić w Łodzi?,local_press,,kontakt@corobicwlodzi.pl,https://corobicwlodzi.pl,,t,f,f,f,50,50.0,50.0
-158,"Co, gdzie, kiedy w Częstochowie",local_press,,cgk@czestochowa.um.gov.pl,https://czestochowa.um.gov.pl,,t,f,f,f,50,50.0,50.0
-159,CollarMe,reviewer,,collarme.info@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-160,Considered Dead,local_press,,considereddeadblog@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-161,ContraBanda Music,patron,,rzeznik@contrabandamusic.com,https://contrabandamusic.com,,t,f,f,f,50,50.0,50.0
-162,Cooltura - Polish Weekly Magazine,local_press,,info@cooltura.co.uk,https://cooltura.co.uk,,t,f,f,f,50,50.0,50.0
-163,Coolturalny Białystok,local_press,,info@coolturalnybialystok.pl,https://coolturalnybialystok.pl,,t,f,f,f,50,50.0,50.0
-164,Core Storage — metalcore/hardcore/deathcore,creator,,corestorageplaylist@gmail.com,,https://open.spotify.com/artist/66tK1NW5Rji1yauiwPrMdz,t,f,f,f,50,50.0,50.0
-165,Creative Music,patron,,info@creativemusic.pl,https://creativemusic.pl,,t,f,f,f,50,50.0,50.0
-166,Crossover,radio,,aleksander.wdowinski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-167,Crunchy Human Children,patron,,info@crunchyhumanchildren.com,https://crunchyhumanchildren.com,,t,f,f,f,50,50.0,50.0
-168,Crushing Metalcore — SuperficialPlagues,creator,,superficialplagues@gmail.com,,https://open.spotify.com/playlist/09786nN4Pz8eYz2CdFI7PP,t,f,f,f,50,50.0,50.0
-169,Culture PL,local_press,,wkostyrko@iam.pl,https://iam.pl,,t,f,f,f,50,50.0,50.0
-170,Culturowo,local_press,,kontakt@culturowo.pl,https://culturowo.pl,,t,f,f,f,50,50.0,50.0
-171,Cutting Edge Metal — metal promotion,local_press,,,https://cutting-edge-metal.rocks,https://cutting-edge-metal.rocks,t,f,f,f,50,50.0,50.0
-172,Czarno Białe Klawisze,radio,,bk@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
-173,Czas Kultury,local_press,,redakcja@czaskultury.pl,https://czaskultury.pl,,t,f,f,f,50,50.0,50.0
-174,Czechowicka Scena Muzyczna,local_press,,czsmusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-175,Czerwony Diabełek (Red Devil),patron,,rdevil@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
-176,DE CORE,creator,,decoregroup@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-177,DJENTCORE,creator,,,https://noiselash.com,,t,f,f,f,50,50.0,50.0
-178,DK13 - Darek Krzak,creator,,dk13_design@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-179,DNA muzyki,local_press,,dnamuzykinet@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-180,DRAW Records,patron,,info@drawrecords.com,https://drawrecords.com,,t,f,f,f,50,50.0,50.0
-181,DRAWING OF THE DAY - Daniel Horowitz,creator,,daniel@daniel-horowitz.com,https://daniel-horowitz.com,,t,f,f,f,50,50.0,50.0
-182,DUDU Agata Dudek,creator,,illu@agatadudek.pl,https://agatadudek.pl,,t,f,f,f,50,50.0,50.0
-183,DYNAMIC DESINGS,creator,,dnm.dsg@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-184,"Dagmara Serek, Artur Kasprzycki",radio,,magmuz@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-185,DailyPlaylists free standard submissions,creator,,,https://dailyplaylists.com/,https://dailyplaylists.com/en/faq/,t,f,f,f,50,50.0,50.0
-186,"Damian Graczyk, Katarzyna Kraska, Anna Maria Budecka",radio,,fabryka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-187,Damned Pages,reviewer,,damnedpages@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-188,Daniel Archetka,radio,,kps@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-189,Dark Inclined — gothic/alternative metal,creator,,darkinclinedmedia@gmail.com,,https://open.spotify.com/artist/2txEW5PBrkWIh82var0Fwa,t,f,f,f,50,50.0,50.0
-190,Dark Market,reviewer,,dark_market@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-191,Deathproof Clothing,reviewer,,deathproof.co@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-192,Defense Records,patron,,defensemerch@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-193,Dekulturator,local_press,,dekulturatorpl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-194,Discostacja,local_press,,fb@itv.net.pl,https://itv.net.pl,,t,f,f,f,50,50.0,50.0
-195,Dla Ciebie TV,local_press,,biuro@ct.jaworzno.pl,https://ct.jaworzno.pl,,t,f,f,f,50,50.0,50.0
-196,Dla Studenta,local_press,,redakcja@dlastudenta.pl,https://dlastudenta.pl,,t,f,f,f,50,50.0,50.0
-197,Dobra Polska Muzyka,local_press,,redakcja@dobrapolskamuzyka.net.pl,https://dobrapolskamuzyka.net.pl,,t,f,f,f,50,50.0,50.0
-198,Dobry Towar Records,patron,,kontakt@dtrecords.pl,https://dtrecords.pl,,t,f,f,f,50,50.0,50.0
-199,Dolnoslaska Scena Muzyczna,local_press,,scenads@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-200,Dolnośląskie Centrum Informacji Kulturalnej OKiS,local_press,,cik@okis.pl,https://okis.pl,,t,f,f,f,50,50.0,50.0
-201,Don't Panic POZNAŃ [RIP],local_press,,poznan@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
-202,Don't Panic SILESIA [RIP],local_press,,silesia@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
-203,Don't Panic TRÓJMIASTO [RIP],local_press,,stas@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
-204,Don't Panic WROCŁAW [RIP],local_press,,wroclaw@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
-205,Don't Panic [RIP],local_press,,karolina@dontpaniconline.com,https://dontpaniconline.com,,t,f,f,f,50,50.0,50.0
-206,Dorosłe Dzieci,local_press,,piotr@metal-archives.com,https://metal-archives.com,,t,f,f,f,50,50.0,50.0
-207,Dorota Dudek i Kacper Sulowski,radio,,kultura@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-208,Drakka,local_press,,drakka@bosko.pl,https://bosko.pl,,t,f,f,f,50,50.0,50.0
-209,Drop Of music,local_press,,kroplaciszy@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-210,Dropcard [UE],reviewer,,hello@dropcards.com,https://dropcards.com,,t,f,f,f,50,50.0,50.0
-211,Dusza Słuchacza,local_press,,dominika@duszasluchacza.pl,https://duszasluchacza.pl,,t,f,f,f,50,50.0,50.0
-212,Dwutygodnik,local_press,,redakcja@dwutygodnik.com,https://dwutygodnik.com,,t,f,f,f,50,50.0,50.0
-213,Dzieje się w Lublinie,local_press,,dziejesiewlublinie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-214,Dzieje się w Poznaniu (Moje Miasto Poznan),local_press,,redakcja@mmpoznan.pl,https://mmpoznan.pl,,t,f,f,f,50,50.0,50.0
-215,Dzieje się w Warszawie (Nasze Miasto Warszawa),local_press,,warszawa@naszemiasto.pl,https://naszemiasto.pl,,t,f,f,f,50,50.0,50.0
-216,Dziennik Łódzki,local_press,,mojreporter@dzienniklodzki.pl,https://dzienniklodzki.pl,,t,f,f,f,50,50.0,50.0
-217,Dzień Dobry Łódź,local_press,,redakcja@ddlodz.pl,https://ddlodz.pl,,t,f,f,f,50,50.0,50.0
-218,Dzika Banda,local_press,,robertziebinski@dzikabanda.pl,https://dzikabanda.pl,,t,f,f,f,50,50.0,50.0
-219,Dzisiaj w Gliwicach,local_press,,kontakt24@dzisiajwgliwicach.pl,https://dzisiajwgliwicach.pl,,t,f,f,f,50,50.0,50.0
-220,Dziś w Łodzi,local_press,,dzis.w.lodzi@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-221,Dźwięk Dobry,radio,,reporter@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
-222,Dźwięki STONERowane,radio,,stonerowane@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-223,E-splot,local_press,,wojciech.zurek@e-splot.pl,https://e-splot.pl,,t,f,f,f,50,50.0,50.0
-224,EDS Embroidery Design Studio,creator,,eds@eds-studio.com.pl,https://eds-studio.com.pl,,t,f,f,f,50,50.0,50.0
-225,EMP PL,reviewer,,kontakt@emp-shop.pl,https://emp-shop.pl,,t,f,f,f,50,50.0,50.0
-226,ENDO - Agata Nowicka,creator,,endo@agatanowicka.com,https://agatanowicka.com,,t,f,f,f,50,50.0,50.0
-227,ESKA,patron,,eskazabrze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-228,ESKa Rock,radio,,radio@eskarock.pl,https://eskarock.pl,,t,f,f,f,50,50.0,50.0
-229,Echo Szczecina,local_press,,biuro@echo.szczecin.pl,https://echo.szczecin.pl,,t,f,f,f,50,50.0,50.0
-230,Egida,radio,,egida@us.edu.pl,https://us.edu.pl,,t,f,f,f,50,50.0,50.0
-231,Eldezet,local_press,,redakcja@eldezet.pl,https://eldezet.pl,,t,f,f,f,50,50.0,50.0
-232,Elemental Metal Radio / Aphotic Lounge TV,radio,,radioelementalmetal@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-233,Elewator Kultury,local_press,,redakcja@elewatorkultury.org,https://elewatorkultury.org,,t,f,f,f,50,50.0,50.0
-234,Elka,radio,,glogow@elka.pl,https://elka.pl,,t,f,f,f,50,50.0,50.0
-235,Emaus (Katolickie),radio,,redakcja@radioemaus.pl,https://radioemaus.pl,,t,f,f,f,50,50.0,50.0
-236,Emma TV,local_press,,info@emmapak.eu,https://emmapak.eu,,t,f,f,f,50,50.0,50.0
-237,Eska,radio,,eskazabrze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-238,Eska Go,radio,,kontakt@eskago.pl,https://eskago.pl,,t,f,f,f,50,50.0,50.0
-239,EuroIndieMusic,local_press,,,https://euroindiemusic.info,,t,f,f,f,50,50.0,50.0
-240,Eventmaniak PL,local_press,,eventmaniak@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-241,Ever Metal,local_press,,contact@ever-metal.com,https://ever-metal.com,,t,f,f,f,50,50.0,50.0
-242,Evil Eye,reviewer,,info@evileyeclothing.com,https://evileyeclothing.com,,t,f,f,f,50,50.0,50.0
-243,Ewa Niewiadomska,radio,,mockultury@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
-244,Ewelina Kroczek,radio,,redakcja@radioexpress.pl,https://radioexpress.pl,,t,f,f,f,50,50.0,50.0
-245,Exclusive,local_press,,biuro@exclusivemag.pl,https://exclusivemag.pl,,t,f,f,f,50,50.0,50.0
-246,Express Ilustrowany,local_press,,sasi@express.lodz.pl,https://express.lodz.pl,,t,f,f,f,50,50.0,50.0
-247,Express Silesia,radio,,radio@silesia.fm,https://silesia.fm,,t,f,f,f,50,50.0,50.0
-248,FAN PL,reviewer,,sklep@fan.pl,https://fan.pl,,t,f,f,f,50,50.0,50.0
-249,FERWA,local_press,,kulig@ferwa.pl,https://ferwa.pl,,t,f,f,f,50,50.0,50.0
-250,FUSS,local_press,,redakcja@fuss.com.pl,https://fuss.com.pl,,t,f,f,f,50,50.0,50.0
-251,FYH !,local_press,,piotr.strzemieczny@fyh.com.pl,https://fyh.com.pl,,t,f,f,f,50,50.0,50.0
-252,FYH Records,patron,,fyh.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-253,Fabryka,radio,,fabryka@radiotczew.pl,https://radiotczew.pl,,t,f,f,f,50,50.0,50.0
-254,Fabryka Muzyki,radio,,r.fabrykamuzyki@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-255,Fajnanuta PL,local_press,,admin@fajnanuta.pl,https://fajnanuta.pl,,t,f,f,f,50,50.0,50.0
-256,Falami,patron,,marcin@falami.pl,https://falami.pl,,t,f,f,f,50,50.0,50.0
-257,Fama EU Sochaczew,radio,,famainfo@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-258,Fejsbukowy Dom Kultury,local_press,,pawel.szczutowski@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
-259,FeshMag,local_press,,redakcja@freshmag.pl,https://freshmag.pl,,t,f,f,f,50,50.0,50.0
-260,Fest Wieczór [RIP],radio,,festwieczor@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-261,Festiwale Koncerty w Warszawie,local_press,,addarek@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-262,Fight Susan!,local_press,,fight.suzan@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-263,Filip Janowski,radio,,dekoder982@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-264,Fix,radio,,admin@radiofix.eu,https://radiofix.eu,,t,f,f,f,50,50.0,50.0
-265,Flash Piaseczno,radio,,redakcja@radioflash.pl,https://radioflash.pl,,t,f,f,f,50,50.0,50.0
-266,Fogo no Gelo (Metal Radio Show),radio,,fogonogelo@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-267,Fonobo (sub label MTJ),patron,,management@fonobo.pl,https://fonobo.pl,,t,f,f,f,50,50.0,50.0
-268,Fonoteka Polska [RIP],radio,,andrzej.krupa@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-269,For Tune,patron,,office@for-tune.pl,https://for-tune.pl,,t,f,f,f,50,50.0,50.0
-270,Fragile,local_press,,fragile@fragile.net.pl,https://fragile.net.pl,,t,f,f,f,50,50.0,50.0
-271,Free Fun,local_press,,freefunpl@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-272,Freee,radio,,redakcja@radiofreee.pl,https://radiofreee.pl,,t,f,f,f,50,50.0,50.0
-273,Fresh Music Records,patron,,freshmusicpoland@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-274,Fuck You Hipsters,local_press,,redakcja@fyh.com.pl,https://fyh.com.pl,,t,f,f,f,50,50.0,50.0
-275,FunRadio FM,radio,,radio@funradio.fm,https://funradio.fm,,t,f,f,f,50,50.0,50.0
-276,Fuzzy Cracklins — stoner/doom/metal reviews,local_press,,fuzzycracklins@gmail.com,,https://fuzzycracklins.substack.com,t,f,f,f,50,50.0,50.0
-277,GAUDE PL,reviewer,,info@gaude.pl,https://gaude.pl,,t,f,f,f,50,50.0,50.0
-278,GIFT Management,patron,,firmagift@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-279,GIG24 PL,local_press,,kontakt@gig24.pl,https://gig24.pl,,t,f,f,f,50,50.0,50.0
-280,GNASH DESIGN - Jakub GNASH Kowalski,creator,,orderyocreature@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-281,GORY GALLERY,creator,,dziuba.rafal@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-282,GOUDA WORKS,creator,,kontakt@goudaworks.pl,https://goudaworks.pl,,t,f,f,f,50,50.0,50.0
-283,GOWI Records,patron,,gowi@gowi.pl,https://gowi.pl,,t,f,f,f,50,50.0,50.0
-284,GRABOVSKA - Magda Grabowska,creator,,contact@grabovska.com,https://grabovska.com,,t,f,f,f,50,50.0,50.0
-285,GRIMHEART - Milosz Z. Artwork,creator,,design@thegrimheart.com,https://thegrimheart.com,,t,f,f,f,50,50.0,50.0
-286,GS24,local_press,,alarm@gs24.pl,https://gs24.pl,,t,f,f,f,50,50.0,50.0
-287,GUZIK ART - Damian Augustyniak,creator,,damian3d5@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-288,Gabriela Synowiec,radio,,teatr@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-289,Gadanie Na Tapczanie,radio,,gadanie@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-290,Galeria Plakatu,reviewer,,biuro@galeriaplakatu.com,https://galeriaplakatu.com,,t,f,f,f,50,50.0,50.0
-291,Garażowy Index,radio,,garazowyindex.96fm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-292,Gazeta Pomorska,local_press,,online@pomorska.pl,https://pomorska.pl,,t,f,f,f,50,50.0,50.0
-293,Gazeta Studencka (Opole),local_press,,studenckauo@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-294,Gazeta Wrocławska,local_press,,online@gazeta.wroc.pl,https://gazeta.wroc.pl,,t,f,f,f,50,50.0,50.0
-295,Gazeta-Student,local_press,,redakcja@gazeta-student.pl,https://gazeta-student.pl,,t,f,f,f,50,50.0,50.0
-296,Gdańsk,radio,,poczta@radio.gdansk.pl,https://radio.gdansk.pl,,t,f,f,f,50,50.0,50.0
-297,Gharbaty ART,creator,,gharbatyart@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-298,Gievont Graw,reviewer,,pawel@gievontgraw.pl,https://gievontgraw.pl,,t,f,f,f,50,50.0,50.0
-299,Gitafera,radio,,bartosz.wojciechowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-300,Godzina Śmierci,radio,,godzinasmierci.radioemiter@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-301,Gold Recordds,patron,,roman@goldmusic.abajt.pl,https://goldmusic.abajt.pl,,t,f,f,f,50,50.0,50.0
-302,Gosia Herba - Illustrations,creator,,mail@gosiaherba.pl,https://gosiaherba.pl,,t,f,f,f,50,50.0,50.0
-303,Gothic Dream,reviewer,,sklep@gothicdream.eu,https://gothicdream.eu,,t,f,f,f,50,50.0,50.0
-304,Grawitacja,radio,,grawitacja@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
-305,Greta Vintage Store,reviewer,,greta-lingerie@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-306,Gruba Biba,local_press,,kontakt@grubabiba.pl,https://grubabiba.pl,,t,f,f,f,50,50.0,50.0
-307,Grudziądz,radio,,radio@grudziadz.com,https://grudziadz.com,,t,f,f,f,50,50.0,50.0
-308,Gryfit TV,local_press,,biuro@gryfittv.pl,https://gryfittv.pl,,t,f,f,f,50,50.0,50.0
-309,Grzegorz Bińczycki + Justyn Skiba,radio,,grzegorz.binczycki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-310,Grzegorz GABZ Gomaradzki,creator,,hello@iamgabz.com,https://iamgabz.com,,t,f,f,f,50,50.0,50.0
-311,Grzegorz Hoffmann,radio,,grzegorz.hoffmann@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-312,Guba Nuta,reviewer,,info@grubanuta.pl,https://grubanuta.pl,,t,f,f,f,50,50.0,50.0
-313,Gustaff Records,patron,,info@gusstaff.com,https://gusstaff.com,,t,f,f,f,50,50.0,50.0
-314,H8DSG - artwork of Konrad B.,creator,,morgoth.grave@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-315,HIRO,local_press,,kris@hiro.pl,https://hiro.pl,,t,f,f,f,50,50.0,50.0
-316,HQT Music Group,patron,,jakub@hqt.be,https://hqt.be,,t,f,f,f,50,50.0,50.0
-317,Halolodz.pl,local_press,,redakcja@halolodz.pl,https://halolodz.pl,,t,f,f,f,50,50.0,50.0
-318,Halomuzyka,local_press,,mironnek@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-319,Halotan Records,patron,,halotan.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-320,Hard & Heavy,radio,,hard.heavy@radiobeat.cz,https://radiobeat.cz,,t,f,f,f,50,50.0,50.0
-321,Hard Like A Rock'n'Blues,radio,,michu@goodtimeradio.pl,https://goodtimeradio.pl,,t,f,f,f,50,50.0,50.0
-322,HardRadio.com - Heavy Metal Radio Hard Rock Radio News,radio,,feedback@hardradio.com,https://hardradio.com,,t,f,f,f,50,50.0,50.0
-323,Hałasowania [RIP],radio,,dawid.odija@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-324,HeadphonesPorno,local_press,,piotr@avizo2.pl,https://avizo2.pl,,t,f,f,f,50,50.0,50.0
-325,Hearbeat,reviewer,,contact@madebyheartbeat.pl,https://madebyheartbeat.pl,,t,f,f,f,50,50.0,50.0
-326,Heavy Metal,radio,,info@radioheavymetal.com,https://radioheavymetal.com,,t,f,f,f,50,50.0,50.0
-327,Hein Edgar,radio,,alterpyra@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-328,Hellbellas,local_press,,hellbellas@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-329,Hello Warsaw,local_press,,m.assanowicz@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-330,Heretica,radio,,blackydark@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-331,Hey Joe,reviewer,,heyjoesklep@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-332,Hey Now,radio,,redakcja@radioheynow.com,https://radioheynow.com,,t,f,f,f,50,50.0,50.0
-333,Hipisówka,radio,,lukasz.kocyla@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-334,Hobby,radio,,dominik@hobby.pl,https://hobby.pl,,t,f,f,f,50,50.0,50.0
-335,House of Rock,radio,,wtomczyk@radioluz.pwr.wroc.pl,https://radioluz.pwr.wroc.pl,,t,f,f,f,50,50.0,50.0
-336,I love Heavy Metal Radio,radio,,iloveheavymetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-337,I'm Stuck Between,radio,,kamil.drozdz@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-338,I.PEWU Miesięcznik Kulturalny Studentów Politechniki Warszawskiej,local_press,,redakcja@ipewu.pw.edu.pl,https://ipewu.pw.edu.pl,,t,f,f,f,50,50.0,50.0
-339,IKSS Informacja Kulturalno-Sportowa Studentów Wrocław,local_press,,ikss@ue.wroc.pl,https://ue.wroc.pl,,t,f,f,f,50,50.0,50.0
-340,INHALE THE HEAVY — metal blog,local_press,,,https://inhaletheheavy.com/submit-your-metal/,https://inhaletheheavy.com/submit-your-metal/,t,f,f,f,50,50.0,50.0
-341,IRKA,local_press,,reklama@irka.com.pl,https://irka.com.pl,,t,f,f,f,50,50.0,50.0
-342,IRN - Internetowe Radio Nasielsk,radio,,radio@nasielsk.pl,https://nasielsk.pl,,t,f,f,f,50,50.0,50.0
-343,Icaros Records,patron,,biuro@icarosrecords.pl,https://icarosrecords.pl,,t,f,f,f,50,50.0,50.0
-344,Igor Wolski,creator,,wolski.igor@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-345,Imigrant Records,patron,,immigrantrec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-346,Imperioz (+ Musiclife),local_press,,matthew@musiclife.pl,https://musiclife.pl,,t,f,f,f,50,50.0,50.0
-347,ImusicWord,local_press,,marcin.cija@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-348,InSilesia,local_press,,redakcja@insilesia.pl,https://insilesia.pl,,t,f,f,f,50,50.0,50.0
-349,Index - Akademickie Radio Index,radio,,radio@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
-350,Indian Summer,radio,,indiansummer@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-351,Indiemono free submission,creator,,,https://player.indiemono.com/music-submit,https://player.indiemono.com/music-submit,t,f,f,f,50,50.0,50.0
-352,Infomusic,patron,,infomusic@infomusic.pl,https://infomusic.pl,,t,f,f,f,50,50.0,50.0
-353,Inhale the Heavy,local_press,,,https://inhaletheheavy.com,,t,f,f,f,50,50.0,50.0
-354,Inspirakcja,local_press,,inspirakcja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-355,Instrumental / Progressive Metal / Post-Metal,creator,,mike.krzemin@gmail.com,,https://open.spotify.com/playlist/4se7i3OtDvWVhbz0qx5aCc,t,f,f,f,50,50.0,50.0
-356,Iza Kwiatkowska,radio,,subiektywny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-357,JAK TU GRAĆ?,local_press,,bartek@jaktugrac.pl,https://jaktugrac.pl,,t,f,f,f,50,50.0,50.0
-358,Jacek Wolszczak,radio,,jacek@radiobogoria.pl,https://radiobogoria.pl,,t,f,f,f,50,50.0,50.0
-359,Jakub Kowalczyk,radio,,pigulka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-360,Jan Feliks Kallwejt,creator,,jan@kallwejt.com,https://kallwejt.com,,t,f,f,f,50,50.0,50.0
-361,Jasień,patron,,emil.macherzynski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-362,Jazda Po Bandzie,local_press,,jazdapobandzie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-363,Jazz FM,radio,,redakcja@radiojazz.fm,https://radiojazz.fm,,t,f,f,f,50,50.0,50.0
-364,Jerzy Skarżyński,radio,,skarzynski@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-365,Jeszcze Tego Nie Słyszałeś,local_press,,rajmund@jeszczenie.pl,https://jeszczenie.pl,,t,f,f,f,50,50.0,50.0
-366,Joahannah von Frankenstein,creator,,joahannah@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-367,Jolanta Drużyńska,radio,,jolanta.druzynska@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-368,Jutrzenka Radio AK,radio,,radio@radiojutrzenka.waw.pl,https://radiojutrzenka.waw.pl,,t,f,f,f,50,50.0,50.0
-369,Jędrzej Furmann,radio,,jedrzej.furmann@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-370,KONTAMINATION DESIGN,creator,,kontaminationvvv@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-371,KTVI - Krakowska Telewizja Internetowa,local_press,,red.naczelny@ktvi.pl,https://ktvi.pl,,t,f,f,f,50,50.0,50.0
-372,KVLT,local_press,,info@kvlt.pl,https://kvlt.pl,,t,f,f,f,50,50.0,50.0
-373,Kacper Wesołowski,radio,,kacper.wesolowski@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-374,Kalejdoskop Kulturalny Reymont,local_press,,reymont@ldk.lodz.pl,https://ldk.lodz.pl,,t,f,f,f,50,50.0,50.0
-375,Kamil Matuszak,radio,,kamil@matuszak.tk,https://matuszak.tk,,t,f,f,f,50,50.0,50.0
-376,Kampf,patron,,kampfrec@go2.pl,https://go2.pl,,t,f,f,f,50,50.0,50.0
-377,Kampus - Akademickie Radio Kampus,radio,,radio@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
-378,KampusTV,local_press,,redakcja@kampustv.pl,https://kampustv.pl,,t,f,f,f,50,50.0,50.0
-379,Karnet,local_press,,karnet@karnet.krakow.pl,https://karnet.krakow.pl,,t,f,f,f,50,50.0,50.0
-380,Karol Banach,creator,,hello@karolbanach.com,https://karolbanach.com,,t,f,f,f,50,50.0,50.0
-381,Karol Panczen,creator,,panczen1@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-382,Karoryfer Lecolds,patron,,karoryfer.lecolds@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-383,Kaseta Polska,local_press,,kasetapolska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-384,Kasia K8 Rościńska,radio,,kontakt@kasiak8.pl,https://kasiak8.pl,,t,f,f,f,50,50.0,50.0
-385,Katalog Artystyczny,local_press,,t.szwecki@katalogartystyczny.pl,https://katalogartystyczny.pl,,t,f,f,f,50,50.0,50.0
-386,"Katarzyna Matczak, Łukasz Strąkowski",radio,,kulturalny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-387,Katolickie Radio Płock,radio,,radioplus@plocman.pl,https://plocman.pl,,t,f,f,f,50,50.0,50.0
-388,Katowice,radio,,sekretariat@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
-389,Kayax,patron,,tomik@kayax.net,https://kayax.net,,t,f,f,f,50,50.0,50.0
-390,Keep Calm and Listen To Melodic Death Metal,creator,,hellsguardian.band@gmail.com,,https://open.spotify.com/playlist/60W5vD1HNZfIjDu6moLQRg,t,f,f,f,50,50.0,50.0
-391,KiS Kultura i Sztuka,radio,,redakcja@radiokis.pl,https://radiokis.pl,,t,f,f,f,50,50.0,50.0
-392,KierunekSzczecin,local_press,,poczta@kierunek.szczecin.pl,https://kierunek.szczecin.pl,,t,f,f,f,50,50.0,50.0
-393,Klasycy Rocka,radio,,klasycyrocka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-394,Klubowa PL,local_press,,reklama@klubowa.pl,https://klubowa.pl,,t,f,f,f,50,50.0,50.0
-395,Kombinat,radio,,kombinat@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
-396,Koncertomania,local_press,,pawel@koncertomania.pl,https://koncertomania.pl,,t,f,f,f,50,50.0,50.0
-397,Koncertowe Zwierzę,radio,,koncertowezwierze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-398,Koncertuj PL,local_press,,kontakt@koncertuj.pl,https://koncertuj.pl,,t,f,f,f,50,50.0,50.0
-399,Koncerty com,local_press,,office@concerts.pl,https://concerts.pl,,t,f,f,f,50,50.0,50.0
-400,Konkol Music,patron,,managerkonkol@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-401,Kontestacja,radio,,redakcja@kontestacja.com,https://kontestacja.com,,t,f,f,f,50,50.0,50.0
-402,Kontra - Niezależny Portal Studentów UAM,local_press,,portal@kontra.poznan.pl,https://kontra.poznan.pl,,t,f,f,f,50,50.0,50.0
-403,Koszalin,radio,,sekretariat@radio.koszalin.pl,https://radio.koszalin.pl,,t,f,f,f,50,50.0,50.0
-404,Koszmarowa - Gazeta Studentów Wydziału Nauk Społecznych,local_press,,koszmarowa@uni.wroc.pl,https://uni.wroc.pl,,t,f,f,f,50,50.0,50.0
-405,Koszulkowo,reviewer,,sklep@koszulkowo.com,https://koszulkowo.com,,t,f,f,f,50,50.0,50.0
-406,Krak TV,local_press,,kontakt@wideokrakow.pl,https://wideokrakow.pl,,t,f,f,f,50,50.0,50.0
-407,Krakowska Scena Muzyczna,local_press,,michal@krakowskascenamuzyczna.pl,https://krakowskascenamuzyczna.pl,,t,f,f,f,50,50.0,50.0
-408,Kraków,radio,,newsroom@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-409,Kraków żyje,local_press,,krakowzyje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-410,Kraków24TV,local_press,,redakcja@krakow24.tv,https://krakow24.tv,,t,f,f,f,50,50.0,50.0
-411,Krustian Garstkowiak,creator,,garstkowiak@ymail.com,https://ymail.com,,t,f,f,f,50,50.0,50.0
-412,Krzysiek Kosiński,radio,,krzysztof@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
-413,Krzysztof Karnkowski,creator,,budyn78@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-414,Krzysztof Wilczyński,radio,,sdn@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
-415,Ktoś Ruszał Moje Płyty,local_press,,backstage@ktosruszalmojeplyty.com,https://ktosruszalmojeplyty.com,,t,f,f,f,50,50.0,50.0
-416,Kuba Kaleta,radio,,szafalesiaka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-417,Kuba Sokólski,creator,,ksokolski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-418,Kudłate słuchanie,local_press,,kudlatesluchanie@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
-419,Kultura Online,local_press,,redakcja@kulturaonline.pl,https://kulturaonline.pl,,t,f,f,f,50,50.0,50.0
-420,Kultura Poznań,local_press,,sylwia.klimek@wm.poznan.pl,https://wm.poznan.pl,,t,f,f,f,50,50.0,50.0
-421,Kultura Się Liczy!,local_press,,kulturasieliczy@nck.pl,https://nck.pl,,t,f,f,f,50,50.0,50.0
-422,Kultura w Krakowie,local_press,,redakcja@kulturawkrakowie.pl,https://kulturawkrakowie.pl,,t,f,f,f,50,50.0,50.0
-423,Kulturalna Warszawa,local_press,,redakcja@infoqultura.pl,https://infoqultura.pl,,t,f,f,f,50,50.0,50.0
-424,Kulturalnie WAW,local_press,,tomasz@kulturalnie.waw.pl,https://kulturalnie.waw.pl,,t,f,f,f,50,50.0,50.0
-425,Kulturatka,local_press,,muzyka@kulturatka.pl,https://kulturatka.pl,,t,f,f,f,50,50.0,50.0
-426,Kulturoholizm,local_press,,kulturoholizm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-427,Kurier Warszawski,local_press,,redakcja.kw@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-428,Kurier Łódzki,local_press,,kontakt@kurierlodzki.pl,https://kurierlodzki.pl,,t,f,f,f,50,50.0,50.0
-429,Kuźnia Dźwięków,radio,,mariusz.rodziewicz@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
-430,LADY2 - Katarzyna A. Kozłowska,creator,,lady2art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-431,LAJF Magazyn Lubelski,local_press,,redakcja@lajf.info,https://lajf.info,,t,f,f,f,50,50.0,50.0
-432,LIS KULA Alek Morawski,creator,,alek@alekmorawski.com,https://alekmorawski.com,,t,f,f,f,50,50.0,50.0
-433,LISY STUDIO,creator,,kontakt@lisystudio.com,https://lisystudio.com,,t,f,f,f,50,50.0,50.0
-434,LOOKmag,local_press,,redakcja@lookmag.pl,https://lookmag.pl,,t,f,f,f,50,50.0,50.0
-435,LOVEDRAW - Andrew Tomaszuk,creator,,tomaszuk2@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-436,LTC Productions,patron,,let_them_come@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-437,LUZ - Akademickie Radio LUZ,radio,,mmalinowska@radioluz.pwr.wroc.pl,https://radioluz.pwr.wroc.pl,,t,f,f,f,50,50.0,50.0
-438,Laboratorium Gitary,local_press,,kontakt@laboratoriumgitary.pl,https://laboratoriumgitary.pl,,t,f,f,f,50,50.0,50.0
-439,Laboratorium Wytrzymałości Metali,radio,,metal@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-440,Lado ABC,patron,,info@ladoabc.com,https://ladoabc.com,,t,f,f,f,50,50.0,50.0
-441,Laif,local_press,,aleksandra.trojnar@mediabroker.pl,https://mediabroker.pl,,t,f,f,f,50,50.0,50.0
-442,Legacy Records,patron,,info@legacy-records.de,https://legacy-records.de,,t,f,f,f,50,50.0,50.0
-443,Leliwa,radio,,bszwedo@leliwa.pl,https://leliwa.pl,,t,f,f,f,50,50.0,50.0
-444,Leokadia,radio,,bezloda@odzew.fm,https://odzew.fm,,t,f,f,f,50,50.0,50.0
-445,Lepsza Strona Muzyki,local_press,,lepszastronamuzyki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-446,Life4sound,local_press,,redakcja@life4sound.pl,https://life4sound.pl,,t,f,f,f,50,50.0,50.0
-447,Lineout,local_press,,kontakt.lineout@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-448,Liryka,radio,,radio.liryka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-449,Lista Przebojów -Top Radia Łódź,radio,,lista@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-450,Lista Przebojów Bemowo.FM [RIP],radio,,lista@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-451,Lista WWW,radio,,lista@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
-452,Live Life,local_press,,redakcja@livelife.pl,https://livelife.pl,,t,f,f,f,50,50.0,50.0
-453,Live Nation Store,reviewer,,merchandise@livenationstore.pl,https://livenationstore.pl,,t,f,f,f,50,50.0,50.0
-454,Loudwire,local_press,,tips@loudwire.com,https://loudwire.com,,t,f,f,f,50,50.0,50.0
-455,Love Kraków,local_press,,d.kucinski@lovekrakow.pl,https://lovekrakow.pl,,t,f,f,f,50,50.0,50.0
-456,Lubisz To,local_press,,rusinowski@lubiszto.org,https://lubiszto.org,,t,f,f,f,50,50.0,50.0
-457,Lubię Śląsk kulturalnie,local_press,,slaskkulturalnie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-458,Luna Music Polska,patron,,luna@luna.pl,https://luna.pl,,t,f,f,f,50,50.0,50.0
-459,Lupus Unleashed,local_press,,lupusunleashed@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
-460,Luta Records,patron,,kuba@lutarecords.pl,https://lutarecords.pl,,t,f,f,f,50,50.0,50.0
-461,Lynx Music,patron,,lynx@lynxmusic.pl,https://lynxmusic.pl,,t,f,f,f,50,50.0,50.0
-462,M/I Kwartalnik Muzyczny,local_press,,redakcja@mimagazyn.pl,https://mimagazyn.pl,,t,f,f,f,50,50.0,50.0
-463,MARIA RYSUJE - Maria Regucka,creator,,mariaregucka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-464,MC Radio,radio,,reklama@mcradio.pl,https://mcradio.pl,,t,f,f,f,50,50.0,50.0
-465,MDC - Muzyka Dla Ciebie,radio,,radiomdc@radiomdc.no-ip.org,https://radiomdc.no-ip.org,,t,f,f,f,50,50.0,50.0
-466,METAL 2020s — Polychroma,creator,,mypolychroma@gmail.com,,https://open.spotify.com/playlist/2tG4vSoIv96vIZTk4G1OHe,t,f,f,f,50,50.0,50.0
-467,MISIEWICZ IlUSTRATION,creator,,misiewicz.malm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-468,MJmimi,patron,,mjmimi@mjmimi.pl,https://mjmimi.pl,,t,f,f,f,50,50.0,50.0
-469,MM Szczecin,local_press,,mmszczecin@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
-470,MORS Mega Otwarte Radio Studenckie,radio,,muzyka@mors.ug.edu.pl,https://mors.ug.edu.pl,,t,f,f,f,50,50.0,50.0
-471,MUCHADSGN - Konrad Moszyński,creator,,muchask8@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-472,MUSCA IMAGO,creator,,musca.imago@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-473,MUZYKO(B)LOG,local_press,,hubert.mysliwiec@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
-474,MaMocRecords,patron,,pawel@mamocrecords.com,https://mamocrecords.com,,t,f,f,f,50,50.0,50.0
-475,Maciej Kamuda,creator,,maciejkamuda@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-476,"Maciej Markowski, Jakub Michalski",radio,,niedlasingli@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-477,Maciej Wałejko,radio,,szuflada@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-478,Maciej Werk,radio,,m.werk@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-479,Mad Rock House,radio,,mrhkontakt@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-480,Magazyn,local_press,,redakcja@mgzn.pl,https://mgzn.pl,,t,f,f,f,50,50.0,50.0
-481,Magda Miszewska,radio,,kultura@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
-482,Magda Sawicka,creator,,sawickaster@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-483,Magic Records,patron,,kontakt@magicrecords.com.pl,https://magicrecords.com.pl,,t,f,f,f,50,50.0,50.0
-484,Magiel,local_press,,robert.szklarz@magiel.waw.pl,https://magiel.waw.pl,,t,f,f,f,50,50.0,50.0
-485,Magnetoffon,local_press,,s.brzozka@magnetoffon.info,https://magnetoffon.info,,t,f,f,f,50,50.0,50.0
-486,Makak,radio,,makak@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
-487,"Marcin Mendelbaum, Magdalena Gałczynska, Piotr Bielawski, Jerzy Kijo",radio,,m.mendelbaum@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-488,Marcin Tercjak,radio,,m.tercjak@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-489,Marcin Tercjak i Bartosz Florczak,radio,,b.florczak@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-490,Marek Lubasiński i Asia Gzyra,radio,,towar@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
-491,Marek Rycak,radio,,lublista@radio-lublin.pl,https://radio-lublin.pl,,t,f,f,f,50,50.0,50.0
-492,Margo Dumin Illustrations,creator,,margolcia.dumin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-493,Maria Bobela,creator,,mariabobela@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-494,Marianna Pruchniak,radio,,marianna.pruchniak@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-495,Mariusz Rodziewicz,local_press,,mariusz.rodziewicz@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
-496,"Marta ""Tygrys"" Pokorska-Jurek",radio,,tematyczny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-497,Marta Gliwińska,creator,,martagliwinska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-498,"Marta Ruda, Paweł Szczudkowski",radio,,lista@radiopraga.pl,https://radiopraga.pl,,t,f,f,f,50,50.0,50.0
-499,Marta Tomczyk,creator,,marta.tomczyk@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-500,"Martyna ""Niger"" Jakubowska Graphic's",creator,,nigerpmi220395@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-501,Martyna Lejman,creator,,mrtnljmn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-502,Martyna Wójcik-Śmierska,creator,,kontakt@martynawojcik.com,https://martynawojcik.com,,t,f,f,f,50,50.0,50.0
-503,Maski - Gazeta Młodzieżowa,local_press,,redakcja@gazetamaski.pl,https://gazetamaski.pl,,t,f,f,f,50,50.0,50.0
-504,"Mateusz Chłystun, Wojtek Zagaj",radio,,wojciech.zagaj@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-505,Mateusz Kołek,creator,,matkolek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-506,Mazowsze,radio,,redakcja@radio-mazowsze.pl,https://radio-mazowsze.pl,,t,f,f,f,50,50.0,50.0
-507,Mało Obiektywnie,radio,,mariusz.owczarek@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-508,Megafon,radio,,megafon@kpsw.edu.pl,https://kpsw.edu.pl,,t,f,f,f,50,50.0,50.0
-509,Megafon Muzyczny,local_press,,megafonmuzyczny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-510,Melba,local_press,,info@melbamagazine.com,https://melbamagazine.com,,t,f,f,f,50,50.0,50.0
-511,Melodeath,radio,,melodeath@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-512,Melodic Metalcore - Best Of,creator,,spotifybestof@yahoo.com,,https://open.spotify.com/playlist/2wNAOkfXWSl88w8URX6RdC,t,f,f,f,50,50.0,50.0
-513,Mercilles Death,patron,,merciless@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
-514,Merkury Polskie Radio,radio,,internet@radiomerkury.pl,https://radiomerkury.pl,,t,f,f,f,50,50.0,50.0
-515,Metal Breakfast Radio,radio,,lapdog1@mac.com,https://mac.com,,t,f,f,f,50,50.0,50.0
-516,Metal Detektor Radio Študent,radio,,metaldetektor@radiostudent.si,https://radiostudent.si,,t,f,f,f,50,50.0,50.0
-517,Metal Devastation Radio,radio,,zach@metaldevastationradio.com,https://metaldevastationradio.com,,t,f,f,f,50,50.0,50.0
-518,Metal Devastation Radio,local_press,,,https://metaldevastationradio.com,,t,f,f,f,50,50.0,50.0
-519,Metal Devastation Radio — online metal radio,radio,,,https://metaldevastationradio.com,https://metaldevastationradio.com,t,f,f,f,50,50.0,50.0
-520,Metal Gentleman — YouTube channel + blog,local_press,,promotion@metalgentleman.com,,https://metalgentleman.com/submit-your-band/,t,f,f,f,50,50.0,50.0
-521,Metal Groove Radio,radio,,metalgrooveradio@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-522,Metal Hammer,local_press,,,https://metalhammer.com,,t,f,f,f,50,50.0,50.0
-523,Metal Hammer (YouTube),creator,,,https://youtube.com/@metalhammer,,t,f,f,f,50,50.0,50.0
-524,Metal Hammer Germany,local_press,,online@metal-hammer.de,https://metal-hammer.de,,t,f,f,f,50,50.0,50.0
-525,Metal Injection,local_press,,tips@metalinjection.net,https://metalinjection.net,,t,f,f,f,50,50.0,50.0
-526,Metal Kross Radio,radio,,metalkrossradio@usa.com,https://usa.com,,t,f,f,f,50,50.0,50.0
-527,Metal Mantra,local_press,,,https://metal-mantra.com,,t,f,f,f,50,50.0,50.0
-528,Metal Mantra — heavy music news,local_press,,,https://metal-mantra.com/submit/,https://metal-mantra.com/submit/,t,f,f,f,50,50.0,50.0
-529,Metal Noise,local_press,,,https://metalnoise.net,,t,f,f,f,50,50.0,50.0
-530,Metal Noise — review blog,local_press,,666metalnoise@gmail.com,,https://metalnoise.net/submissions,t,f,f,f,50,50.0,50.0
-531,Metal Sucks,local_press,,news@metalsucks.net,https://metalsucks.net,,t,f,f,f,50,50.0,50.0
-532,Metal Tavern Radio,radio,,jamescorprew@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-533,Metal Trenches,creator,,,https://youtube.com/c/metaltrenches,,t,f,f,f,50,50.0,50.0
-534,Metal Woman Radio,radio,,metalwomanradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-535,Metal Workout Intense TOP100,creator,,metalstars_promo@email.de,,https://open.spotify.com/playlist/214zuvy65rXE92gYnAON7m,t,f,f,f,50,50.0,50.0
-536,Metal Zone Radio,radio,,contato@metalzone.radio.br,https://metalzone.radio.br,,t,f,f,f,50,50.0,50.0
-537,MetalFM,radio,,leimsen@metalfm.de,https://metalfm.de,,t,f,f,f,50,50.0,50.0
-538,MetalizacjA - Metal Radio Show,radio,,metalizacja@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
-539,Meteor UAM,radio,,biuro@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-540,Metro,reviewer,,metronysa@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-541,Miasta w Komie,local_press,,miastawkomie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-542,Miasto Ma Głos,local_press,,miastomaglos@tlen.pl,https://tlen.pl,,t,f,f,f,50,50.0,50.0
-543,Miasto i Ludzie,local_press,,redakcja@miastoiludzie.pl,https://miastoiludzie.pl,,t,f,f,f,50,50.0,50.0
-544,Michał Gancarski + Piotr Czarnota,radio,,klimatyzator@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-545,Michał Karwatowicz,local_press,,infomusic@infomusic.pl,https://infomusic.pl,,t,f,f,f,50,50.0,50.0
-546,"Michał Lisiewicz, Blanka Borys, Piotr Radio",radio,,michal.lisiewicz@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-547,Michał Napiórkowski i Piotr Szauer,radio,,redakcja.muzyczna@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
-548,"Michałowska Martyna, Szymura Sebastian",radio,,sebastian.szymura@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-549,Miej Miejsce,local_press,,redakcja@miejmiejsce.com,https://miejmiejsce.com,,t,f,f,f,50,50.0,50.0
-550,Mik Music,patron,,innyadreswojtka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-551,Miladelic,reviewer,,milalee.art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-552,Mind Born,creator,,michal@mindborn.pl,https://mindborn.pl,,t,f,f,f,50,50.0,50.0
-553,Mirrorphobic,patron,,mirrorphobic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-554,Mittendrin,radio,,redakcja@mittendrin.pl,https://mittendrin.pl,,t,f,f,f,50,50.0,50.0
-555,Modlitwy Psychodeliczne,radio,,mikolaj.zurakowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-556,Moja Stodoła,local_press,,roland.filip@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-557,Moje Katowice,local_press,,barbara.lukomska@silnet.pl,https://silnet.pl,,t,f,f,f,50,50.0,50.0
-558,Moje Miasto Trójmiasto,local_press,,redakcja@mmtrojmiasto.pl,https://mmtrojmiasto.pl,,t,f,f,f,50,50.0,50.0
-559,Monitor Magazine,local_press,,redakcja@monitor-magazine.com,https://monitor-magazine.com,,t,f,f,f,50,50.0,50.0
-560,Motoradio,radio,,redakcja@motoradio.com.pl,https://motoradio.com.pl,,t,f,f,f,50,50.0,50.0
-561,Multikulti Project,patron,,e-sklep@multikulti.com,https://multikulti.com,,t,f,f,f,50,50.0,50.0
-562,Muno PL,local_press,,info@muno.pl,https://muno.pl,,t,f,f,f,50,50.0,50.0
-563,Music Alert,local_press,,news@musicalert.pl,https://musicalert.pl,,t,f,f,f,50,50.0,50.0
-564,Music Face,local_press,,musicface.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-565,Music Is,local_press,,kubastadnicki@musicis.pl,https://musicis.pl,,t,f,f,f,50,50.0,50.0
-566,Music Merch,reviewer,,sklep@musicmerch.pl,https://musicmerch.pl,,t,f,f,f,50,50.0,50.0
-567,Music Rage,patron,,musicrage@musicrage.org,https://musicrage.org,,t,f,f,f,50,50.0,50.0
-568,Music Serwis COM PL,local_press,,katarzyna.prychacz@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-569,Music Store Poznań,reviewer,,poznan@musicstore.com.pl,https://musicstore.com.pl,,t,f,f,f,50,50.0,50.0
-570,Music to the People,local_press,,info@musictothepeople.pl,https://musictothepeople.pl,,t,f,f,f,50,50.0,50.0
-571,Musicgram,local_press,,redakcja@musicgram.pl,https://musicgram.pl,,t,f,f,f,50,50.0,50.0
-572,Musicngear,local_press,,info+metalcore.submissions@musicngear.com,https://musicngear.com,,t,f,f,f,50,50.0,50.0
-573,Musique Experimentale,radio,,eksperymentale@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-574,Muzo TV,local_press,,redakcja@muzo.tv,https://muzo.tv,,t,f,f,f,50,50.0,50.0
-575,Muzol,local_press,,m-arcin@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-576,Muzomaniak,local_press,,chwedczuk.marek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-577,Muzotakt,local_press,,redakcja@muzotakt.pl,https://muzotakt.pl,,t,f,f,f,50,50.0,50.0
-578,Muzoteka,local_press,,redakcja@muzoteka.pl,https://muzoteka.pl,,t,f,f,f,50,50.0,50.0
-579,Muzycy Trójmiasta,local_press,,muzycy-trojmiasta@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-580,Muzyczna Artyleria,radio,,muzyczna.artyleria@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-581,Muzyczna Scena Łodzi,local_press,,dymek@ulicznagaleriadzwieku.pl,https://ulicznagaleriadzwieku.pl,,t,f,f,f,50,50.0,50.0
-582,Muzyczne Radio,radio,,radio@muzyczneradio.pl,https://muzyczneradio.pl,,t,f,f,f,50,50.0,50.0
-583,Muzyczne Wędrowanie,local_press,,muzycznewedrowanie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-584,Muzyczny Esflorres,local_press,,romantycyrocka@toksyna.fm,https://toksyna.fm,,t,f,f,f,50,50.0,50.0
-585,Muzyczny Horyzont,local_press,,kontakt@muzycznyhoryzont.pl,https://muzycznyhoryzont.pl,,t,f,f,f,50,50.0,50.0
-586,Muzyczny Kraków,local_press,,kontakt@muzyczny-krakow.eu,https://muzyczny-krakow.eu,,t,f,f,f,50,50.0,50.0
-587,Muzyczny Piotrków,local_press,,amusicagencja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-588,Muzyka Alternatywna,local_press,,takisam100@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-589,Muzyka DZIENNIK PL,local_press,,diana.rymuza@infor.pl,https://infor.pl,,t,f,f,f,50,50.0,50.0
-590,Muzyka Interia,local_press,,newsroom@firma.interia.pl,https://firma.interia.pl,,t,f,f,f,50,50.0,50.0
-591,Muzyka Onet,local_press,,pawel.gaik@portal.onet.pl,https://portal.onet.pl,,t,f,f,f,50,50.0,50.0
-592,Muzyka na Fali,radio,,biuro@skafala.pl,https://skafala.pl,,t,f,f,f,50,50.0,50.0
-593,Muzyka z głośnika,local_press,,mzg@mzg.pl,https://mzg.pl,,t,f,f,f,50,50.0,50.0
-594,Muzykamenty [RIP],radio,,maciej.majewski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-595,Muzykoholicy,local_press,,muzykoholicy.com@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-596,Muzykoteka,radio,,muzykoteka@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-597,My Shit In Your Coffe,patron,,info@myshitinyourcoffee.com,https://myshitinyourcoffee.com,,t,f,f,f,50,50.0,50.0
-598,Myszliciel kwartalnik interdyscyplinarny KNS MISH,local_press,,myszliciel@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-599,Mówią Na Mieście,local_press,,redakcja@mowianamiescie.pl,https://mowianamiescie.pl,,t,f,f,f,50,50.0,50.0
-600,Młoda Gdynia,local_press,,mariusz.sieraczkiewicz@mlodagdynia.pl,https://mlodagdynia.pl,,t,f,f,f,50,50.0,50.0
-601,Młodzi Wykonawcy,local_press,,mlodzi.wykonawcy.pl@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-602,NNRadio,radio,,contact@nnradio.pl,https://nnradio.pl,,t,f,f,f,50,50.0,50.0
-603,NOH8,reviewer,,office@noh8.eu,https://noh8.eu,,t,f,f,f,50,50.0,50.0
-604,Na Fest,local_press,,kontakt@nafest.pl,https://nafest.pl,,t,f,f,f,50,50.0,50.0
-605,Na Temat,local_press,,tomasz.machala@natemat.pl,https://natemat.pl,,t,f,f,f,50,50.0,50.0
-606,Na obrzeżach,local_press,,michal.d.wieczorek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-607,Nadaje.com,radio,,firma@nadaje.com,https://nadaje.com,,t,f,f,f,50,50.0,50.0
-608,Nadia Szymańska,radio,,muzyka@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-609,Najlepsze Piosenki,local_press,,kontakt@najlepszepiosenki.pl,https://najlepszepiosenki.pl,,t,f,f,f,50,50.0,50.0
-610,Namuzowani,local_press,,sennasenna@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
-611,Nasiono Records,patron,,info@nasiono.net,https://nasiono.net,,t,f,f,f,50,50.0,50.0
-612,Nasza Łódź da się lubić - Lodz.ipowiat.pl,local_press,,lodz@ipowiat.pl,https://ipowiat.pl,,t,f,f,f,50,50.0,50.0
-613,Nasze FM,radio,,sekretariat@nasze.pl,https://nasze.pl,,t,f,f,f,50,50.0,50.0
-614,Nasze miasto Łódź,local_press,,patronaty@naszemiasto.pl,https://naszemiasto.pl,,t,f,f,f,50,50.0,50.0
-615,Naszywki,reviewer,,biuro@naszywki.net,https://naszywki.net,,t,f,f,f,50,50.0,50.0
-616,Natalia Martuzalska / Maciek Sławski / Adam Kaczorowski,radio,,faworki@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-617,Nawiedzone studio,radio,,nawiedzonestudio@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-618,Net Fan,local_press,,sandra.jedrowiak@netfan.pl,https://netfan.pl,,t,f,f,f,50,50.0,50.0
-619,Nevada Music,patron,,nevadamusic@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
-620,Neverland,radio,,jakub.marszalkowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-621,New Abra,patron,,info@newabra.com.pl,https://newabra.com.pl,,t,f,f,f,50,50.0,50.0
-622,New Life Recordings,patron,,newlife.recordings@myspace.com,https://myspace.com,,t,f,f,f,50,50.0,50.0
-623,New Metalcore 2026 — RIFF CULT,creator,,riffcultjp@gmail.com,,https://open.spotify.com/playlist/280unJx37YbHbRvPDlZxPi,t,f,f,f,50,50.0,50.0
-624,NewsrmTV,local_press,,redakcja@newsrm.tv,https://newsrm.tv,,t,f,f,f,50,50.0,50.0
-625,Next-Gen Metal,creator,,,https://groover.co,,t,f,f,f,50,50.0,50.0
-626,Nextpop Label / Innersong,patron,,info.nextpop@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-627,Nie Znasz Tego,local_press,,diabelmowi@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-628,Nierdzewna Stal,radio,,nierdzewnastal@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-629,Nietoperzownia Atelier de chauvesouris,reviewer,,diesmara@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-630,Nikt już nie słucha dobrej muzyki,local_press,,niktjuznieslucha@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-631,Nine Records,reviewer,,sklep@nine-records.pl,https://nine-records.pl,,t,f,f,f,50,50.0,50.0
-632,Noisey Music by VICE,local_press,,andrzej.cala@vice.com,https://vice.com,,t,f,f,f,50,50.0,50.0
-633,Noob Heavy,local_press,,teamnoobheavy@gmail.com,https://noobheavy.com,,t,f,f,f,50,50.0,50.0
-634,Northern Metal Radio,radio,,northernmetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-635,Nostalgia,radio,,biuro@nostalgia.waw.pl,https://nostalgia.waw.pl,,t,f,f,f,50,50.0,50.0
-636,Notes na 6 tygodni,local_press,,nn6t@funbec.eu,https://funbec.eu,,t,f,f,f,50,50.0,50.0
-637,Nowa Gazeta Śląska,local_press,,redakcja@nowagazetaslaska.eu,https://nowagazetaslaska.eu,,t,f,f,f,50,50.0,50.0
-638,Nowa Muzyka,local_press,,redakcja@nowamuzyka.pl,https://nowamuzyka.pl,,t,f,f,f,50,50.0,50.0
-639,Nowe Idzie Od Morza,local_press,,jakub.knera@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-640,Nowinki - Politechnika Krakowska,radio,,nowinki@pk.edu.pl,https://pk.edu.pl,,t,f,f,f,50,50.0,50.0
-641,O PL Polski Portal Kultury,local_press,,redakcja@o.pl,https://o.pl,,t,f,f,f,50,50.0,50.0
-642,OKO,radio,,radiooko@radiooko.pl,https://radiooko.pl,,t,f,f,f,50,50.0,50.0
-643,OLD SCHOOL DESIGN - Malwina Siedlecka,creator,,old_school_design@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-644,ONTV - Poznańska Telewizja,local_press,,marketing@ontv.pl,https://ontv.pl,,t,f,f,f,50,50.0,50.0
-645,OSTROŚĆ studio,creator,,studioostrosc@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-646,Oblicza Kultury,local_press,,redakcja@obliczakultury.pl,https://obliczakultury.pl,,t,f,f,f,50,50.0,50.0
-647,Obudź Warszawę [RIP],local_press,,obudzwarszawe@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-648,Odium Rex,patron,,info@odiumrex.com,https://odiumrex.com,,t,f,f,f,50,50.0,50.0
-649,Odra,local_press,,odra@odra.net.pl,https://odra.net.pl,,t,f,f,f,50,50.0,50.0
-650,Odsłuch Kulturalny,radio,,egida.kultura@us.edu.pl,https://us.edu.pl,,t,f,f,f,50,50.0,50.0
-651,Off On czyli Made in Poland [RIP],radio,,przemyslaw.banaszkiewicz@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-652,Off Radio Kraków,radio,,off@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-653,Oficyna Biedota,patron,,oficyna@biedota.com,https://biedota.com,,t,f,f,f,50,50.0,50.0
-654,Ola Niepsuj,creator,,niepsuja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-655,Olejnicki Mikołaj,radio,,mikolaj.olejnicki@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-656,Oliwia Adamkowska,creator,,oadamkowska@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-657,Olo Records Management,patron,,biuro@olorecords.pl,https://olorecords.pl,,t,f,f,f,50,50.0,50.0
-658,Olsztyn,radio,,radio@ro.com.pl,https://ro.com.pl,,t,f,f,f,50,50.0,50.0
-659,Only4Music,local_press,,kontakt@only4music.com,https://only4music.com,,t,f,f,f,50,50.0,50.0
-660,OnlyGoodMusic,local_press,,onlygoodmusic@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-661,Opcje,local_press,,redakcja@opcje.net.pl,https://opcje.net.pl,,t,f,f,f,50,50.0,50.0
-662,Orbit,radio,,kontakt@radioorbit.pl,https://radioorbit.pl,,t,f,f,f,50,50.0,50.0
-663,Ortiga,reviewer,,ortigaclothing@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-664,Osterdam Records,patron,,info@osterdamrecords.com,https://osterdamrecords.com,,t,f,f,f,50,50.0,50.0
-665,Other Center,local_press,,redakcja@othercenter.pl,https://othercenter.pl,,t,f,f,f,50,50.0,50.0
-666,Other Music Label,patron,,manager@othermusiclabel.pl,https://othermusiclabel.pl,,t,f,f,f,50,50.0,50.0
-667,Out Of Line Music,patron,,info@outofline.de,https://outofline.de,,t,f,f,f,50,50.0,50.0
-668,Outrave,local_press,,outravemedia@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-669,P.anika w Krakowie,radio,,p.anika@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-670,PANTER ART,creator,,panterart13@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-671,PGA,local_press,,patrykgaluszka@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
-672,PIK WROCŁAW,local_press,,kontakt@pik.wroclaw.pl,https://pik.wroclaw.pl,,t,f,f,f,50,50.0,50.0
-673,PKPZin,local_press,,pkpzin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-674,POKA POKA,local_press,,poka@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-675,PUMSMAJER - Kamil Karpiński,creator,,pumsmajer@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-676,Pagan Records,patron,,info@pagan-records.com,https://pagan-records.com,,t,f,f,f,50,50.0,50.0
-677,Pan Od Muzyki,local_press,,kamil@matuszak.tk,https://matuszak.tk,,t,f,f,f,50,50.0,50.0
-678,PandArt Design,creator,,pandart-design@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
-679,Panda TV (UKSW),local_press,,redakcja@pandatv.pl,https://pandatv.pl,,t,f,f,f,50,50.0,50.0
-680,Pandora Clothing,reviewer,,sklep@pandoraclth.com,https://pandoraclth.com,,t,f,f,f,50,50.0,50.0
-681,Pani Nożownik,local_press,,siostra.rip@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-682,Panteon,radio,,kontakt@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
-683,Panzer Battalion,patron,,panzer-battalion@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-684,Paper Cats,reviewer,,kontakt@papercats.pl,https://papercats.pl,,t,f,f,f,50,50.0,50.0
-685,Paragraph 212,reviewer,,biuro@paragraph212.pl,https://paragraph212.pl,,t,f,f,f,50,50.0,50.0
-686,Party PL,local_press,,redakcja@afterparty.pl,https://afterparty.pl,,t,f,f,f,50,50.0,50.0
-687,Pasta,radio,,radiopasta@klps.pl,https://klps.pl,,t,f,f,f,50,50.0,50.0
-688,Patrycja Podkościelny,creator,,patrycja.podkoscielny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-689,Patryk Hardziej,creator,,patryk@hardziej.com,https://hardziej.com,,t,f,f,f,50,50.0,50.0
-690,Patryk Mogilnicki,creator,,pa.tryk@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-691,Paulina Steklińska,radio,,paulina.steklinska@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-692,Paweł Rembarz,radio,,rock@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-693,Penguin Records,patron,,biuro@penguinrecords.eu,https://penguinrecords.eu,,t,f,f,f,50,50.0,50.0
-694,Perun,patron,,perunrun@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-695,PiK,radio,,radio@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
-696,Piana,local_press,,k.pietrzok@pianamagazine.com,https://pianamagazine.com,,t,f,f,f,50,50.0,50.0
-697,Piekary,radio,,radiopiekary@radiopiekary.pl,https://radiopiekary.pl,,t,f,f,f,50,50.0,50.0
-698,Pionierska Records,patron,,pionierska.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-699,Piotr Bielawski,radio,,p.bielawski@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-700,Piotr Gołąb,radio,,piotrgolab85@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-701,Piotr Stanczyk,radio,,studio@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
-702,"Piotr Stelmach, Anna Gacek + Borys Dejnarowicz + Kuba Wandachowicz",radio,,piotr.stelmach@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-703,"Piotr Szauer, Michał Napiórkowski",radio,,pisz@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
-704,Pit Check,creator,,,https://youtube.com/@pitcheck,,t,f,f,f,50,50.0,50.0
-705,Pitu Pitu Warsaw,local_press,,hej@pitupitu.info,https://pitupitu.info,,t,f,f,f,50,50.0,50.0
-706,Place For Dance,local_press,,redakcja@placefordance.pl,https://placefordance.pl,,t,f,f,f,50,50.0,50.0
-707,Plaster Łódzki,local_press,,redakcja@plasterlodzki.pl,https://plasterlodzki.pl,,t,f,f,f,50,50.0,50.0
-708,Play More Records,patron,,playmorecompany@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-709,Playboy,local_press,,rafal.ksiezyk@playboy.pl,https://playboy.pl,,t,f,f,f,50,50.0,50.0
-710,PlaylistPartner metal,creator,,,https://playlistpartner.com/genre/metal,https://playlistpartner.com/about,t,f,f,f,50,50.0,50.0
-711,Plej TV,local_press,,kontakt@plej.tv,https://plej.tv,,t,f,f,f,50,50.0,50.0
-712,Pociąg do muzyki - Andrzej Kukuczka,radio,,kukuczka@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
-713,Pod Prąd,local_press,,redakcja@podprad.pl,https://podprad.pl,,t,f,f,f,50,50.0,50.0
-714,Podkarpacka Scena Muzyczna,local_press,,kosel07@psm.aq.pl,https://psm.aq.pl,,t,f,f,f,50,50.0,50.0
-715,Podotykaj sobie Poznań,local_press,,podotykajsobie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-716,Podprogowa godzina,radio,,podprogowa@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-717,Pointless Geometry,patron,,pointless.label@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-718,Poka Poka BIAŁYSTOK,local_press,,info@pokapoka.co,https://pokapoka.co,,t,f,f,f,50,50.0,50.0
-719,Poka Poka KARKONOSZE,local_press,,karkonosze@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-720,Poka Poka KUJAWY,local_press,,info@kujawy.pokapoka.co,https://kujawy.pokapoka.co,,t,f,f,f,50,50.0,50.0
-721,Poka Poka POZNAŃ,local_press,,info@poznan.pokapoka.co,https://poznan.pokapoka.co,,t,f,f,f,50,50.0,50.0
-722,Poka Poka RZESZÓW,local_press,,rzeszow@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-723,Poka Poka SZCZECIN,local_press,,info@szczecin.pokapoka.co,https://szczecin.pokapoka.co,,t,f,f,f,50,50.0,50.0
-724,Poka Poka TRÓJMIASTO,local_press,,3miasto@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-725,Poka Poka WARSZAWA,local_press,,warszawa@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-726,Poka Poka WROCŁAW,local_press,,wroclaw@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-727,Poka Poka ŁÓDŹ,local_press,,info@lodz.pokapoka.com,https://lodz.pokapoka.com,,t,f,f,f,50,50.0,50.0
-728,Poka Poka ŚLĄSKIE,local_press,,info@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
-729,Polish Metal Promotion,local_press,,,https://facebook.com/PolishMetalPromo,,t,f,f,f,50,50.0,50.0
-730,Polisz Mnie,local_press,,lukasz.halicki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-731,PoliszCzart Polska Audycja,local_press,,slaorw@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-732,Polityka,local_press,,facebook@polityka.pl,https://polityka.pl,,t,f,f,f,50,50.0,50.0
-733,Pollub TV Studencka Internetowa Telewizja Politechniki Lubelskiej,local_press,,redakcja@pollub.tv,https://pollub.tv,,t,f,f,f,50,50.0,50.0
-734,Polska Muzyka (?),local_press,,kuzmicz@onet.eu,https://onet.eu,,t,f,f,f,50,50.0,50.0
-735,Polska Stacja,radio,,radio@polskastacja.pl,https://polskastacja.pl,,t,f,f,f,50,50.0,50.0
-736,Polskie Radio - Trójka - Program 3 Polskiego Radia,radio,,portal.trojka@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-737,Polskie Zespoły,local_press,,m.gwozdowski@polskiezespoly.pl,https://polskiezespoly.pl,,t,f,f,f,50,50.0,50.0
-738,Polyphonia,local_press,,redakcja@polyphonia.pl,https://polyphonia.pl,,t,f,f,f,50,50.0,50.0
-739,Pomerania TV,local_press,,t.szubryt@pomerania.tv,https://pomerania.tv,,t,f,f,f,50,50.0,50.0
-740,Pomorze [RIP],radio,,radio@arp.org.pl,https://arp.org.pl,,t,f,f,f,50,50.0,50.0
-741,Pop Goes The Blog,local_press,,kordian.kn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-742,Popheart,local_press,,redakcja@popheart.pl,https://popheart.pl,,t,f,f,f,50,50.0,50.0
-743,Popler TV,local_press,,admin@popler.tv,https://popler.tv,,t,f,f,f,50,50.0,50.0
-744,Porcys,local_press,,redakcja@porcys.com,https://porcys.com,,t,f,f,f,50,50.0,50.0
-745,Portal Winylowy,local_press,,kontakt@portalwinylowy.pl,https://portalwinylowy.pl,,t,f,f,f,50,50.0,50.0
-746,Postaranie Records,patron,,postaranierecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-747,Power Radio Berlin-Brandenburg,radio,,info@power-radio.de,https://power-radio.de,,t,f,f,f,50,50.0,50.0
-748,"Poznan, I Love You",local_press,,hi@poznaniloveyou.com,https://poznaniloveyou.com,,t,f,f,f,50,50.0,50.0
-749,Pozytywka,radio,,pozytywka@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-750,Praga,radio,,redakcja@radiopraga.pl,https://radiopraga.pl,,t,f,f,f,50,50.0,50.0
-751,Pralka,radio,,marcin.liminowicz@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-752,Presja,local_press,,pressjamagazyn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-753,Prestiż - Magazyn Koszalinski,local_press,,prestizredakcja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-754,Prestiż - Magazyn Trójmiejski,local_press,,redakcja.trojmiasto@eprestiz.pl,https://eprestiz.pl,,t,f,f,f,50,50.0,50.0
-755,Pro Radio,radio,,redakcja@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
-756,Pro-polskie,radio,,tomasz@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
-757,Prog Magazine,local_press,,,https://progmagazine.com,,t,f,f,f,50,50.0,50.0
-758,"Progressive Metal, Metalcore & Djent // Next-Gen Metal",creator,,godmodeaudio@gmail.com,,https://open.spotify.com/playlist/6ua9vhcJstPlFF8NpksL5X,t,f,f,f,50,50.0,50.0
-759,Promuje Łódzkie (Urząd Marszałkowski Województwa Łódzkiego),local_press,,promocja@lodzkie.pl,https://lodzkie.pl,,t,f,f,f,50,50.0,50.0
-760,Prorock,radio,,prorocker@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-761,Przekrój,local_press,,doredakcji@przekroj.pl,https://przekroj.pl,,t,f,f,f,50,50.0,50.0
-762,Przemek Galret,creator,,galert@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-763,Przemek Mikke,creator,,pvmikke@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-764,Przestrzeń Kultury,radio,,kultura@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-765,Przesłuchanie,radio,,przesluchanie@roxy.fm,https://roxy.fm,,t,f,f,f,50,50.0,50.0
-766,Przypiny PL,reviewer,,przypiny@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-767,Próbownia,local_press,,probownia@probownia.pl,https://probownia.pl,,t,f,f,f,50,50.0,50.0
-768,Próbownia w eterze,radio,,probownia@meteor.amu.edu,https://meteor.amu.edu,,t,f,f,f,50,50.0,50.0
-769,Psycho Records,patron,,robert@wydawnictwopsycho.com,https://wydawnictwopsycho.com,,t,f,f,f,50,50.0,50.0
-770,Puls Poznania,local_press,,reklama@pulspoznania.pl,https://pulspoznania.pl,,t,f,f,f,50,50.0,50.0
-771,Purpose,local_press,,redakcja@purpose.com.pl,https://purpose.com.pl,,t,f,f,f,50,50.0,50.0
-772,Pustynna Burza,radio,,arek.lukaszewicz@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-773,QPoznań TV,local_press,,qpoznantv@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-774,Qult Kultury,local_press,,reklama@qultqultury.pl,https://qultqultury.pl,,t,f,f,f,50,50.0,50.0
-775,R.N.A. Radio Niezależnych Artystów,radio,,info@e-stacja-rna.pl,https://e-stacja-rna.pl,,t,f,f,f,50,50.0,50.0
-776,RADIO BOB!,radio,,bob@radiobob.de,https://radiobob.de,,t,f,f,f,50,50.0,50.0
-777,RAM,radio,,ram@prw.pl,https://prw.pl,,t,f,f,f,50,50.0,50.0
-778,RDC - Radio Dla Ciebie,radio,,sekretariat@rdc.pl,https://rdc.pl,,t,f,f,f,50,50.0,50.0
-779,RDN Małopolska (Katolickie),radio,,sektar@rdn.pl,https://rdn.pl,,t,f,f,f,50,50.0,50.0
-780,RDN Nowy Sącz (Katolickie),radio,,nsacz@rdn.pl,https://rdn.pl,,t,f,f,f,50,50.0,50.0
-781,RDS Music,patron,,jacekadamczyk2@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-782,RMF FM,radio,,redakcja@rmf.fm,https://rmf.fm,,t,f,f,f,50,50.0,50.0
-783,RWA zin,local_press,,rwarwa.zin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-784,Radar - Magazyn Studencki Uniwersytetu Przyrodniczego w Lublinie,local_press,,radar.magazyn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-785,Radio Goethe,radio,,info@radiogoethe.org,https://radiogoethe.org,,t,f,f,f,50,50.0,50.0
-786,Radio Metal,radio,,metalmorningshow@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-787,Radio heavy metal,radio,,radioheavymetal76@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-788,RadioWWW,radio,,radio@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
-789,Radiofonia,radio,,promocja@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
-790,Rafał Tyluś,radio,,informacje@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
-791,Raised on Rock,local_press,,rafal.mrowicki@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-792,Rak’n’Roll Records,patron,,contact@raknrollrecords.com,https://raknrollrecords.com,,t,f,f,f,50,50.0,50.0
-793,Raven Market,reviewer,,ravenmarket@ravenmarket.pl,https://ravenmarket.pl,,t,f,f,f,50,50.0,50.0
-794,Rebel Madness,reviewer,,rebel-madness@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-795,Rebelios Koszulki,reviewer,,info@rebelios.pl,https://rebelios.pl,,t,f,f,f,50,50.0,50.0
-796,Recenzje Muzyki,local_press,,tomal300@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-797,Recenzje Płyt,local_press,,redakcja@recenzjeplyt.pl,https://recenzjeplyt.pl,,t,f,f,f,50,50.0,50.0
-798,Recenzje płytowe,local_press,,mandy23@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
-799,Red Elephant Records,patron,,jurkis@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
-800,RedHook Recommends,creator,,playlist@weareredhook.com,,https://open.spotify.com/artist/6OVWDN6Ty6RfnhUJlrYBlI,t,f,f,f,50,50.0,50.0
-801,Redrum666,patron,,tom@redrum666.net,https://redrum666.net,,t,f,f,f,50,50.0,50.0
-802,Regio Records,patron,,biuro@regiorecords.pl,https://regiorecords.pl,,t,f,f,f,50,50.0,50.0
-803,Region Kultury,local_press,,w.cascarino@ldk.lodz.pl,https://ldk.lodz.pl,,t,f,f,f,50,50.0,50.0
-804,Regulator,local_press,,redakcja@rgltr.pl,https://rgltr.pl,,t,f,f,f,50,50.0,50.0
-805,Reporter PL,local_press,,redakcja@reporter.pl,https://reporter.pl,,t,f,f,f,50,50.0,50.0
-806,Requiem Records,patron,,info@requiem-records.com,https://requiem-records.com,,t,f,f,f,50,50.0,50.0
-807,Restriction Wear,reviewer,,info@restrictionwear.com,https://restrictionwear.com,,t,f,f,f,50,50.0,50.0
-808,Restyle,reviewer,,restyle.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-809,Retrospektywa,radio,,marta.baum@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
-810,Revolta,radio,,dorota39-70@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-811,Rewers,radio,,redakcja@radiorewers.pl,https://radiorewers.pl,,t,f,f,f,50,50.0,50.0
-812,Rita von Schlag,radio,,redakcja@odzew.fm,https://odzew.fm,,t,f,f,f,50,50.0,50.0
-813,Ro(c)koteka,radio,,agataczwarta@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-814,Rock Block,radio,,333prl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-815,Rock Express Store,reviewer,,rock_express_store@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
-816,Rock Long Luck,reviewer,,info@rocklongluck.pl,https://rocklongluck.pl,,t,f,f,f,50,50.0,50.0
-817,Rock Nocą,radio,,rocknoca@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
-818,Rock Radio,radio,,mikolaj.lizut@rockradio.pl,https://rockradio.pl,,t,f,f,f,50,50.0,50.0
-819,Rock Radio CZ,radio,,kamil.drab@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
-820,Rock Radio Polska,radio,,kontakt@rockradio.pl,https://rockradio.pl,,t,f,f,f,50,50.0,50.0
-821,Rock Revolution,patron,,k.wydra@rockrevolution.pl,https://rockrevolution.pl,,t,f,f,f,50,50.0,50.0
-822,Rock Rádio,radio,,studio@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
-823,Rock Serwis,reviewer,,bok@rockserwis.pl,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
-824,Rock Serwis FM,radio,,promocja@rockserwis.fm,https://rockserwis.fm,,t,f,f,f,50,50.0,50.0
-825,Rock Time,radio,,rjakubowski@rocktime.pl,https://rocktime.pl,,t,f,f,f,50,50.0,50.0
-826,Rock na přání,radio,,prani@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
-827,Rock'n'roll w wersji blond,local_press,,aneta.gliwicka@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-828,RockAntenne,radio,,studio@rockantenne.de,https://rockantenne.de,,t,f,f,f,50,50.0,50.0
-829,RockZone PL,reviewer,,sklep@rockzone.pl,https://rockzone.pl,,t,f,f,f,50,50.0,50.0
-830,Rocket,radio,,radio.rocket.eu@gmail.eu,https://gmail.eu,,t,f,f,f,50,50.0,50.0
-831,Rockmetalshop,reviewer,,zamowienia@rockmetalshop.pl,https://rockmetalshop.pl,,t,f,f,f,50,50.0,50.0
-832,Rockowa Lista Przebojów,radio,,airwolf116@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-833,Rockowa Wyspa,radio,,rockowawyspa@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
-834,Rockowa lista przebojów Radia Aspekt,radio,,iza@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
-835,Rockowy Alfabet Banacha i Zbycha,radio,,zbychowiec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-836,Rockserwis FM,radio,,bok@rockserwis.pl,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
-837,Rockserwis.pl,local_press,,,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
-838,Rockshock,reviewer,,rockshock@rockshock.pl,https://rockshock.pl,,t,f,f,f,50,50.0,50.0
-839,Roksana Orlicka,radio,,studio@radiopanda.pl,https://radiopanda.pl,,t,f,f,f,50,50.0,50.0
-840,Romuald Jakubowski,radio,,biuro@rocktime.pl,https://rocktime.pl,,t,f,f,f,50,50.0,50.0
-841,Rox,radio,,redakcja@radiorox.pl,https://radiorox.pl,,t,f,f,f,50,50.0,50.0
-842,Ryszard Gloger,radio,,ryszard.gloger@radiomerkury.pl,https://radiomerkury.pl,,t,f,f,f,50,50.0,50.0
-843,Rzeszów,radio,,sekretariat@radio.rzeszow.pl,https://radio.rzeszow.pl,,t,f,f,f,50,50.0,50.0
-844,Rzyg Kulturalny,local_press,,tormentor@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
-845,Rádio Beat,radio,,studio@radiobeat.cz,https://radiobeat.cz,,t,f,f,f,50,50.0,50.0
-846,Rádio ROCK,radio,,studio@radiorock.sk,https://radiorock.sk,,t,f,f,f,50,50.0,50.0
-847,S.P. Records,patron,,sprecords@sprecords.com.pl,https://sprecords.com.pl,,t,f,f,f,50,50.0,50.0
-848,SETA Studencka Telewizja Uniwersytetu Opolskiego,local_press,,tv@uni.opole.pl,https://uni.opole.pl,,t,f,f,f,50,50.0,50.0
-849,SGHTV,local_press,,patronat@sghtv.pl,https://sghtv.pl,,t,f,f,f,50,50.0,50.0
-850,SOUL - Society of Urban Life,local_press,,redakcja@soul.pl,https://soul.pl,,t,f,f,f,50,50.0,50.0
-851,SUD,radio,,zaczyk@radiosud.pl,https://radiosud.pl,,t,f,f,f,50,50.0,50.0
-852,SZN TV,local_press,,redakcja@szntv.pl,https://szntv.pl,,t,f,f,f,50,50.0,50.0
-853,Scena Rozmaitości,radio,,kontakt@radiofoniakrakow.pl,https://radiofoniakrakow.pl,,t,f,f,f,50,50.0,50.0
-854,Scena Wrocławska,local_press,,scena.wroclawska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-855,Sebastian SKROBOL,creator,,skrobol.sebastian@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-856,Sebol,local_press,,jozwiak.sebastian@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-857,SecondRadio,radio,,studio@secondradio.de,https://secondradio.de,,t,f,f,f,50,50.0,50.0
-858,Siadaj Pała!,radio,,siadajpala@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-859,Sie Klei,reviewer,,klej@sieklei.com,https://sieklei.com,,t,f,f,f,50,50.0,50.0
-860,Sie kręci,radio,,jerzy.owsiak@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-861,Silent Scream Graphics,creator,,sala@silent-scream.pl,https://silent-scream.pl,,t,f,f,f,50,50.0,50.0
-862,Silesia Kultura,local_press,,redakcja@silesiakultura.pl,https://silesiakultura.pl,,t,f,f,f,50,50.0,50.0
-863,Siostry ZŁO,reviewer,,thealmightytwins@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-864,Sky,radio,,michal.organek@radiosky.pl,https://radiosky.pl,,t,f,f,f,50,50.0,50.0
-865,Slowdown Records,patron,,slowdownrec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-866,So Music,local_press,,redakcja.somusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-867,Sonic Records,patron,,sonic@sonicrecords.pl,https://sonicrecords.pl,,t,f,f,f,50,50.0,50.0
-868,Souloovka,radio,,ania.duszczynska@radiofonia.net,https://radiofonia.net,,t,f,f,f,50,50.0,50.0
-869,Soundplate metal directory,creator,,,https://soundplate.com/new-spotify-playlists1/metal/,https://soundplate.com/new-spotify-playlists1/metal/,t,f,f,f,50,50.0,50.0
-870,Soundrive,local_press,,redakcja@soundrive.pl,https://soundrive.pl,,t,f,f,f,50,50.0,50.0
-871,Sounduniverse,local_press,,sounduniverse.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-872,Spotify for Artists editorial pitch,creator,,,https://artists.spotify.com/,https://support.spotify.com/nz/artists/article/pitching-music-to-playlist-editors/,t,f,f,f,50,50.0,50.0
-873,Sputnikmusic,local_press,,,https://sputnikmusic.com,,t,f,f,f,50,50.0,50.0
-874,Sreenagers PL,local_press,,redakcja@screenagers.pl,https://screenagers.pl,,t,f,f,f,50,50.0,50.0
-875,Stacja Kultura,local_press,,redakcja@stacjakultura.pl,https://stacjakultura.pl,,t,f,f,f,50,50.0,50.0
-876,Stanley Recenzuje,local_press,,stanleyrecenzuje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-877,Stanleyowy,local_press,,fkrbzm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-878,Stargard,radio,,biuro@radiostargard.fm,https://radiostargard.fm,,t,f,f,f,50,50.0,50.0
-879,Stars TV,local_press,,redakcja@starstv.eu,https://starstv.eu,,t,f,f,f,50,50.0,50.0
-880,Stay In Tune Music — ROCK & METAL,creator,,stayintunemusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-881,Strefa Młodych w Radiu Koszalin,radio,,strefamlodych@radio.koszalin.pl,https://radio.koszalin.pl,,t,f,f,f,50,50.0,50.0
-882,Strefa Niepotrzebnych Słów i Dźwięków,radio,,strefa.niepotrzebnych@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-883,Studencki Magazyn Miejski,radio,,smm@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-884,Student News,local_press,,sergiusz.dobosz@studentnews.pl,https://studentnews.pl,,t,f,f,f,50,50.0,50.0
-885,Students PL,local_press,,aleksandra.gorska@ringieraxelspringer.com,https://ringieraxelspringer.com,,t,f,f,f,50,50.0,50.0
-886,Students TV,local_press,,marcin@students.pl,https://students.pl,,t,f,f,f,50,50.0,50.0
-887,Styk Telewizja Studencka,local_press,,redakcja@styk.pwr.edu.pl,https://styk.pwr.edu.pl,,t,f,f,f,50,50.0,50.0
-888,Subiektywna Płytoteka,local_press,,ddaanneekk@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-889,SubmitHub free standard credits,creator,,,https://www.submithub.com/,https://www.submithub.com/,t,f,f,f,50,50.0,50.0
-890,Superstacja,local_press,,sekretariat@superstacja.tv,https://superstacja.tv,,t,f,f,f,50,50.0,50.0
-891,Surfblog,local_press,,kontakt@surfblog.pl,https://surfblog.pl,,t,f,f,f,50,50.0,50.0
-892,Swallowing The Decibels,local_press,,redakcja.thedecibels@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-893,Sweet Home Bielsko-Biała,local_press,,ilovebb.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-894,Sylwester Poleca,local_press,,dogitary@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-895,Syntezator,radio,,syntezator@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-896,Syrenka,radio,,projekt.syrenka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-897,Szadek Południową Porą [RIP],radio,,radoslaw.szatkowski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-898,Szafa Muzyczna,local_press,,szafamuzyczna@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-899,Szamaj Na Rockowo [RIP],radio,,damian.szemraj@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-900,"Szamotuła Anna, Szmyd Szymon, Malinowska Katarzyna, Marć Joanna, Miszkowicz-Adamowicz Emil",radio,,szymon.szmyd@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-901,Szczecin Aloud,local_press,,blog@szczecin.eu,https://szczecin.eu,,t,f,f,f,50,50.0,50.0
-902,Szczecin BLOG,local_press,,pawelbloger@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-903,Szczecin FM,radio,,kontakt@94i4.fm,https://94i4.fm,,t,f,f,f,50,50.0,50.0
-904,Szczecin Główny,local_press,,kbieniecka@szczecinglowny.org,https://szczecinglowny.org,,t,f,f,f,50,50.0,50.0
-905,Szczecin in Progress,local_press,,redakcja@grupaprogress.pl,https://grupaprogress.pl,,t,f,f,f,50,50.0,50.0
-906,Szczecin nie jest wioską z tramwajami,local_press,,szczecin@blogx.pl,https://blogx.pl,,t,f,f,f,50,50.0,50.0
-907,SzczecinNaFali,local_press,,redakcja@szczecinnafali.pl,https://szczecinnafali.pl,,t,f,f,f,50,50.0,50.0
-908,Szczeciner,local_press,,pawel.knap@szczeciner.pl,https://szczeciner.pl,,t,f,f,f,50,50.0,50.0
-909,Szron Productions,patron,,szronproductions@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-910,Szymon Wolf,radio,,studiodzwieku@radiosygnaly.pl,https://radiosygnaly.pl,,t,f,f,f,50,50.0,50.0
-911,Słabe Radio,radio,,radio@slaberadio.pl,https://slaberadio.pl,,t,f,f,f,50,50.0,50.0
-912,Sławek Orwat,radio,,slaorw@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-913,Sławomir Bajew,radio,,slawomir.bajew@radiopoznan.fm,https://radiopoznan.fm,,t,f,f,f,50,50.0,50.0
-914,Słyszymisię,local_press,,slyszymisie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-915,T-Mobile Music PL,local_press,,redakcja@t-mobile-trendy.pl,https://t-mobile-trendy.pl,,t,f,f,f,50,50.0,50.0
-916,TALKSEEK Dawid Ryski,creator,,talkseek@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
-917,TBA [RIP],radio,,anita.zuchora@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
-918,TEAM,radio,,kontakt@teamradio.pl,https://teamradio.pl,,t,f,f,f,50,50.0,50.0
-919,TEMI - Galicyjski Tygodnik Informacyjny,local_press,,mwolak@temi.pl,https://temi.pl,,t,f,f,f,50,50.0,50.0
-920,TOO MANY SKULLS Raf The Might,creator,,xwechterx@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
-921,TOP METAL NEXT HITS — Olli Prohorova,creator,,submit.olli@gmail.com,,https://open.spotify.com/playlist/6Y9FrCv7c7dkWs0B30PYas,t,f,f,f,50,50.0,50.0
-922,TRENDY Magazyn,local_press,,facebook@trendymagazyn.pl,https://trendymagazyn.pl,,t,f,f,f,50,50.0,50.0
-923,TV Kortowo,local_press,,wiolau@uwm.edu.pl,https://uwm.edu.pl,,t,f,f,f,50,50.0,50.0
-924,TV Net,local_press,,telewizja@tvnet.com.pl,https://tvnet.com.pl,,t,f,f,f,50,50.0,50.0
-925,TVP 3 Łódź,local_press,,sekretariat.lodz@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
-926,TVP KULTURA,local_press,,tvpkultura@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
-927,TVP Szczecin,local_press,,joanna.lisowska@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
-928,TVPW Studencka Telewizja Internetowa,local_press,,redakcja@tvpw.pl,https://tvpw.pl,,t,f,f,f,50,50.0,50.0
-929,Tableau! rekomendacje muzyczne,local_press,,rekomendacje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-930,Tak dużo genialnej muzyki,local_press,,magda.rogoz@takduzogenialnejmuzyki.pl,https://takduzogenialnejmuzyki.pl,,t,f,f,f,50,50.0,50.0
-931,Tego Słucham PL,local_press,,radek@tegoslucham.pl,https://tegoslucham.pl,,t,f,f,f,50,50.0,50.0
-932,Telewizja M KRAKÓW,local_press,,krakow@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
-933,Telewizja M SILESIA,local_press,,slask@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
-934,Telewizja M ŁÓDŹ,local_press,,lodz@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
-935,Telewizja Polonijna Tv Culture,local_press,,kontakt@tvculture.pl,https://tvculture.pl,,t,f,f,f,50,50.0,50.0
-936,Telewizja Warszawa,local_press,,produkcja@telewizjawarszawa.tv,https://telewizjawarszawa.tv,,t,f,f,f,50,50.0,50.0
-937,Teoria Strun,radio,,teoria.strun@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-938,Teraz Rock,local_press,,,https://terazrock.pl,,t,f,f,f,50,50.0,50.0
-939,Teraz Wrocław,local_press,,redakcja@terazwroclaw.pl,https://terazwroclaw.pl,,t,f,f,f,50,50.0,50.0
-940,The Autopsy Report Rock & Metal Radio Show,radio,,soundsofchaos@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
-941,The Metalcore Union — ANCProductions,creator,,ancagency.zach@gmail.com,,https://open.spotify.com/playlist/0URkqjgDRGgjc8tcyUkpO8,t,f,f,f,50,50.0,50.0
-942,The Nwothm,local_press,,thenwothm@gmail.com,https://thenwothm.com,,t,f,f,f,50,50.0,50.0
-943,The Rockferry,local_press,,zuziio@onet.eu,https://onet.eu,,t,f,f,f,50,50.0,50.0
-944,Thin Man Records,patron,,info@thinman.pl,https://thinman.pl,,t,f,f,f,50,50.0,50.0
-945,Thrashing Madness Radio Show,radio,,maciej.minczykowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
-946,Toksyna FM,radio,,radio@toksyna.fm,https://toksyna.fm,,t,f,f,f,50,50.0,50.0
-947,Tomasz Bilak,creator,,tomaszbilak@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-948,Tomasz Kasprzyk,radio,,kasprol@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
-949,"Tomasz Żąda, Bartosz Gil",radio,,godzinazero@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
-950,Tomek Kowalewicz,radio,,tomek@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
-951,Tommaso Scalici,creator,,,https://submitlink.io,,t,f,f,f,50,50.0,50.0
-952,Tony Suwerenne,local_press,,redakcja.tosu@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-953,Traffic,radio,,redakcja@radiotraffic.fm,https://radiotraffic.fm,,t,f,f,f,50,50.0,50.0
-954,Trasa 66,radio,,trasa66@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
-955,Trojmiasto PL,local_press,,info@trojmiasto.pl,https://trojmiasto.pl,,t,f,f,f,50,50.0,50.0
-956,TuWroclaw,local_press,,patronaty@tuwroclaw.com,https://tuwroclaw.com,,t,f,f,f,50,50.0,50.0
-957,Tuba PL,local_press,,tubapl@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
-958,Turn OFF The Night,radio,,olek.adamski@radioazyll.pl,https://radioazyll.pl,,t,f,f,f,50,50.0,50.0
-959,Twarze Warszawy,local_press,,kontakt@twarzewarszawy.pl,https://twarzewarszawy.pl,,t,f,f,f,50,50.0,50.0
-960,TwoToeTags,creator,,,https://youtube.com/@TwoToeTags,,t,f,f,f,50,50.0,50.0
-961,Twoja Telewizja Morska,local_press,,redakcja@telewizjattm.pl,https://telewizjattm.pl,,t,f,f,f,50,50.0,50.0
-962,UKSW,radio,,d.szafraniec@uksw.edu.pl,https://uksw.edu.pl,,t,f,f,f,50,50.0,50.0
-963,UMK TV,local_press,,studenckatv@stud.umk.pl,https://stud.umk.pl,,t,f,f,f,50,50.0,50.0
-964,UPRADGE DESIGN TUDIO,creator,,marcin@upgradestudio.pl,https://upgradestudio.pl,,t,f,f,f,50,50.0,50.0
-965,URSS TV,local_press,,ursstv@agh.edu.pl,https://agh.edu.pl,,t,f,f,f,50,50.0,50.0
-966,UWM FM,radio,,biuro@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
-967,Ukryta cytadela,radio,,ukryta.cytadela@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-968,Ultra Żurnal,local_press,,ultra@ultrazurnal.pl,https://ultrazurnal.pl,,t,f,f,f,50,50.0,50.0
-969,Ultramaryna,local_press,,poczta@ultramaryna.pl,https://ultramaryna.pl,,t,f,f,f,50,50.0,50.0
-970,Under the Sign of Garazel,patron,,lezarag@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-971,Unicorn,reviewer,,unicorntorun@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-972,Universal Music,patron,,universal@universalmusic.pl,https://universalmusic.pl,,t,f,f,f,50,50.0,50.0
-973,Uniwerek TV,local_press,,patronaty@uniwerek.tv,https://uniwerek.tv,,t,f,f,f,50,50.0,50.0
-974,Uniwersal info,local_press,,stawiskibohdan23@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
-975,Upiór w eterze,radio,,pawel.bakowski@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
-976,Usłysz,local_press,,hej@uslysz.com,https://uslysz.com,,t,f,f,f,50,50.0,50.0
-977,Uwolnij Muzyke,local_press,,redakcja@uwolnijmuzyke.pl,https://uwolnijmuzyke.pl,,t,f,f,f,50,50.0,50.0
-978,VM-Underground — death/black metal zine,local_press,,,https://www.vm-underground.com/submitting-music/,https://www.vm-underground.com/submitting-music/,t,f,f,f,50,50.0,50.0
-979,Via Nocturna,patron,,info@vianocturna.com,https://vianocturna.com,,t,f,f,f,50,50.0,50.0
-980,Victoria,radio,,sekretariat@radiovictoria.pl,https://radiovictoria.pl,,t,f,f,f,50,50.0,50.0
-981,Visula Kei,reviewer,,sklep@v-kei.pl,https://v-kei.pl,,t,f,f,f,50,50.0,50.0
-982,Von Trupka Records,patron,,vontrupkarec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-983,W Nas,local_press,,redakcja@wnas.pl,https://wnas.pl,,t,f,f,f,50,50.0,50.0
-984,W Pełni Dźwięków,radio,,ish@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
-985,W Pół Rocku,radio,,przemo@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
-986,W Szczecinie TV,local_press,,w.wirwicki@wszczecinie.tv,https://wszczecinie.tv,,t,f,f,f,50,50.0,50.0
-987,W.Kolińska,creator,,kolinska.weronika@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-988,WAFP!,local_press,,wearefrompoland@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-989,WARNER Music Poland,patron,,facebook@warnermusic.pl,https://warnermusic.pl,,t,f,f,f,50,50.0,50.0
-990,WHY DUCK illustrates,creator,,krystian.scigalski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-991,WaWa Love,local_press,,tomasz.jakubowski@grupawp.pl,https://grupawp.pl,,t,f,f,f,50,50.0,50.0
-992,Wacken Radio by RADIO BOB,radio,,kontakt@wackenradio.de,https://wackenradio.de,,t,f,f,f,50,50.0,50.0
-993,War Office Propaganda,patron,,info@rageineden.org,https://rageineden.org,,t,f,f,f,50,50.0,50.0
-994,Warsawholic,local_press,,contributors@warsawholic.com,https://warsawholic.com,,t,f,f,f,50,50.0,50.0
-995,Warszawa,radio,,reklama@radiowarszawa.com.pl,https://radiowarszawa.com.pl,,t,f,f,f,50,50.0,50.0
-996,Warszawska Telewizja Społecznościowa,local_press,,iwona.klorek@warszawskatv.pl,https://warszawskatv.pl,,t,f,f,f,50,50.0,50.0
-997,Warszawski Serwis Prasowy,local_press,,redakcja@wsp.waw.pl,https://wsp.waw.pl,,t,f,f,f,50,50.0,50.0
-998,Warthog Records,patron,,warthogrecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
-999,Wiadomości Ogólnopolskie 24h,local_press,,redakcja@wo24.pl,https://wo24.pl,,t,f,f,f,50,50.0,50.0
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+Marcin,promoter,Wrocław,m.janusin@gmail.com,,,t,t,t,f,100,100.0,100.0
+Wojtek test,promoter,Wrocław,wojciech.jan.bator@gmail.com,,,t,t,t,f,100,100.0,100.0
+(Ż)aluzje,local_press,,zaluzje.gazeta@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+101 WRIF - FM Detroit,radio,,promotions@wrif.com,https://wrif.com,,t,f,f,f,50,50.0,50.0
+140dB,local_press,,j.milszewski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+17 - Studenckie Radio 17,radio,,redakcja@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
+1921 Baliheadbanger Online Radio,radio,,agus_yankky@yahoo.co.id,https://yahoo.co.id,,t,f,f,f,50,50.0,50.0
+24Kurier,local_press,,24kurier@kurier.szczecin.pl,https://kurier.szczecin.pl,,t,f,f,f,50,50.0,50.0
+3 wymiary gitary,radio,,piotr.baron@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+4Ever Music,patron,,promocja@4evermusic.pl,https://4evermusic.pl,,t,f,f,f,50,50.0,50.0
+5 Ełk,radio,,suwalki@radio5.com.pl,https://radio5.com.pl,,t,f,f,f,50,50.0,50.0
+5kg Kultury,local_press,,redakcja@5kilokultury.pl,https://5kilokultury.pl,,t,f,f,f,50,50.0,50.0
+@deathcoredadofficial,creator,,,https://tiktok.com/@deathcoredadofficial,,t,f,f,f,50,50.0,50.0
+@metalhammeruk,creator,,,https://tiktok.com/@metalhammeruk,,t,f,f,f,50,50.0,50.0
+@metalnews,creator,,,https://tiktok.com/@metalnews,,t,f,f,f,50,50.0,50.0
+@mutiilati0n,creator,,,https://tiktok.com/@mutiilati0n,,t,f,f,f,50,50.0,50.0
+AAGHR,creator,,hello@aaaghr.com,https://aaaghr.com,,t,f,f,f,50,50.0,50.0
+AKVARK0,creator,,akvarko@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+ALEXOWO,creator,,alexowo@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+AMM Audycja Mocno Muzyczna,radio,,amm@rns.fm,https://rns.fm,,t,f,f,f,50,50.0,50.0
+ANAKO - Daria Widermanska-Spala,creator,,daria@anako.pl,https://anako.pl,,t,f,f,f,50,50.0,50.0
+ARP - Akademickie Radio Pomorze,radio,,arp@zut.edu.pl,https://zut.edu.pl,,t,f,f,f,50,50.0,50.0
+ARTVADERS,creator,,contact@artvaders.com,https://artvaders.com,,t,f,f,f,50,50.0,50.0
+ATM Rozrywka,local_press,,telewizja@atmrozrywka.tv,https://atmrozrywka.tv,,t,f,f,f,50,50.0,50.0
+Abbey Road,reviewer,,martyna@abbeyroad.pl,https://abbeyroad.pl,,t,f,f,f,50,50.0,50.0
+Absynt,reviewer,,absyntsklep@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Ace of Spades,reviewer,,kontakt@aceofspades.com.pl,https://aceofspades.com.pl,,t,f,f,f,50,50.0,50.0
+Active Rock Show,radio,,sebastian@activerock.pl,https://activerock.pl,,t,f,f,f,50,50.0,50.0
+Ada Buchholc,creator,,ada.buchholc@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Adam Droździk,radio,,rock@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
+Adrenalina,reviewer,,sklep@adrenalina.info.pl,https://adrenalina.info.pl,,t,f,f,f,50,50.0,50.0
+Aerial Art,creator,,aerialart@aerialart.pl,https://aerialart.pl,,t,f,f,f,50,50.0,50.0
+Afera,radio,,piotr.graczyk@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Afro Styl,reviewer,,afrozakupy@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+AfterDark,radio,,afterdark@radiooko.pl,https://radiooko.pl,,t,f,f,f,50,50.0,50.0
+Agnieszka Barańska,radio,,baranska@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Agnieszka Obszańska,radio,,agnieszka.obszanska@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Agonia Records,patron,,info@agoniarecords.com,https://agoniarecords.com,,t,f,f,f,50,50.0,50.0
+AgrAWFka Gazeta Studentów AWF-u,local_press,,agrawfka@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
+Akademia Art Rocka,radio,,andrzej@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
+Aktivist,local_press,,skawalerowicz@valkea.com,https://valkea.com,,t,f,f,f,50,50.0,50.0
+Albatros Records,patron,,albatrosrecords@albatrosrecords.pl,https://albatrosrecords.pl,,t,f,f,f,50,50.0,50.0
+Ale Kultura,local_press,,redakcja@alekultura.com,https://alekultura.com,,t,f,f,f,50,50.0,50.0
+Ale Lipa!,radio,,lipa@wosp.org.pl,https://wosp.org.pl,,t,f,f,f,50,50.0,50.0
+Aleksandra Galant,radio,,aleksandra.galant@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Alex,radio,,sambor@radioalex.pl,https://radioalex.pl,,t,f,f,f,50,50.0,50.0
+Alfabet Rockowy,radio,,valdemort1@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+All About Music,local_press,,lukasz.mantiuk@allaboutmusic.pl,https://allaboutmusic.pl,,t,f,f,f,50,50.0,50.0
+All Seeing Eye Art,patron,,allseeingeyeart@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Alt-itude,radio,,olga.matusik@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+AltMundi,local_press,,zapytajnia@altmundi.pl,https://altmundi.pl,,t,f,f,f,50,50.0,50.0
+Alter Radio,radio,,redakcja@alteradio.pl,https://alteradio.pl,,t,f,f,f,50,50.0,50.0
+Altercore,reviewer,,info@altercore.pl,https://altercore.pl,,t,f,f,f,50,50.0,50.0
+Alternator,radio,,alternator@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Amazon Music for Artists new release pitch,creator,,,https://artists.amazonmusic.com/pitch,https://artists.amazonmusic.com/pitch,t,f,f,f,50,50.0,50.0
+Ambasada [RIP],radio,,ambasada@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Ampersand Records,patron,,ampersand@ampersandrecords.com,https://ampersandrecords.com,,t,f,f,f,50,50.0,50.0
+Amplify the Noise,local_press,,,https://amplifythenoise.com,,t,f,f,f,50,50.0,50.0
+Angry Metal Guy,local_press,,contact@angrymetalguy.com,https://angrymetalguy.com,,t,f,f,f,50,50.0,50.0
+Ania Maludzińska,radio,,ania.maludzinska@rockserwis.fm,https://rockserwis.fm,,t,f,f,f,50,50.0,50.0
+Anioł Beskidów,radio,,radio@diecezja.bielsko.pl,https://diecezja.bielsko.pl,,t,f,f,f,50,50.0,50.0
+Anita Brzyszcz,radio,,kultura@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Anna Groblinska,radio,,a.groblinska@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Anna Helena Szymborska,creator,,annahelenaszymborska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+"Anna Winkler, Dawid Surdeko",radio,,dawid.surdeko@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Antena Krzyku,patron,,sklep@rockers.pl,https://rockers.pl,,t,f,f,f,50,50.0,50.0
+Antidotum Rocknrollowe,radio,,pawulon@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
+Antykwariat,radio,,anna.partyka@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+Antymuza,local_press,,redakcja@antymuza.pl,https://antymuza.pl,,t,f,f,f,50,50.0,50.0
+Antyradio,radio,,joanna.fijalkowska@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
+Arcy Radio,radio,,redakcja@arcyradio.pl,https://arcyradio.pl,,t,f,f,f,50,50.0,50.0
+Arcyportal,local_press,,redakcja@arcyportal.pl,https://arcyportal.pl,,t,f,f,f,50,50.0,50.0
+Art.Rockowy Świat [RIP],radio,,wojciech.lewandowski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Aspekt,radio,,info@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
+Asylum Metal Radio,radio,,music@asylummetalradio.com,https://asylummetalradio.com,,t,f,f,f,50,50.0,50.0
+Auxun Arts,local_press,,axunarts@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+AwG Radio,radio,,saper888@poczta.pl,https://poczta.pl,,t,f,f,f,50,50.0,50.0
+Awesome Music Place,patron,,awesomemusicplace@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Azyll,radio,,kontakt@radioazyll.pl,https://radioazyll.pl,,t,f,f,f,50,50.0,50.0
+B.e.s.t. Niezależna Gazeta Studentów Uniwersytetu Ekonomicznego,local_press,,best@ue.wroc.pl,https://ue.wroc.pl,,t,f,f,f,50,50.0,50.0
+BAD LUCK Arek,creator,,zarazz@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+BAS - Bardzo Akademicka Stacja,radio,,bartek.zasieczny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+BB365 info,local_press,,darek.m@bb365.info,https://bb365.info,,t,f,f,f,50,50.0,50.0
+BDTA,patron,,info@bdta.pl,https://bdta.pl,,t,f,f,f,50,50.0,50.0
+BIT - Akademickie Radio BIT,radio,,kontakt.radiobit@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+BLACK FITS ME,creator,,gosiajankowska@gmx.com,https://gmx.com,,t,f,f,f,50,50.0,50.0
+BLACK MOON DESIGN,creator,,blackmoondsgn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+BLACKBIRD ILLUSTRATION - Bartosz Kosowski,creator,,bartosz.kosowski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+BSFD records,patron,,bsfd.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Backstage [RIP],radio,,backstage945@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Bajka,radio,,biuro@radiobajka.pl,https://radiobajka.pl,,t,f,f,f,50,50.0,50.0
+Bajkonur Records,patron,,bajkonur.rec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Bal X,patron,,hrabia@balx.pl,https://balx.pl,,t,f,f,f,50,50.0,50.0
+Band.pl Records,patron,,records@band.pl,https://band.pl,,t,f,f,f,50,50.0,50.0
+Baobab,radio,,baobab@radiobaobab.pl,https://radiobaobab.pl,,t,f,f,f,50,50.0,50.0
+Barbara Dziadosz,creator,,schreibbarbara@yahoo.de,https://yahoo.de,,t,f,f,f,50,50.0,50.0
+Bardzo Uniwersyteckie Czasopismo UAM,local_press,,paulinalubieniecka@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Barock,local_press,,kominek@barock.pl,https://barock.pl,,t,f,f,f,50,50.0,50.0
+Bartosz Kicior i Tomasz Gałek / Agnieszki Nasternak i Kamil Barnowski,radio,,strefamuzyki@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
+Bartoszyce,radio,,radio@radiobartoszyce.pl,https://radiobartoszyce.pl,,t,f,f,f,50,50.0,50.0
+Bartys,radio,,piotrbartys@radioram.pl,https://radioram.pl,,t,f,f,f,50,50.0,50.0
+Baryś,radio,,goraca.siedemnastka@radio17.pl,https://radio17.pl,,t,f,f,f,50,50.0,50.0
+Bawisz Się PL,local_press,,kontakt@bawiszsie.pl,https://bawiszsie.pl,,t,f,f,f,50,50.0,50.0
+Bayer FM,radio,,poczta@bayerfm.eu,https://bayerfm.eu,,t,f,f,f,50,50.0,50.0
+Be Controversial,reviewer,,sklep@be-con.pl,https://be-con.pl,,t,f,f,f,50,50.0,50.0
+Bear Metal Radio,radio,,djbear@bearmetalradio.com,https://bearmetalradio.com,,t,f,f,f,50,50.0,50.0
+Beast of Prey,patron,,beastofprey@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Bezsenność wczesną porą,radio,,bezsennosc@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Białystok,radio,,radiobia@radio.bialystok.pl,https://radio.bialystok.pl,,t,f,f,f,50,50.0,50.0
+Biba Info,local_press,,klub@bibainfo.pl,https://bibainfo.pl,,t,f,f,f,50,50.0,50.0
+Bielsko,radio,,radio@radio.bielsko.pl,https://radio.bielsko.pl,,t,f,f,f,50,50.0,50.0
+Big Flow,patron,,biuro@bigflow.pl,https://bigflow.pl,,t,f,f,f,50,50.0,50.0
+Biodro Records,patron,,pr@biodro.pl,https://biodro.pl,,t,f,f,f,50,50.0,50.0
+Biznes Music,local_press,,redakcja@biznes-music.pl,https://biznes-music.pl,,t,f,f,f,50,50.0,50.0
+Blabbermouth,local_press,,news@roadrunner.com,https://blabbermouth.net,,t,f,f,f,50,50.0,50.0
+Black Garden,reviewer,,sklepblackgarden@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Black Wall Magazine,local_press,,black.wall.magazine@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Black Wednesday Records,patron,,info@black-wednesday.pl,https://black-wednesday.pl,,t,f,f,f,50,50.0,50.0
+Blast Beat 105,radio,,blastbeat105@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Blog Nawiedzonego,local_press,,nawiedzonestudio@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Bodek Pezda,patron,,bodek247@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Bogoria,radio,,poczta@radiobogoria.pl,https://radiobogoria.pl,,t,f,f,f,50,50.0,50.0
+Bogumił Starzyński i Bartek Gruchlik,radio,,gruchlik@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
+Bon Ton,radio,,radio@bonton.chelm.pl,https://bonton.chelm.pl,,t,f,f,f,50,50.0,50.0
+Bonomuza - Życie Jest Muzyką,local_press,,bonomuza@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Box Music,patron,,biuro@boxmusic.com.pl,https://boxmusic.com.pl,,t,f,f,f,50,50.0,50.0
+BraveWords — metal news + Facebook group (9k members),local_press,,,https://facebook.com/groups/bravewordsmetal,https://bravewords.com,t,f,f,f,50,50.0,50.0
+Breaking MusicS,local_press,,breakingmusics@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Brennnessel,patron,,contact@brennnessel.pl,https://brennnessel.pl,,t,f,f,f,50,50.0,50.0
+Bunkier,radio,,atarzyna.foksinska@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Burlesque Shop,reviewer,,kontakt@sklepburleska.pl,https://sklepburleska.pl,,t,f,f,f,50,50.0,50.0
+Bydgoska Scena,local_press,,info@bydgoskascena.pl,https://bydgoskascena.pl,,t,f,f,f,50,50.0,50.0
+BziCool,local_press,,redakcja@bzicool.pl,https://bzicool.pl,,t,f,f,f,50,50.0,50.0
+Błażej Janusz,radio,,blazej.janusz@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+CASSIARAMONE,creator,,cassiaramone.art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+CCM,radio,,sekretariat@radioccm.pl,https://radioccm.pl,,t,f,f,f,50,50.0,50.0
+CGM,local_press,,redakcja@cgm.pl,https://cgm.pl,,t,f,f,f,50,50.0,50.0
+COM TV,local_press,,comtv@comtv.pl,https://comtv.pl,,t,f,f,f,50,50.0,50.0
+CUERO Y METAL EN CÓRDOBA,radio,,cueroymetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+CUPCAKE Aleksandra Marchocka,creator,,aleksandramarchocka@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+CW 24 TV,local_press,,redakcja@cw24.tv,https://cw24.tv,,t,f,f,f,50,50.0,50.0
+Can't Tell You Records,patron,,canttellyourecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Cantara Music PL,local_press,,cantara@cantaramusic.pl,https://cantaramusic.pl,,t,f,f,f,50,50.0,50.0
+Carton,reviewer,,shop@carton.pl,https://carton.pl,,t,f,f,f,50,50.0,50.0
+Centrum Informacji Turystycznej w Łodzi,local_press,,cit@cit.lodz.pl,https://cit.lodz.pl,,t,f,f,f,50,50.0,50.0
+Centrum Kalisz,radio,,radio@rc.fm,https://rc.fm,,t,f,f,f,50,50.0,50.0
+Chaos Management,patron,,m.pil@chaos.com.pl,https://chaos.com.pl,,t,f,f,f,50,50.0,50.0
+ChillSoundsGoodMusic,local_press,,chillsoundsgoodmusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Chillout Arcyszalenczy,local_press,,han.kwasna@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Choszczno,radio,,redakcja@radiochoszczno.pl,https://radiochoszczno.pl,,t,f,f,f,50,50.0,50.0
+Chrześcijanin TV,local_press,,biuro@chrzescijanin.tv,https://chrzescijanin.tv,,t,f,f,f,50,50.0,50.0
+Ciemna Strona Meteora,radio,,blazej.jelonek@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+City of Poznan,local_press,,mim@man.poznan.pl,https://man.poznan.pl,,t,f,f,f,50,50.0,50.0
+Co Jest Grane,local_press,,redakcja_portalu@agora.pl,https://agora.pl,,t,f,f,f,50,50.0,50.0
+Co Mi w duszy Gra,local_press,,comiwduszygra90@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Co Za Dzień - Radom,local_press,,redakcja@cozadzien.com.pl,https://cozadzien.com.pl,,t,f,f,f,50,50.0,50.0
+Co robić w Łodzi?,local_press,,kontakt@corobicwlodzi.pl,https://corobicwlodzi.pl,,t,f,f,f,50,50.0,50.0
+"Co, gdzie, kiedy w Częstochowie",local_press,,cgk@czestochowa.um.gov.pl,https://czestochowa.um.gov.pl,,t,f,f,f,50,50.0,50.0
+CollarMe,reviewer,,collarme.info@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Considered Dead,local_press,,considereddeadblog@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+ContraBanda Music,patron,,rzeznik@contrabandamusic.com,https://contrabandamusic.com,,t,f,f,f,50,50.0,50.0
+Cooltura - Polish Weekly Magazine,local_press,,info@cooltura.co.uk,https://cooltura.co.uk,,t,f,f,f,50,50.0,50.0
+Coolturalny Białystok,local_press,,info@coolturalnybialystok.pl,https://coolturalnybialystok.pl,,t,f,f,f,50,50.0,50.0
+Core Storage — metalcore/hardcore/deathcore,creator,,corestorageplaylist@gmail.com,,https://open.spotify.com/artist/66tK1NW5Rji1yauiwPrMdz,t,f,f,f,50,50.0,50.0
+Creative Music,patron,,info@creativemusic.pl,https://creativemusic.pl,,t,f,f,f,50,50.0,50.0
+Crossover,radio,,aleksander.wdowinski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Crunchy Human Children,patron,,info@crunchyhumanchildren.com,https://crunchyhumanchildren.com,,t,f,f,f,50,50.0,50.0
+Crushing Metalcore — SuperficialPlagues,creator,,superficialplagues@gmail.com,,https://open.spotify.com/playlist/09786nN4Pz8eYz2CdFI7PP,t,f,f,f,50,50.0,50.0
+Culture PL,local_press,,wkostyrko@iam.pl,https://iam.pl,,t,f,f,f,50,50.0,50.0
+Culturowo,local_press,,kontakt@culturowo.pl,https://culturowo.pl,,t,f,f,f,50,50.0,50.0
+Cutting Edge Metal — metal promotion,local_press,,,https://cutting-edge-metal.rocks,https://cutting-edge-metal.rocks,t,f,f,f,50,50.0,50.0
+Czarno Białe Klawisze,radio,,bk@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
+Czas Kultury,local_press,,redakcja@czaskultury.pl,https://czaskultury.pl,,t,f,f,f,50,50.0,50.0
+Czechowicka Scena Muzyczna,local_press,,czsmusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Czerwony Diabełek (Red Devil),patron,,rdevil@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
+DE CORE,creator,,decoregroup@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+DJENTCORE,creator,,,https://noiselash.com,,t,f,f,f,50,50.0,50.0
+DK13 - Darek Krzak,creator,,dk13_design@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+DNA muzyki,local_press,,dnamuzykinet@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+DRAW Records,patron,,info@drawrecords.com,https://drawrecords.com,,t,f,f,f,50,50.0,50.0
+DRAWING OF THE DAY - Daniel Horowitz,creator,,daniel@daniel-horowitz.com,https://daniel-horowitz.com,,t,f,f,f,50,50.0,50.0
+DUDU Agata Dudek,creator,,illu@agatadudek.pl,https://agatadudek.pl,,t,f,f,f,50,50.0,50.0
+DYNAMIC DESINGS,creator,,dnm.dsg@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+"Dagmara Serek, Artur Kasprzycki",radio,,magmuz@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+DailyPlaylists free standard submissions,creator,,,https://dailyplaylists.com/,https://dailyplaylists.com/en/faq/,t,f,f,f,50,50.0,50.0
+"Damian Graczyk, Katarzyna Kraska, Anna Maria Budecka",radio,,fabryka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Damned Pages,reviewer,,damnedpages@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+Daniel Archetka,radio,,kps@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Dark Inclined — gothic/alternative metal,creator,,darkinclinedmedia@gmail.com,,https://open.spotify.com/artist/2txEW5PBrkWIh82var0Fwa,t,f,f,f,50,50.0,50.0
+Dark Market,reviewer,,dark_market@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Deathproof Clothing,reviewer,,deathproof.co@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Defense Records,patron,,defensemerch@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Dekulturator,local_press,,dekulturatorpl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Discostacja,local_press,,fb@itv.net.pl,https://itv.net.pl,,t,f,f,f,50,50.0,50.0
+Dla Ciebie TV,local_press,,biuro@ct.jaworzno.pl,https://ct.jaworzno.pl,,t,f,f,f,50,50.0,50.0
+Dla Studenta,local_press,,redakcja@dlastudenta.pl,https://dlastudenta.pl,,t,f,f,f,50,50.0,50.0
+Dobra Polska Muzyka,local_press,,redakcja@dobrapolskamuzyka.net.pl,https://dobrapolskamuzyka.net.pl,,t,f,f,f,50,50.0,50.0
+Dobry Towar Records,patron,,kontakt@dtrecords.pl,https://dtrecords.pl,,t,f,f,f,50,50.0,50.0
+Dolnoslaska Scena Muzyczna,local_press,,scenads@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Dolnośląskie Centrum Informacji Kulturalnej OKiS,local_press,,cik@okis.pl,https://okis.pl,,t,f,f,f,50,50.0,50.0
+Don't Panic POZNAŃ [RIP],local_press,,poznan@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
+Don't Panic SILESIA [RIP],local_press,,silesia@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
+Don't Panic TRÓJMIASTO [RIP],local_press,,stas@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
+Don't Panic WROCŁAW [RIP],local_press,,wroclaw@dontpaniconline.pl,https://dontpaniconline.pl,,t,f,f,f,50,50.0,50.0
+Don't Panic [RIP],local_press,,karolina@dontpaniconline.com,https://dontpaniconline.com,,t,f,f,f,50,50.0,50.0
+Dorosłe Dzieci,local_press,,piotr@metal-archives.com,https://metal-archives.com,,t,f,f,f,50,50.0,50.0
+Dorota Dudek i Kacper Sulowski,radio,,kultura@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Drakka,local_press,,drakka@bosko.pl,https://bosko.pl,,t,f,f,f,50,50.0,50.0
+Drop Of music,local_press,,kroplaciszy@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Dropcard [UE],reviewer,,hello@dropcards.com,https://dropcards.com,,t,f,f,f,50,50.0,50.0
+Dusza Słuchacza,local_press,,dominika@duszasluchacza.pl,https://duszasluchacza.pl,,t,f,f,f,50,50.0,50.0
+Dwutygodnik,local_press,,redakcja@dwutygodnik.com,https://dwutygodnik.com,,t,f,f,f,50,50.0,50.0
+Dzieje się w Lublinie,local_press,,dziejesiewlublinie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Dzieje się w Poznaniu (Moje Miasto Poznan),local_press,,redakcja@mmpoznan.pl,https://mmpoznan.pl,,t,f,f,f,50,50.0,50.0
+Dzieje się w Warszawie (Nasze Miasto Warszawa),local_press,,warszawa@naszemiasto.pl,https://naszemiasto.pl,,t,f,f,f,50,50.0,50.0
+Dziennik Łódzki,local_press,,mojreporter@dzienniklodzki.pl,https://dzienniklodzki.pl,,t,f,f,f,50,50.0,50.0
+Dzień Dobry Łódź,local_press,,redakcja@ddlodz.pl,https://ddlodz.pl,,t,f,f,f,50,50.0,50.0
+Dzika Banda,local_press,,robertziebinski@dzikabanda.pl,https://dzikabanda.pl,,t,f,f,f,50,50.0,50.0
+Dzisiaj w Gliwicach,local_press,,kontakt24@dzisiajwgliwicach.pl,https://dzisiajwgliwicach.pl,,t,f,f,f,50,50.0,50.0
+Dziś w Łodzi,local_press,,dzis.w.lodzi@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Dźwięk Dobry,radio,,reporter@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
+Dźwięki STONERowane,radio,,stonerowane@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+E-splot,local_press,,wojciech.zurek@e-splot.pl,https://e-splot.pl,,t,f,f,f,50,50.0,50.0
+EDS Embroidery Design Studio,creator,,eds@eds-studio.com.pl,https://eds-studio.com.pl,,t,f,f,f,50,50.0,50.0
+EMP PL,reviewer,,kontakt@emp-shop.pl,https://emp-shop.pl,,t,f,f,f,50,50.0,50.0
+ENDO - Agata Nowicka,creator,,endo@agatanowicka.com,https://agatanowicka.com,,t,f,f,f,50,50.0,50.0
+ESKA,patron,,eskazabrze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+ESKa Rock,radio,,radio@eskarock.pl,https://eskarock.pl,,t,f,f,f,50,50.0,50.0
+Echo Szczecina,local_press,,biuro@echo.szczecin.pl,https://echo.szczecin.pl,,t,f,f,f,50,50.0,50.0
+Egida,radio,,egida@us.edu.pl,https://us.edu.pl,,t,f,f,f,50,50.0,50.0
+Eldezet,local_press,,redakcja@eldezet.pl,https://eldezet.pl,,t,f,f,f,50,50.0,50.0
+Elemental Metal Radio / Aphotic Lounge TV,radio,,radioelementalmetal@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+Elewator Kultury,local_press,,redakcja@elewatorkultury.org,https://elewatorkultury.org,,t,f,f,f,50,50.0,50.0
+Elka,radio,,glogow@elka.pl,https://elka.pl,,t,f,f,f,50,50.0,50.0
+Emaus (Katolickie),radio,,redakcja@radioemaus.pl,https://radioemaus.pl,,t,f,f,f,50,50.0,50.0
+Emma TV,local_press,,info@emmapak.eu,https://emmapak.eu,,t,f,f,f,50,50.0,50.0
+Eska,radio,,eskazabrze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Eska Go,radio,,kontakt@eskago.pl,https://eskago.pl,,t,f,f,f,50,50.0,50.0
+EuroIndieMusic,local_press,,,https://euroindiemusic.info,,t,f,f,f,50,50.0,50.0
+Eventmaniak PL,local_press,,eventmaniak@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Ever Metal,local_press,,contact@ever-metal.com,https://ever-metal.com,,t,f,f,f,50,50.0,50.0
+Evil Eye,reviewer,,info@evileyeclothing.com,https://evileyeclothing.com,,t,f,f,f,50,50.0,50.0
+Ewa Niewiadomska,radio,,mockultury@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
+Ewelina Kroczek,radio,,redakcja@radioexpress.pl,https://radioexpress.pl,,t,f,f,f,50,50.0,50.0
+Exclusive,local_press,,biuro@exclusivemag.pl,https://exclusivemag.pl,,t,f,f,f,50,50.0,50.0
+Express Ilustrowany,local_press,,sasi@express.lodz.pl,https://express.lodz.pl,,t,f,f,f,50,50.0,50.0
+Express Silesia,radio,,radio@silesia.fm,https://silesia.fm,,t,f,f,f,50,50.0,50.0
+FAN PL,reviewer,,sklep@fan.pl,https://fan.pl,,t,f,f,f,50,50.0,50.0
+FERWA,local_press,,kulig@ferwa.pl,https://ferwa.pl,,t,f,f,f,50,50.0,50.0
+FUSS,local_press,,redakcja@fuss.com.pl,https://fuss.com.pl,,t,f,f,f,50,50.0,50.0
+FYH !,local_press,,piotr.strzemieczny@fyh.com.pl,https://fyh.com.pl,,t,f,f,f,50,50.0,50.0
+FYH Records,patron,,fyh.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Fabryka,radio,,fabryka@radiotczew.pl,https://radiotczew.pl,,t,f,f,f,50,50.0,50.0
+Fabryka Muzyki,radio,,r.fabrykamuzyki@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Fajnanuta PL,local_press,,admin@fajnanuta.pl,https://fajnanuta.pl,,t,f,f,f,50,50.0,50.0
+Falami,patron,,marcin@falami.pl,https://falami.pl,,t,f,f,f,50,50.0,50.0
+Fama EU Sochaczew,radio,,famainfo@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Fejsbukowy Dom Kultury,local_press,,pawel.szczutowski@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
+FeshMag,local_press,,redakcja@freshmag.pl,https://freshmag.pl,,t,f,f,f,50,50.0,50.0
+Fest Wieczór [RIP],radio,,festwieczor@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Festiwale Koncerty w Warszawie,local_press,,addarek@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Fight Susan!,local_press,,fight.suzan@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Filip Janowski,radio,,dekoder982@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Fix,radio,,admin@radiofix.eu,https://radiofix.eu,,t,f,f,f,50,50.0,50.0
+Flash Piaseczno,radio,,redakcja@radioflash.pl,https://radioflash.pl,,t,f,f,f,50,50.0,50.0
+Fogo no Gelo (Metal Radio Show),radio,,fogonogelo@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Fonobo (sub label MTJ),patron,,management@fonobo.pl,https://fonobo.pl,,t,f,f,f,50,50.0,50.0
+Fonoteka Polska [RIP],radio,,andrzej.krupa@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+For Tune,patron,,office@for-tune.pl,https://for-tune.pl,,t,f,f,f,50,50.0,50.0
+Fragile,local_press,,fragile@fragile.net.pl,https://fragile.net.pl,,t,f,f,f,50,50.0,50.0
+Free Fun,local_press,,freefunpl@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Freee,radio,,redakcja@radiofreee.pl,https://radiofreee.pl,,t,f,f,f,50,50.0,50.0
+Fresh Music Records,patron,,freshmusicpoland@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Fuck You Hipsters,local_press,,redakcja@fyh.com.pl,https://fyh.com.pl,,t,f,f,f,50,50.0,50.0
+FunRadio FM,radio,,radio@funradio.fm,https://funradio.fm,,t,f,f,f,50,50.0,50.0
+Fuzzy Cracklins — stoner/doom/metal reviews,local_press,,fuzzycracklins@gmail.com,,https://fuzzycracklins.substack.com,t,f,f,f,50,50.0,50.0
+GAUDE PL,reviewer,,info@gaude.pl,https://gaude.pl,,t,f,f,f,50,50.0,50.0
+GIFT Management,patron,,firmagift@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+GIG24 PL,local_press,,kontakt@gig24.pl,https://gig24.pl,,t,f,f,f,50,50.0,50.0
+GNASH DESIGN - Jakub GNASH Kowalski,creator,,orderyocreature@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+GORY GALLERY,creator,,dziuba.rafal@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+GOUDA WORKS,creator,,kontakt@goudaworks.pl,https://goudaworks.pl,,t,f,f,f,50,50.0,50.0
+GOWI Records,patron,,gowi@gowi.pl,https://gowi.pl,,t,f,f,f,50,50.0,50.0
+GRABOVSKA - Magda Grabowska,creator,,contact@grabovska.com,https://grabovska.com,,t,f,f,f,50,50.0,50.0
+GRIMHEART - Milosz Z. Artwork,creator,,design@thegrimheart.com,https://thegrimheart.com,,t,f,f,f,50,50.0,50.0
+GS24,local_press,,alarm@gs24.pl,https://gs24.pl,,t,f,f,f,50,50.0,50.0
+GUZIK ART - Damian Augustyniak,creator,,damian3d5@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Gabriela Synowiec,radio,,teatr@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Gadanie Na Tapczanie,radio,,gadanie@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+Galeria Plakatu,reviewer,,biuro@galeriaplakatu.com,https://galeriaplakatu.com,,t,f,f,f,50,50.0,50.0
+Garażowy Index,radio,,garazowyindex.96fm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Gazeta Pomorska,local_press,,online@pomorska.pl,https://pomorska.pl,,t,f,f,f,50,50.0,50.0
+Gazeta Studencka (Opole),local_press,,studenckauo@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Gazeta Wrocławska,local_press,,online@gazeta.wroc.pl,https://gazeta.wroc.pl,,t,f,f,f,50,50.0,50.0
+Gazeta-Student,local_press,,redakcja@gazeta-student.pl,https://gazeta-student.pl,,t,f,f,f,50,50.0,50.0
+Gdańsk,radio,,poczta@radio.gdansk.pl,https://radio.gdansk.pl,,t,f,f,f,50,50.0,50.0
+Gharbaty ART,creator,,gharbatyart@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Gievont Graw,reviewer,,pawel@gievontgraw.pl,https://gievontgraw.pl,,t,f,f,f,50,50.0,50.0
+Gitafera,radio,,bartosz.wojciechowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Godzina Śmierci,radio,,godzinasmierci.radioemiter@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Gold Recordds,patron,,roman@goldmusic.abajt.pl,https://goldmusic.abajt.pl,,t,f,f,f,50,50.0,50.0
+Gosia Herba - Illustrations,creator,,mail@gosiaherba.pl,https://gosiaherba.pl,,t,f,f,f,50,50.0,50.0
+Gothic Dream,reviewer,,sklep@gothicdream.eu,https://gothicdream.eu,,t,f,f,f,50,50.0,50.0
+Grawitacja,radio,,grawitacja@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
+Greta Vintage Store,reviewer,,greta-lingerie@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Gruba Biba,local_press,,kontakt@grubabiba.pl,https://grubabiba.pl,,t,f,f,f,50,50.0,50.0
+Grudziądz,radio,,radio@grudziadz.com,https://grudziadz.com,,t,f,f,f,50,50.0,50.0
+Gryfit TV,local_press,,biuro@gryfittv.pl,https://gryfittv.pl,,t,f,f,f,50,50.0,50.0
+Grzegorz Bińczycki + Justyn Skiba,radio,,grzegorz.binczycki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Grzegorz GABZ Gomaradzki,creator,,hello@iamgabz.com,https://iamgabz.com,,t,f,f,f,50,50.0,50.0
+Grzegorz Hoffmann,radio,,grzegorz.hoffmann@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Guba Nuta,reviewer,,info@grubanuta.pl,https://grubanuta.pl,,t,f,f,f,50,50.0,50.0
+Gustaff Records,patron,,info@gusstaff.com,https://gusstaff.com,,t,f,f,f,50,50.0,50.0
+H8DSG - artwork of Konrad B.,creator,,morgoth.grave@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+HIRO,local_press,,kris@hiro.pl,https://hiro.pl,,t,f,f,f,50,50.0,50.0
+HQT Music Group,patron,,jakub@hqt.be,https://hqt.be,,t,f,f,f,50,50.0,50.0
+Halolodz.pl,local_press,,redakcja@halolodz.pl,https://halolodz.pl,,t,f,f,f,50,50.0,50.0
+Halomuzyka,local_press,,mironnek@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Halotan Records,patron,,halotan.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Hard & Heavy,radio,,hard.heavy@radiobeat.cz,https://radiobeat.cz,,t,f,f,f,50,50.0,50.0
+Hard Like A Rock'n'Blues,radio,,michu@goodtimeradio.pl,https://goodtimeradio.pl,,t,f,f,f,50,50.0,50.0
+HardRadio.com - Heavy Metal Radio Hard Rock Radio News,radio,,feedback@hardradio.com,https://hardradio.com,,t,f,f,f,50,50.0,50.0
+Hałasowania [RIP],radio,,dawid.odija@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+HeadphonesPorno,local_press,,piotr@avizo2.pl,https://avizo2.pl,,t,f,f,f,50,50.0,50.0
+Hearbeat,reviewer,,contact@madebyheartbeat.pl,https://madebyheartbeat.pl,,t,f,f,f,50,50.0,50.0
+Heavy Metal,radio,,info@radioheavymetal.com,https://radioheavymetal.com,,t,f,f,f,50,50.0,50.0
+Hein Edgar,radio,,alterpyra@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Hellbellas,local_press,,hellbellas@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Hello Warsaw,local_press,,m.assanowicz@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Heretica,radio,,blackydark@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Hey Joe,reviewer,,heyjoesklep@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Hey Now,radio,,redakcja@radioheynow.com,https://radioheynow.com,,t,f,f,f,50,50.0,50.0
+Hipisówka,radio,,lukasz.kocyla@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Hobby,radio,,dominik@hobby.pl,https://hobby.pl,,t,f,f,f,50,50.0,50.0
+House of Rock,radio,,wtomczyk@radioluz.pwr.wroc.pl,https://radioluz.pwr.wroc.pl,,t,f,f,f,50,50.0,50.0
+I love Heavy Metal Radio,radio,,iloveheavymetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+I'm Stuck Between,radio,,kamil.drozdz@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+I.PEWU Miesięcznik Kulturalny Studentów Politechniki Warszawskiej,local_press,,redakcja@ipewu.pw.edu.pl,https://ipewu.pw.edu.pl,,t,f,f,f,50,50.0,50.0
+IKSS Informacja Kulturalno-Sportowa Studentów Wrocław,local_press,,ikss@ue.wroc.pl,https://ue.wroc.pl,,t,f,f,f,50,50.0,50.0
+INHALE THE HEAVY — metal blog,local_press,,,https://inhaletheheavy.com/submit-your-metal/,https://inhaletheheavy.com/submit-your-metal/,t,f,f,f,50,50.0,50.0
+IRKA,local_press,,reklama@irka.com.pl,https://irka.com.pl,,t,f,f,f,50,50.0,50.0
+IRN - Internetowe Radio Nasielsk,radio,,radio@nasielsk.pl,https://nasielsk.pl,,t,f,f,f,50,50.0,50.0
+Icaros Records,patron,,biuro@icarosrecords.pl,https://icarosrecords.pl,,t,f,f,f,50,50.0,50.0
+Igor Wolski,creator,,wolski.igor@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Imigrant Records,patron,,immigrantrec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Imperioz (+ Musiclife),local_press,,matthew@musiclife.pl,https://musiclife.pl,,t,f,f,f,50,50.0,50.0
+ImusicWord,local_press,,marcin.cija@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+InSilesia,local_press,,redakcja@insilesia.pl,https://insilesia.pl,,t,f,f,f,50,50.0,50.0
+Index - Akademickie Radio Index,radio,,radio@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
+Indian Summer,radio,,indiansummer@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Indiemono free submission,creator,,,https://player.indiemono.com/music-submit,https://player.indiemono.com/music-submit,t,f,f,f,50,50.0,50.0
+Infomusic,patron,,infomusic@infomusic.pl,https://infomusic.pl,,t,f,f,f,50,50.0,50.0
+Inhale the Heavy,local_press,,,https://inhaletheheavy.com,,t,f,f,f,50,50.0,50.0
+Inspirakcja,local_press,,inspirakcja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Instrumental / Progressive Metal / Post-Metal,creator,,mike.krzemin@gmail.com,,https://open.spotify.com/playlist/4se7i3OtDvWVhbz0qx5aCc,t,f,f,f,50,50.0,50.0
+Iza Kwiatkowska,radio,,subiektywny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+JAK TU GRAĆ?,local_press,,bartek@jaktugrac.pl,https://jaktugrac.pl,,t,f,f,f,50,50.0,50.0
+Jacek Wolszczak,radio,,jacek@radiobogoria.pl,https://radiobogoria.pl,,t,f,f,f,50,50.0,50.0
+Jakub Kowalczyk,radio,,pigulka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Jan Feliks Kallwejt,creator,,jan@kallwejt.com,https://kallwejt.com,,t,f,f,f,50,50.0,50.0
+Jasień,patron,,emil.macherzynski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Jazda Po Bandzie,local_press,,jazdapobandzie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Jazz FM,radio,,redakcja@radiojazz.fm,https://radiojazz.fm,,t,f,f,f,50,50.0,50.0
+Jerzy Skarżyński,radio,,skarzynski@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Jeszcze Tego Nie Słyszałeś,local_press,,rajmund@jeszczenie.pl,https://jeszczenie.pl,,t,f,f,f,50,50.0,50.0
+Joahannah von Frankenstein,creator,,joahannah@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Jolanta Drużyńska,radio,,jolanta.druzynska@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Jutrzenka Radio AK,radio,,radio@radiojutrzenka.waw.pl,https://radiojutrzenka.waw.pl,,t,f,f,f,50,50.0,50.0
+Jędrzej Furmann,radio,,jedrzej.furmann@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+KONTAMINATION DESIGN,creator,,kontaminationvvv@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+KTVI - Krakowska Telewizja Internetowa,local_press,,red.naczelny@ktvi.pl,https://ktvi.pl,,t,f,f,f,50,50.0,50.0
+KVLT,local_press,,info@kvlt.pl,https://kvlt.pl,,t,f,f,f,50,50.0,50.0
+Kacper Wesołowski,radio,,kacper.wesolowski@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Kalejdoskop Kulturalny Reymont,local_press,,reymont@ldk.lodz.pl,https://ldk.lodz.pl,,t,f,f,f,50,50.0,50.0
+Kamil Matuszak,radio,,kamil@matuszak.tk,https://matuszak.tk,,t,f,f,f,50,50.0,50.0
+Kampf,patron,,kampfrec@go2.pl,https://go2.pl,,t,f,f,f,50,50.0,50.0
+Kampus - Akademickie Radio Kampus,radio,,radio@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
+KampusTV,local_press,,redakcja@kampustv.pl,https://kampustv.pl,,t,f,f,f,50,50.0,50.0
+Karnet,local_press,,karnet@karnet.krakow.pl,https://karnet.krakow.pl,,t,f,f,f,50,50.0,50.0
+Karol Banach,creator,,hello@karolbanach.com,https://karolbanach.com,,t,f,f,f,50,50.0,50.0
+Karol Panczen,creator,,panczen1@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Karoryfer Lecolds,patron,,karoryfer.lecolds@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kaseta Polska,local_press,,kasetapolska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kasia K8 Rościńska,radio,,kontakt@kasiak8.pl,https://kasiak8.pl,,t,f,f,f,50,50.0,50.0
+Katalog Artystyczny,local_press,,t.szwecki@katalogartystyczny.pl,https://katalogartystyczny.pl,,t,f,f,f,50,50.0,50.0
+"Katarzyna Matczak, Łukasz Strąkowski",radio,,kulturalny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Katolickie Radio Płock,radio,,radioplus@plocman.pl,https://plocman.pl,,t,f,f,f,50,50.0,50.0
+Katowice,radio,,sekretariat@radio.katowice.pl,https://radio.katowice.pl,,t,f,f,f,50,50.0,50.0
+Kayax,patron,,tomik@kayax.net,https://kayax.net,,t,f,f,f,50,50.0,50.0
+Keep Calm and Listen To Melodic Death Metal,creator,,hellsguardian.band@gmail.com,,https://open.spotify.com/playlist/60W5vD1HNZfIjDu6moLQRg,t,f,f,f,50,50.0,50.0
+KiS Kultura i Sztuka,radio,,redakcja@radiokis.pl,https://radiokis.pl,,t,f,f,f,50,50.0,50.0
+KierunekSzczecin,local_press,,poczta@kierunek.szczecin.pl,https://kierunek.szczecin.pl,,t,f,f,f,50,50.0,50.0
+Klasycy Rocka,radio,,klasycyrocka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Klubowa PL,local_press,,reklama@klubowa.pl,https://klubowa.pl,,t,f,f,f,50,50.0,50.0
+Kombinat,radio,,kombinat@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
+Koncertomania,local_press,,pawel@koncertomania.pl,https://koncertomania.pl,,t,f,f,f,50,50.0,50.0
+Koncertowe Zwierzę,radio,,koncertowezwierze@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Koncertuj PL,local_press,,kontakt@koncertuj.pl,https://koncertuj.pl,,t,f,f,f,50,50.0,50.0
+Koncerty com,local_press,,office@concerts.pl,https://concerts.pl,,t,f,f,f,50,50.0,50.0
+Konkol Music,patron,,managerkonkol@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Kontestacja,radio,,redakcja@kontestacja.com,https://kontestacja.com,,t,f,f,f,50,50.0,50.0
+Kontra - Niezależny Portal Studentów UAM,local_press,,portal@kontra.poznan.pl,https://kontra.poznan.pl,,t,f,f,f,50,50.0,50.0
+Koszalin,radio,,sekretariat@radio.koszalin.pl,https://radio.koszalin.pl,,t,f,f,f,50,50.0,50.0
+Koszmarowa - Gazeta Studentów Wydziału Nauk Społecznych,local_press,,koszmarowa@uni.wroc.pl,https://uni.wroc.pl,,t,f,f,f,50,50.0,50.0
+Koszulkowo,reviewer,,sklep@koszulkowo.com,https://koszulkowo.com,,t,f,f,f,50,50.0,50.0
+Krak TV,local_press,,kontakt@wideokrakow.pl,https://wideokrakow.pl,,t,f,f,f,50,50.0,50.0
+Krakowska Scena Muzyczna,local_press,,michal@krakowskascenamuzyczna.pl,https://krakowskascenamuzyczna.pl,,t,f,f,f,50,50.0,50.0
+Kraków,radio,,newsroom@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Kraków żyje,local_press,,krakowzyje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kraków24TV,local_press,,redakcja@krakow24.tv,https://krakow24.tv,,t,f,f,f,50,50.0,50.0
+Krustian Garstkowiak,creator,,garstkowiak@ymail.com,https://ymail.com,,t,f,f,f,50,50.0,50.0
+Krzysiek Kosiński,radio,,krzysztof@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
+Krzysztof Karnkowski,creator,,budyn78@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Krzysztof Wilczyński,radio,,sdn@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
+Ktoś Ruszał Moje Płyty,local_press,,backstage@ktosruszalmojeplyty.com,https://ktosruszalmojeplyty.com,,t,f,f,f,50,50.0,50.0
+Kuba Kaleta,radio,,szafalesiaka@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Kuba Sokólski,creator,,ksokolski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kudłate słuchanie,local_press,,kudlatesluchanie@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
+Kultura Online,local_press,,redakcja@kulturaonline.pl,https://kulturaonline.pl,,t,f,f,f,50,50.0,50.0
+Kultura Poznań,local_press,,sylwia.klimek@wm.poznan.pl,https://wm.poznan.pl,,t,f,f,f,50,50.0,50.0
+Kultura Się Liczy!,local_press,,kulturasieliczy@nck.pl,https://nck.pl,,t,f,f,f,50,50.0,50.0
+Kultura w Krakowie,local_press,,redakcja@kulturawkrakowie.pl,https://kulturawkrakowie.pl,,t,f,f,f,50,50.0,50.0
+Kulturalna Warszawa,local_press,,redakcja@infoqultura.pl,https://infoqultura.pl,,t,f,f,f,50,50.0,50.0
+Kulturalnie WAW,local_press,,tomasz@kulturalnie.waw.pl,https://kulturalnie.waw.pl,,t,f,f,f,50,50.0,50.0
+Kulturatka,local_press,,muzyka@kulturatka.pl,https://kulturatka.pl,,t,f,f,f,50,50.0,50.0
+Kulturoholizm,local_press,,kulturoholizm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kurier Warszawski,local_press,,redakcja.kw@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Kurier Łódzki,local_press,,kontakt@kurierlodzki.pl,https://kurierlodzki.pl,,t,f,f,f,50,50.0,50.0
+Kuźnia Dźwięków,radio,,mariusz.rodziewicz@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
+LADY2 - Katarzyna A. Kozłowska,creator,,lady2art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+LAJF Magazyn Lubelski,local_press,,redakcja@lajf.info,https://lajf.info,,t,f,f,f,50,50.0,50.0
+LIS KULA Alek Morawski,creator,,alek@alekmorawski.com,https://alekmorawski.com,,t,f,f,f,50,50.0,50.0
+LISY STUDIO,creator,,kontakt@lisystudio.com,https://lisystudio.com,,t,f,f,f,50,50.0,50.0
+LOOKmag,local_press,,redakcja@lookmag.pl,https://lookmag.pl,,t,f,f,f,50,50.0,50.0
+LOVEDRAW - Andrew Tomaszuk,creator,,tomaszuk2@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+LTC Productions,patron,,let_them_come@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+LUZ - Akademickie Radio LUZ,radio,,mmalinowska@radioluz.pwr.wroc.pl,https://radioluz.pwr.wroc.pl,,t,f,f,f,50,50.0,50.0
+Laboratorium Gitary,local_press,,kontakt@laboratoriumgitary.pl,https://laboratoriumgitary.pl,,t,f,f,f,50,50.0,50.0
+Laboratorium Wytrzymałości Metali,radio,,metal@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Lado ABC,patron,,info@ladoabc.com,https://ladoabc.com,,t,f,f,f,50,50.0,50.0
+Laif,local_press,,aleksandra.trojnar@mediabroker.pl,https://mediabroker.pl,,t,f,f,f,50,50.0,50.0
+Legacy Records,patron,,info@legacy-records.de,https://legacy-records.de,,t,f,f,f,50,50.0,50.0
+Leliwa,radio,,bszwedo@leliwa.pl,https://leliwa.pl,,t,f,f,f,50,50.0,50.0
+Leokadia,radio,,bezloda@odzew.fm,https://odzew.fm,,t,f,f,f,50,50.0,50.0
+Lepsza Strona Muzyki,local_press,,lepszastronamuzyki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Life4sound,local_press,,redakcja@life4sound.pl,https://life4sound.pl,,t,f,f,f,50,50.0,50.0
+Lineout,local_press,,kontakt.lineout@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Liryka,radio,,radio.liryka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Lista Przebojów -Top Radia Łódź,radio,,lista@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Lista Przebojów Bemowo.FM [RIP],radio,,lista@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Lista WWW,radio,,lista@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
+Live Life,local_press,,redakcja@livelife.pl,https://livelife.pl,,t,f,f,f,50,50.0,50.0
+Live Nation Store,reviewer,,merchandise@livenationstore.pl,https://livenationstore.pl,,t,f,f,f,50,50.0,50.0
+Loudwire,local_press,,tips@loudwire.com,https://loudwire.com,,t,f,f,f,50,50.0,50.0
+Love Kraków,local_press,,d.kucinski@lovekrakow.pl,https://lovekrakow.pl,,t,f,f,f,50,50.0,50.0
+Lubisz To,local_press,,rusinowski@lubiszto.org,https://lubiszto.org,,t,f,f,f,50,50.0,50.0
+Lubię Śląsk kulturalnie,local_press,,slaskkulturalnie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Luna Music Polska,patron,,luna@luna.pl,https://luna.pl,,t,f,f,f,50,50.0,50.0
+Lupus Unleashed,local_press,,lupusunleashed@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
+Luta Records,patron,,kuba@lutarecords.pl,https://lutarecords.pl,,t,f,f,f,50,50.0,50.0
+Lynx Music,patron,,lynx@lynxmusic.pl,https://lynxmusic.pl,,t,f,f,f,50,50.0,50.0
+M/I Kwartalnik Muzyczny,local_press,,redakcja@mimagazyn.pl,https://mimagazyn.pl,,t,f,f,f,50,50.0,50.0
+MARIA RYSUJE - Maria Regucka,creator,,mariaregucka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+MC Radio,radio,,reklama@mcradio.pl,https://mcradio.pl,,t,f,f,f,50,50.0,50.0
+MDC - Muzyka Dla Ciebie,radio,,radiomdc@radiomdc.no-ip.org,https://radiomdc.no-ip.org,,t,f,f,f,50,50.0,50.0
+METAL 2020s — Polychroma,creator,,mypolychroma@gmail.com,,https://open.spotify.com/playlist/2tG4vSoIv96vIZTk4G1OHe,t,f,f,f,50,50.0,50.0
+MISIEWICZ IlUSTRATION,creator,,misiewicz.malm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+MJmimi,patron,,mjmimi@mjmimi.pl,https://mjmimi.pl,,t,f,f,f,50,50.0,50.0
+MM Szczecin,local_press,,mmszczecin@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
+MORS Mega Otwarte Radio Studenckie,radio,,muzyka@mors.ug.edu.pl,https://mors.ug.edu.pl,,t,f,f,f,50,50.0,50.0
+MUCHADSGN - Konrad Moszyński,creator,,muchask8@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+MUSCA IMAGO,creator,,musca.imago@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+MUZYKO(B)LOG,local_press,,hubert.mysliwiec@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
+MaMocRecords,patron,,pawel@mamocrecords.com,https://mamocrecords.com,,t,f,f,f,50,50.0,50.0
+Maciej Kamuda,creator,,maciejkamuda@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+"Maciej Markowski, Jakub Michalski",radio,,niedlasingli@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Maciej Wałejko,radio,,szuflada@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+Maciej Werk,radio,,m.werk@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Mad Rock House,radio,,mrhkontakt@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Magazyn,local_press,,redakcja@mgzn.pl,https://mgzn.pl,,t,f,f,f,50,50.0,50.0
+Magda Miszewska,radio,,kultura@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
+Magda Sawicka,creator,,sawickaster@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Magic Records,patron,,kontakt@magicrecords.com.pl,https://magicrecords.com.pl,,t,f,f,f,50,50.0,50.0
+Magiel,local_press,,robert.szklarz@magiel.waw.pl,https://magiel.waw.pl,,t,f,f,f,50,50.0,50.0
+Magnetoffon,local_press,,s.brzozka@magnetoffon.info,https://magnetoffon.info,,t,f,f,f,50,50.0,50.0
+Makak,radio,,makak@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
+"Marcin Mendelbaum, Magdalena Gałczynska, Piotr Bielawski, Jerzy Kijo",radio,,m.mendelbaum@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Marcin Tercjak,radio,,m.tercjak@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Marcin Tercjak i Bartosz Florczak,radio,,b.florczak@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Marek Lubasiński i Asia Gzyra,radio,,towar@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
+Marek Rycak,radio,,lublista@radio-lublin.pl,https://radio-lublin.pl,,t,f,f,f,50,50.0,50.0
+Margo Dumin Illustrations,creator,,margolcia.dumin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Maria Bobela,creator,,mariabobela@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Marianna Pruchniak,radio,,marianna.pruchniak@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Mariusz Rodziewicz,local_press,,mariusz.rodziewicz@mediaregionalne.pl,https://mediaregionalne.pl,,t,f,f,f,50,50.0,50.0
+"Marta ""Tygrys"" Pokorska-Jurek",radio,,tematyczny@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Marta Gliwińska,creator,,martagliwinska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+"Marta Ruda, Paweł Szczudkowski",radio,,lista@radiopraga.pl,https://radiopraga.pl,,t,f,f,f,50,50.0,50.0
+Marta Tomczyk,creator,,marta.tomczyk@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+"Martyna ""Niger"" Jakubowska Graphic's",creator,,nigerpmi220395@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Martyna Lejman,creator,,mrtnljmn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Martyna Wójcik-Śmierska,creator,,kontakt@martynawojcik.com,https://martynawojcik.com,,t,f,f,f,50,50.0,50.0
+Maski - Gazeta Młodzieżowa,local_press,,redakcja@gazetamaski.pl,https://gazetamaski.pl,,t,f,f,f,50,50.0,50.0
+"Mateusz Chłystun, Wojtek Zagaj",radio,,wojciech.zagaj@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Mateusz Kołek,creator,,matkolek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Mazowsze,radio,,redakcja@radio-mazowsze.pl,https://radio-mazowsze.pl,,t,f,f,f,50,50.0,50.0
+Mało Obiektywnie,radio,,mariusz.owczarek@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Megafon,radio,,megafon@kpsw.edu.pl,https://kpsw.edu.pl,,t,f,f,f,50,50.0,50.0
+Megafon Muzyczny,local_press,,megafonmuzyczny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Melba,local_press,,info@melbamagazine.com,https://melbamagazine.com,,t,f,f,f,50,50.0,50.0
+Melodeath,radio,,melodeath@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Melodic Metalcore - Best Of,creator,,spotifybestof@yahoo.com,,https://open.spotify.com/playlist/2wNAOkfXWSl88w8URX6RdC,t,f,f,f,50,50.0,50.0
+Mercilles Death,patron,,merciless@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
+Merkury Polskie Radio,radio,,internet@radiomerkury.pl,https://radiomerkury.pl,,t,f,f,f,50,50.0,50.0
+Metal Breakfast Radio,radio,,lapdog1@mac.com,https://mac.com,,t,f,f,f,50,50.0,50.0
+Metal Detektor Radio Študent,radio,,metaldetektor@radiostudent.si,https://radiostudent.si,,t,f,f,f,50,50.0,50.0
+Metal Devastation Radio,radio,,zach@metaldevastationradio.com,https://metaldevastationradio.com,,t,f,f,f,50,50.0,50.0
+Metal Devastation Radio,local_press,,,https://metaldevastationradio.com,,t,f,f,f,50,50.0,50.0
+Metal Devastation Radio — online metal radio,radio,,,https://metaldevastationradio.com,https://metaldevastationradio.com,t,f,f,f,50,50.0,50.0
+Metal Gentleman — YouTube channel + blog,local_press,,promotion@metalgentleman.com,,https://metalgentleman.com/submit-your-band/,t,f,f,f,50,50.0,50.0
+Metal Groove Radio,radio,,metalgrooveradio@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+Metal Hammer,local_press,,,https://metalhammer.com,,t,f,f,f,50,50.0,50.0
+Metal Hammer (YouTube),creator,,,https://youtube.com/@metalhammer,,t,f,f,f,50,50.0,50.0
+Metal Hammer Germany,local_press,,online@metal-hammer.de,https://metal-hammer.de,,t,f,f,f,50,50.0,50.0
+Metal Injection,local_press,,tips@metalinjection.net,https://metalinjection.net,,t,f,f,f,50,50.0,50.0
+Metal Kross Radio,radio,,metalkrossradio@usa.com,https://usa.com,,t,f,f,f,50,50.0,50.0
+Metal Mantra,local_press,,,https://metal-mantra.com,,t,f,f,f,50,50.0,50.0
+Metal Mantra — heavy music news,local_press,,,https://metal-mantra.com/submit/,https://metal-mantra.com/submit/,t,f,f,f,50,50.0,50.0
+Metal Noise,local_press,,,https://metalnoise.net,,t,f,f,f,50,50.0,50.0
+Metal Noise — review blog,local_press,,666metalnoise@gmail.com,,https://metalnoise.net/submissions,t,f,f,f,50,50.0,50.0
+Metal Sucks,local_press,,news@metalsucks.net,https://metalsucks.net,,t,f,f,f,50,50.0,50.0
+Metal Tavern Radio,radio,,jamescorprew@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Metal Trenches,creator,,,https://youtube.com/c/metaltrenches,,t,f,f,f,50,50.0,50.0
+Metal Woman Radio,radio,,metalwomanradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Metal Workout Intense TOP100,creator,,metalstars_promo@email.de,,https://open.spotify.com/playlist/214zuvy65rXE92gYnAON7m,t,f,f,f,50,50.0,50.0
+Metal Zone Radio,radio,,contato@metalzone.radio.br,https://metalzone.radio.br,,t,f,f,f,50,50.0,50.0
+MetalFM,radio,,leimsen@metalfm.de,https://metalfm.de,,t,f,f,f,50,50.0,50.0
+MetalizacjA - Metal Radio Show,radio,,metalizacja@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
+Meteor UAM,radio,,biuro@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Metro,reviewer,,metronysa@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Miasta w Komie,local_press,,miastawkomie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Miasto Ma Głos,local_press,,miastomaglos@tlen.pl,https://tlen.pl,,t,f,f,f,50,50.0,50.0
+Miasto i Ludzie,local_press,,redakcja@miastoiludzie.pl,https://miastoiludzie.pl,,t,f,f,f,50,50.0,50.0
+Michał Gancarski + Piotr Czarnota,radio,,klimatyzator@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+Michał Karwatowicz,local_press,,infomusic@infomusic.pl,https://infomusic.pl,,t,f,f,f,50,50.0,50.0
+"Michał Lisiewicz, Blanka Borys, Piotr Radio",radio,,michal.lisiewicz@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+Michał Napiórkowski i Piotr Szauer,radio,,redakcja.muzyczna@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
+"Michałowska Martyna, Szymura Sebastian",radio,,sebastian.szymura@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Miej Miejsce,local_press,,redakcja@miejmiejsce.com,https://miejmiejsce.com,,t,f,f,f,50,50.0,50.0
+Mik Music,patron,,innyadreswojtka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Miladelic,reviewer,,milalee.art@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Mind Born,creator,,michal@mindborn.pl,https://mindborn.pl,,t,f,f,f,50,50.0,50.0
+Mirrorphobic,patron,,mirrorphobic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Mittendrin,radio,,redakcja@mittendrin.pl,https://mittendrin.pl,,t,f,f,f,50,50.0,50.0
+Modlitwy Psychodeliczne,radio,,mikolaj.zurakowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Moja Stodoła,local_press,,roland.filip@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Moje Katowice,local_press,,barbara.lukomska@silnet.pl,https://silnet.pl,,t,f,f,f,50,50.0,50.0
+Moje Miasto Trójmiasto,local_press,,redakcja@mmtrojmiasto.pl,https://mmtrojmiasto.pl,,t,f,f,f,50,50.0,50.0
+Monitor Magazine,local_press,,redakcja@monitor-magazine.com,https://monitor-magazine.com,,t,f,f,f,50,50.0,50.0
+Motoradio,radio,,redakcja@motoradio.com.pl,https://motoradio.com.pl,,t,f,f,f,50,50.0,50.0
+Multikulti Project,patron,,e-sklep@multikulti.com,https://multikulti.com,,t,f,f,f,50,50.0,50.0
+Muno PL,local_press,,info@muno.pl,https://muno.pl,,t,f,f,f,50,50.0,50.0
+Music Alert,local_press,,news@musicalert.pl,https://musicalert.pl,,t,f,f,f,50,50.0,50.0
+Music Face,local_press,,musicface.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Music Is,local_press,,kubastadnicki@musicis.pl,https://musicis.pl,,t,f,f,f,50,50.0,50.0
+Music Merch,reviewer,,sklep@musicmerch.pl,https://musicmerch.pl,,t,f,f,f,50,50.0,50.0
+Music Rage,patron,,musicrage@musicrage.org,https://musicrage.org,,t,f,f,f,50,50.0,50.0
+Music Serwis COM PL,local_press,,katarzyna.prychacz@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Music Store Poznań,reviewer,,poznan@musicstore.com.pl,https://musicstore.com.pl,,t,f,f,f,50,50.0,50.0
+Music to the People,local_press,,info@musictothepeople.pl,https://musictothepeople.pl,,t,f,f,f,50,50.0,50.0
+Musicgram,local_press,,redakcja@musicgram.pl,https://musicgram.pl,,t,f,f,f,50,50.0,50.0
+Musicngear,local_press,,info+metalcore.submissions@musicngear.com,https://musicngear.com,,t,f,f,f,50,50.0,50.0
+Musique Experimentale,radio,,eksperymentale@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Muzo TV,local_press,,redakcja@muzo.tv,https://muzo.tv,,t,f,f,f,50,50.0,50.0
+Muzol,local_press,,m-arcin@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Muzomaniak,local_press,,chwedczuk.marek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzotakt,local_press,,redakcja@muzotakt.pl,https://muzotakt.pl,,t,f,f,f,50,50.0,50.0
+Muzoteka,local_press,,redakcja@muzoteka.pl,https://muzoteka.pl,,t,f,f,f,50,50.0,50.0
+Muzycy Trójmiasta,local_press,,muzycy-trojmiasta@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Muzyczna Artyleria,radio,,muzyczna.artyleria@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzyczna Scena Łodzi,local_press,,dymek@ulicznagaleriadzwieku.pl,https://ulicznagaleriadzwieku.pl,,t,f,f,f,50,50.0,50.0
+Muzyczne Radio,radio,,radio@muzyczneradio.pl,https://muzyczneradio.pl,,t,f,f,f,50,50.0,50.0
+Muzyczne Wędrowanie,local_press,,muzycznewedrowanie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzyczny Esflorres,local_press,,romantycyrocka@toksyna.fm,https://toksyna.fm,,t,f,f,f,50,50.0,50.0
+Muzyczny Horyzont,local_press,,kontakt@muzycznyhoryzont.pl,https://muzycznyhoryzont.pl,,t,f,f,f,50,50.0,50.0
+Muzyczny Kraków,local_press,,kontakt@muzyczny-krakow.eu,https://muzyczny-krakow.eu,,t,f,f,f,50,50.0,50.0
+Muzyczny Piotrków,local_press,,amusicagencja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzyka Alternatywna,local_press,,takisam100@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzyka DZIENNIK PL,local_press,,diana.rymuza@infor.pl,https://infor.pl,,t,f,f,f,50,50.0,50.0
+Muzyka Interia,local_press,,newsroom@firma.interia.pl,https://firma.interia.pl,,t,f,f,f,50,50.0,50.0
+Muzyka Onet,local_press,,pawel.gaik@portal.onet.pl,https://portal.onet.pl,,t,f,f,f,50,50.0,50.0
+Muzyka na Fali,radio,,biuro@skafala.pl,https://skafala.pl,,t,f,f,f,50,50.0,50.0
+Muzyka z głośnika,local_press,,mzg@mzg.pl,https://mzg.pl,,t,f,f,f,50,50.0,50.0
+Muzykamenty [RIP],radio,,maciej.majewski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Muzykoholicy,local_press,,muzykoholicy.com@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Muzykoteka,radio,,muzykoteka@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+My Shit In Your Coffe,patron,,info@myshitinyourcoffee.com,https://myshitinyourcoffee.com,,t,f,f,f,50,50.0,50.0
+Myszliciel kwartalnik interdyscyplinarny KNS MISH,local_press,,myszliciel@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Mówią Na Mieście,local_press,,redakcja@mowianamiescie.pl,https://mowianamiescie.pl,,t,f,f,f,50,50.0,50.0
+Młoda Gdynia,local_press,,mariusz.sieraczkiewicz@mlodagdynia.pl,https://mlodagdynia.pl,,t,f,f,f,50,50.0,50.0
+Młodzi Wykonawcy,local_press,,mlodzi.wykonawcy.pl@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+NNRadio,radio,,contact@nnradio.pl,https://nnradio.pl,,t,f,f,f,50,50.0,50.0
+NOH8,reviewer,,office@noh8.eu,https://noh8.eu,,t,f,f,f,50,50.0,50.0
+Na Fest,local_press,,kontakt@nafest.pl,https://nafest.pl,,t,f,f,f,50,50.0,50.0
+Na Temat,local_press,,tomasz.machala@natemat.pl,https://natemat.pl,,t,f,f,f,50,50.0,50.0
+Na obrzeżach,local_press,,michal.d.wieczorek@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nadaje.com,radio,,firma@nadaje.com,https://nadaje.com,,t,f,f,f,50,50.0,50.0
+Nadia Szymańska,radio,,muzyka@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Najlepsze Piosenki,local_press,,kontakt@najlepszepiosenki.pl,https://najlepszepiosenki.pl,,t,f,f,f,50,50.0,50.0
+Namuzowani,local_press,,sennasenna@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
+Nasiono Records,patron,,info@nasiono.net,https://nasiono.net,,t,f,f,f,50,50.0,50.0
+Nasza Łódź da się lubić - Lodz.ipowiat.pl,local_press,,lodz@ipowiat.pl,https://ipowiat.pl,,t,f,f,f,50,50.0,50.0
+Nasze FM,radio,,sekretariat@nasze.pl,https://nasze.pl,,t,f,f,f,50,50.0,50.0
+Nasze miasto Łódź,local_press,,patronaty@naszemiasto.pl,https://naszemiasto.pl,,t,f,f,f,50,50.0,50.0
+Naszywki,reviewer,,biuro@naszywki.net,https://naszywki.net,,t,f,f,f,50,50.0,50.0
+Natalia Martuzalska / Maciek Sławski / Adam Kaczorowski,radio,,faworki@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Nawiedzone studio,radio,,nawiedzonestudio@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Net Fan,local_press,,sandra.jedrowiak@netfan.pl,https://netfan.pl,,t,f,f,f,50,50.0,50.0
+Nevada Music,patron,,nevadamusic@onet.pl,https://onet.pl,,t,f,f,f,50,50.0,50.0
+Neverland,radio,,jakub.marszalkowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+New Abra,patron,,info@newabra.com.pl,https://newabra.com.pl,,t,f,f,f,50,50.0,50.0
+New Life Recordings,patron,,newlife.recordings@myspace.com,https://myspace.com,,t,f,f,f,50,50.0,50.0
+New Metalcore 2026 — RIFF CULT,creator,,riffcultjp@gmail.com,,https://open.spotify.com/playlist/280unJx37YbHbRvPDlZxPi,t,f,f,f,50,50.0,50.0
+NewsrmTV,local_press,,redakcja@newsrm.tv,https://newsrm.tv,,t,f,f,f,50,50.0,50.0
+Next-Gen Metal,creator,,,https://groover.co,,t,f,f,f,50,50.0,50.0
+Nextpop Label / Innersong,patron,,info.nextpop@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nie Znasz Tego,local_press,,diabelmowi@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nierdzewna Stal,radio,,nierdzewnastal@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Nietoperzownia Atelier de chauvesouris,reviewer,,diesmara@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nikt już nie słucha dobrej muzyki,local_press,,niktjuznieslucha@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nine Records,reviewer,,sklep@nine-records.pl,https://nine-records.pl,,t,f,f,f,50,50.0,50.0
+Noisey Music by VICE,local_press,,andrzej.cala@vice.com,https://vice.com,,t,f,f,f,50,50.0,50.0
+Noob Heavy,local_press,,teamnoobheavy@gmail.com,https://noobheavy.com,,t,f,f,f,50,50.0,50.0
+Northern Metal Radio,radio,,northernmetalradio@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nostalgia,radio,,biuro@nostalgia.waw.pl,https://nostalgia.waw.pl,,t,f,f,f,50,50.0,50.0
+Notes na 6 tygodni,local_press,,nn6t@funbec.eu,https://funbec.eu,,t,f,f,f,50,50.0,50.0
+Nowa Gazeta Śląska,local_press,,redakcja@nowagazetaslaska.eu,https://nowagazetaslaska.eu,,t,f,f,f,50,50.0,50.0
+Nowa Muzyka,local_press,,redakcja@nowamuzyka.pl,https://nowamuzyka.pl,,t,f,f,f,50,50.0,50.0
+Nowe Idzie Od Morza,local_press,,jakub.knera@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Nowinki - Politechnika Krakowska,radio,,nowinki@pk.edu.pl,https://pk.edu.pl,,t,f,f,f,50,50.0,50.0
+O PL Polski Portal Kultury,local_press,,redakcja@o.pl,https://o.pl,,t,f,f,f,50,50.0,50.0
+OKO,radio,,radiooko@radiooko.pl,https://radiooko.pl,,t,f,f,f,50,50.0,50.0
+OLD SCHOOL DESIGN - Malwina Siedlecka,creator,,old_school_design@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+ONTV - Poznańska Telewizja,local_press,,marketing@ontv.pl,https://ontv.pl,,t,f,f,f,50,50.0,50.0
+OSTROŚĆ studio,creator,,studioostrosc@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Oblicza Kultury,local_press,,redakcja@obliczakultury.pl,https://obliczakultury.pl,,t,f,f,f,50,50.0,50.0
+Obudź Warszawę [RIP],local_press,,obudzwarszawe@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Odium Rex,patron,,info@odiumrex.com,https://odiumrex.com,,t,f,f,f,50,50.0,50.0
+Odra,local_press,,odra@odra.net.pl,https://odra.net.pl,,t,f,f,f,50,50.0,50.0
+Odsłuch Kulturalny,radio,,egida.kultura@us.edu.pl,https://us.edu.pl,,t,f,f,f,50,50.0,50.0
+Off On czyli Made in Poland [RIP],radio,,przemyslaw.banaszkiewicz@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Off Radio Kraków,radio,,off@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Oficyna Biedota,patron,,oficyna@biedota.com,https://biedota.com,,t,f,f,f,50,50.0,50.0
+Ola Niepsuj,creator,,niepsuja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Olejnicki Mikołaj,radio,,mikolaj.olejnicki@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Oliwia Adamkowska,creator,,oadamkowska@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Olo Records Management,patron,,biuro@olorecords.pl,https://olorecords.pl,,t,f,f,f,50,50.0,50.0
+Olsztyn,radio,,radio@ro.com.pl,https://ro.com.pl,,t,f,f,f,50,50.0,50.0
+Only4Music,local_press,,kontakt@only4music.com,https://only4music.com,,t,f,f,f,50,50.0,50.0
+OnlyGoodMusic,local_press,,onlygoodmusic@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Opcje,local_press,,redakcja@opcje.net.pl,https://opcje.net.pl,,t,f,f,f,50,50.0,50.0
+Orbit,radio,,kontakt@radioorbit.pl,https://radioorbit.pl,,t,f,f,f,50,50.0,50.0
+Ortiga,reviewer,,ortigaclothing@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Osterdam Records,patron,,info@osterdamrecords.com,https://osterdamrecords.com,,t,f,f,f,50,50.0,50.0
+Other Center,local_press,,redakcja@othercenter.pl,https://othercenter.pl,,t,f,f,f,50,50.0,50.0
+Other Music Label,patron,,manager@othermusiclabel.pl,https://othermusiclabel.pl,,t,f,f,f,50,50.0,50.0
+Out Of Line Music,patron,,info@outofline.de,https://outofline.de,,t,f,f,f,50,50.0,50.0
+Outrave,local_press,,outravemedia@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+P.anika w Krakowie,radio,,p.anika@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+PANTER ART,creator,,panterart13@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+PGA,local_press,,patrykgaluszka@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
+PIK WROCŁAW,local_press,,kontakt@pik.wroclaw.pl,https://pik.wroclaw.pl,,t,f,f,f,50,50.0,50.0
+PKPZin,local_press,,pkpzin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+POKA POKA,local_press,,poka@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+PUMSMAJER - Kamil Karpiński,creator,,pumsmajer@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Pagan Records,patron,,info@pagan-records.com,https://pagan-records.com,,t,f,f,f,50,50.0,50.0
+Pan Od Muzyki,local_press,,kamil@matuszak.tk,https://matuszak.tk,,t,f,f,f,50,50.0,50.0
+PandArt Design,creator,,pandart-design@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
+Panda TV (UKSW),local_press,,redakcja@pandatv.pl,https://pandatv.pl,,t,f,f,f,50,50.0,50.0
+Pandora Clothing,reviewer,,sklep@pandoraclth.com,https://pandoraclth.com,,t,f,f,f,50,50.0,50.0
+Pani Nożownik,local_press,,siostra.rip@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Panteon,radio,,kontakt@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
+Panzer Battalion,patron,,panzer-battalion@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Paper Cats,reviewer,,kontakt@papercats.pl,https://papercats.pl,,t,f,f,f,50,50.0,50.0
+Paragraph 212,reviewer,,biuro@paragraph212.pl,https://paragraph212.pl,,t,f,f,f,50,50.0,50.0
+Party PL,local_press,,redakcja@afterparty.pl,https://afterparty.pl,,t,f,f,f,50,50.0,50.0
+Pasta,radio,,radiopasta@klps.pl,https://klps.pl,,t,f,f,f,50,50.0,50.0
+Patrycja Podkościelny,creator,,patrycja.podkoscielny@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Patryk Hardziej,creator,,patryk@hardziej.com,https://hardziej.com,,t,f,f,f,50,50.0,50.0
+Patryk Mogilnicki,creator,,pa.tryk@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+Paulina Steklińska,radio,,paulina.steklinska@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Paweł Rembarz,radio,,rock@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Penguin Records,patron,,biuro@penguinrecords.eu,https://penguinrecords.eu,,t,f,f,f,50,50.0,50.0
+Perun,patron,,perunrun@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+PiK,radio,,radio@radiopik.pl,https://radiopik.pl,,t,f,f,f,50,50.0,50.0
+Piana,local_press,,k.pietrzok@pianamagazine.com,https://pianamagazine.com,,t,f,f,f,50,50.0,50.0
+Piekary,radio,,radiopiekary@radiopiekary.pl,https://radiopiekary.pl,,t,f,f,f,50,50.0,50.0
+Pionierska Records,patron,,pionierska.records@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Piotr Bielawski,radio,,p.bielawski@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+Piotr Gołąb,radio,,piotrgolab85@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Piotr Stanczyk,radio,,studio@radiolodz.pl,https://radiolodz.pl,,t,f,f,f,50,50.0,50.0
+"Piotr Stelmach, Anna Gacek + Borys Dejnarowicz + Kuba Wandachowicz",radio,,piotr.stelmach@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+"Piotr Szauer, Michał Napiórkowski",radio,,pisz@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
+Pit Check,creator,,,https://youtube.com/@pitcheck,,t,f,f,f,50,50.0,50.0
+Pitu Pitu Warsaw,local_press,,hej@pitupitu.info,https://pitupitu.info,,t,f,f,f,50,50.0,50.0
+Place For Dance,local_press,,redakcja@placefordance.pl,https://placefordance.pl,,t,f,f,f,50,50.0,50.0
+Plaster Łódzki,local_press,,redakcja@plasterlodzki.pl,https://plasterlodzki.pl,,t,f,f,f,50,50.0,50.0
+Play More Records,patron,,playmorecompany@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Playboy,local_press,,rafal.ksiezyk@playboy.pl,https://playboy.pl,,t,f,f,f,50,50.0,50.0
+PlaylistPartner metal,creator,,,https://playlistpartner.com/genre/metal,https://playlistpartner.com/about,t,f,f,f,50,50.0,50.0
+Plej TV,local_press,,kontakt@plej.tv,https://plej.tv,,t,f,f,f,50,50.0,50.0
+Pociąg do muzyki - Andrzej Kukuczka,radio,,kukuczka@radiokrakow.pl,https://radiokrakow.pl,,t,f,f,f,50,50.0,50.0
+Pod Prąd,local_press,,redakcja@podprad.pl,https://podprad.pl,,t,f,f,f,50,50.0,50.0
+Podkarpacka Scena Muzyczna,local_press,,kosel07@psm.aq.pl,https://psm.aq.pl,,t,f,f,f,50,50.0,50.0
+Podotykaj sobie Poznań,local_press,,podotykajsobie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Podprogowa godzina,radio,,podprogowa@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Pointless Geometry,patron,,pointless.label@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Poka Poka BIAŁYSTOK,local_press,,info@pokapoka.co,https://pokapoka.co,,t,f,f,f,50,50.0,50.0
+Poka Poka KARKONOSZE,local_press,,karkonosze@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Poka Poka KUJAWY,local_press,,info@kujawy.pokapoka.co,https://kujawy.pokapoka.co,,t,f,f,f,50,50.0,50.0
+Poka Poka POZNAŃ,local_press,,info@poznan.pokapoka.co,https://poznan.pokapoka.co,,t,f,f,f,50,50.0,50.0
+Poka Poka RZESZÓW,local_press,,rzeszow@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Poka Poka SZCZECIN,local_press,,info@szczecin.pokapoka.co,https://szczecin.pokapoka.co,,t,f,f,f,50,50.0,50.0
+Poka Poka TRÓJMIASTO,local_press,,3miasto@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Poka Poka WARSZAWA,local_press,,warszawa@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Poka Poka WROCŁAW,local_press,,wroclaw@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Poka Poka ŁÓDŹ,local_press,,info@lodz.pokapoka.com,https://lodz.pokapoka.com,,t,f,f,f,50,50.0,50.0
+Poka Poka ŚLĄSKIE,local_press,,info@pokapoka.info.pl,https://pokapoka.info.pl,,t,f,f,f,50,50.0,50.0
+Polish Metal Promotion,local_press,,,https://facebook.com/PolishMetalPromo,,t,f,f,f,50,50.0,50.0
+Polisz Mnie,local_press,,lukasz.halicki@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+PoliszCzart Polska Audycja,local_press,,slaorw@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Polityka,local_press,,facebook@polityka.pl,https://polityka.pl,,t,f,f,f,50,50.0,50.0
+Pollub TV Studencka Internetowa Telewizja Politechniki Lubelskiej,local_press,,redakcja@pollub.tv,https://pollub.tv,,t,f,f,f,50,50.0,50.0
+Polska Muzyka (?),local_press,,kuzmicz@onet.eu,https://onet.eu,,t,f,f,f,50,50.0,50.0
+Polska Stacja,radio,,radio@polskastacja.pl,https://polskastacja.pl,,t,f,f,f,50,50.0,50.0
+Polskie Radio - Trójka - Program 3 Polskiego Radia,radio,,portal.trojka@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Polskie Zespoły,local_press,,m.gwozdowski@polskiezespoly.pl,https://polskiezespoly.pl,,t,f,f,f,50,50.0,50.0
+Polyphonia,local_press,,redakcja@polyphonia.pl,https://polyphonia.pl,,t,f,f,f,50,50.0,50.0
+Pomerania TV,local_press,,t.szubryt@pomerania.tv,https://pomerania.tv,,t,f,f,f,50,50.0,50.0
+Pomorze [RIP],radio,,radio@arp.org.pl,https://arp.org.pl,,t,f,f,f,50,50.0,50.0
+Pop Goes The Blog,local_press,,kordian.kn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Popheart,local_press,,redakcja@popheart.pl,https://popheart.pl,,t,f,f,f,50,50.0,50.0
+Popler TV,local_press,,admin@popler.tv,https://popler.tv,,t,f,f,f,50,50.0,50.0
+Porcys,local_press,,redakcja@porcys.com,https://porcys.com,,t,f,f,f,50,50.0,50.0
+Portal Winylowy,local_press,,kontakt@portalwinylowy.pl,https://portalwinylowy.pl,,t,f,f,f,50,50.0,50.0
+Postaranie Records,patron,,postaranierecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Power Radio Berlin-Brandenburg,radio,,info@power-radio.de,https://power-radio.de,,t,f,f,f,50,50.0,50.0
+"Poznan, I Love You",local_press,,hi@poznaniloveyou.com,https://poznaniloveyou.com,,t,f,f,f,50,50.0,50.0
+Pozytywka,radio,,pozytywka@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Praga,radio,,redakcja@radiopraga.pl,https://radiopraga.pl,,t,f,f,f,50,50.0,50.0
+Pralka,radio,,marcin.liminowicz@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Presja,local_press,,pressjamagazyn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Prestiż - Magazyn Koszalinski,local_press,,prestizredakcja@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Prestiż - Magazyn Trójmiejski,local_press,,redakcja.trojmiasto@eprestiz.pl,https://eprestiz.pl,,t,f,f,f,50,50.0,50.0
+Pro Radio,radio,,redakcja@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
+Pro-polskie,radio,,tomasz@proradio.pl,https://proradio.pl,,t,f,f,f,50,50.0,50.0
+Prog Magazine,local_press,,,https://progmagazine.com,,t,f,f,f,50,50.0,50.0
+"Progressive Metal, Metalcore & Djent // Next-Gen Metal",creator,,godmodeaudio@gmail.com,,https://open.spotify.com/playlist/6ua9vhcJstPlFF8NpksL5X,t,f,f,f,50,50.0,50.0
+Promuje Łódzkie (Urząd Marszałkowski Województwa Łódzkiego),local_press,,promocja@lodzkie.pl,https://lodzkie.pl,,t,f,f,f,50,50.0,50.0
+Prorock,radio,,prorocker@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Przekrój,local_press,,doredakcji@przekroj.pl,https://przekroj.pl,,t,f,f,f,50,50.0,50.0
+Przemek Galret,creator,,galert@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+Przemek Mikke,creator,,pvmikke@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+Przestrzeń Kultury,radio,,kultura@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Przesłuchanie,radio,,przesluchanie@roxy.fm,https://roxy.fm,,t,f,f,f,50,50.0,50.0
+Przypiny PL,reviewer,,przypiny@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Próbownia,local_press,,probownia@probownia.pl,https://probownia.pl,,t,f,f,f,50,50.0,50.0
+Próbownia w eterze,radio,,probownia@meteor.amu.edu,https://meteor.amu.edu,,t,f,f,f,50,50.0,50.0
+Psycho Records,patron,,robert@wydawnictwopsycho.com,https://wydawnictwopsycho.com,,t,f,f,f,50,50.0,50.0
+Puls Poznania,local_press,,reklama@pulspoznania.pl,https://pulspoznania.pl,,t,f,f,f,50,50.0,50.0
+Purpose,local_press,,redakcja@purpose.com.pl,https://purpose.com.pl,,t,f,f,f,50,50.0,50.0
+Pustynna Burza,radio,,arek.lukaszewicz@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+QPoznań TV,local_press,,qpoznantv@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Qult Kultury,local_press,,reklama@qultqultury.pl,https://qultqultury.pl,,t,f,f,f,50,50.0,50.0
+R.N.A. Radio Niezależnych Artystów,radio,,info@e-stacja-rna.pl,https://e-stacja-rna.pl,,t,f,f,f,50,50.0,50.0
+RADIO BOB!,radio,,bob@radiobob.de,https://radiobob.de,,t,f,f,f,50,50.0,50.0
+RAM,radio,,ram@prw.pl,https://prw.pl,,t,f,f,f,50,50.0,50.0
+RDC - Radio Dla Ciebie,radio,,sekretariat@rdc.pl,https://rdc.pl,,t,f,f,f,50,50.0,50.0
+RDN Małopolska (Katolickie),radio,,sektar@rdn.pl,https://rdn.pl,,t,f,f,f,50,50.0,50.0
+RDN Nowy Sącz (Katolickie),radio,,nsacz@rdn.pl,https://rdn.pl,,t,f,f,f,50,50.0,50.0
+RDS Music,patron,,jacekadamczyk2@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+RMF FM,radio,,redakcja@rmf.fm,https://rmf.fm,,t,f,f,f,50,50.0,50.0
+RWA zin,local_press,,rwarwa.zin@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Radar - Magazyn Studencki Uniwersytetu Przyrodniczego w Lublinie,local_press,,radar.magazyn@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Radio Goethe,radio,,info@radiogoethe.org,https://radiogoethe.org,,t,f,f,f,50,50.0,50.0
+Radio Metal,radio,,metalmorningshow@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Radio heavy metal,radio,,radioheavymetal76@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+RadioWWW,radio,,radio@radiowww.eu,https://radiowww.eu,,t,f,f,f,50,50.0,50.0
+Radiofonia,radio,,promocja@radiofonia.fm,https://radiofonia.fm,,t,f,f,f,50,50.0,50.0
+Rafał Tyluś,radio,,informacje@zak.lodz.pl,https://zak.lodz.pl,,t,f,f,f,50,50.0,50.0
+Raised on Rock,local_press,,rafal.mrowicki@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Rak’n’Roll Records,patron,,contact@raknrollrecords.com,https://raknrollrecords.com,,t,f,f,f,50,50.0,50.0
+Raven Market,reviewer,,ravenmarket@ravenmarket.pl,https://ravenmarket.pl,,t,f,f,f,50,50.0,50.0
+Rebel Madness,reviewer,,rebel-madness@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Rebelios Koszulki,reviewer,,info@rebelios.pl,https://rebelios.pl,,t,f,f,f,50,50.0,50.0
+Recenzje Muzyki,local_press,,tomal300@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Recenzje Płyt,local_press,,redakcja@recenzjeplyt.pl,https://recenzjeplyt.pl,,t,f,f,f,50,50.0,50.0
+Recenzje płytowe,local_press,,mandy23@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
+Red Elephant Records,patron,,jurkis@op.pl,https://op.pl,,t,f,f,f,50,50.0,50.0
+RedHook Recommends,creator,,playlist@weareredhook.com,,https://open.spotify.com/artist/6OVWDN6Ty6RfnhUJlrYBlI,t,f,f,f,50,50.0,50.0
+Redrum666,patron,,tom@redrum666.net,https://redrum666.net,,t,f,f,f,50,50.0,50.0
+Regio Records,patron,,biuro@regiorecords.pl,https://regiorecords.pl,,t,f,f,f,50,50.0,50.0
+Region Kultury,local_press,,w.cascarino@ldk.lodz.pl,https://ldk.lodz.pl,,t,f,f,f,50,50.0,50.0
+Regulator,local_press,,redakcja@rgltr.pl,https://rgltr.pl,,t,f,f,f,50,50.0,50.0
+Reporter PL,local_press,,redakcja@reporter.pl,https://reporter.pl,,t,f,f,f,50,50.0,50.0
+Requiem Records,patron,,info@requiem-records.com,https://requiem-records.com,,t,f,f,f,50,50.0,50.0
+Restriction Wear,reviewer,,info@restrictionwear.com,https://restrictionwear.com,,t,f,f,f,50,50.0,50.0
+Restyle,reviewer,,restyle.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Retrospektywa,radio,,marta.baum@radioaktywne.pl,https://radioaktywne.pl,,t,f,f,f,50,50.0,50.0
+Revolta,radio,,dorota39-70@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Rewers,radio,,redakcja@radiorewers.pl,https://radiorewers.pl,,t,f,f,f,50,50.0,50.0
+Rita von Schlag,radio,,redakcja@odzew.fm,https://odzew.fm,,t,f,f,f,50,50.0,50.0
+Ro(c)koteka,radio,,agataczwarta@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Rock Block,radio,,333prl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Rock Express Store,reviewer,,rock_express_store@vp.pl,https://vp.pl,,t,f,f,f,50,50.0,50.0
+Rock Long Luck,reviewer,,info@rocklongluck.pl,https://rocklongluck.pl,,t,f,f,f,50,50.0,50.0
+Rock Nocą,radio,,rocknoca@index.zgora.pl,https://index.zgora.pl,,t,f,f,f,50,50.0,50.0
+Rock Radio,radio,,mikolaj.lizut@rockradio.pl,https://rockradio.pl,,t,f,f,f,50,50.0,50.0
+Rock Radio CZ,radio,,kamil.drab@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
+Rock Radio Polska,radio,,kontakt@rockradio.pl,https://rockradio.pl,,t,f,f,f,50,50.0,50.0
+Rock Revolution,patron,,k.wydra@rockrevolution.pl,https://rockrevolution.pl,,t,f,f,f,50,50.0,50.0
+Rock Rádio,radio,,studio@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
+Rock Serwis,reviewer,,bok@rockserwis.pl,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
+Rock Serwis FM,radio,,promocja@rockserwis.fm,https://rockserwis.fm,,t,f,f,f,50,50.0,50.0
+Rock Time,radio,,rjakubowski@rocktime.pl,https://rocktime.pl,,t,f,f,f,50,50.0,50.0
+Rock na přání,radio,,prani@rockovyradio.cz,https://rockovyradio.cz,,t,f,f,f,50,50.0,50.0
+Rock'n'roll w wersji blond,local_press,,aneta.gliwicka@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+RockAntenne,radio,,studio@rockantenne.de,https://rockantenne.de,,t,f,f,f,50,50.0,50.0
+RockZone PL,reviewer,,sklep@rockzone.pl,https://rockzone.pl,,t,f,f,f,50,50.0,50.0
+Rocket,radio,,radio.rocket.eu@gmail.eu,https://gmail.eu,,t,f,f,f,50,50.0,50.0
+Rockmetalshop,reviewer,,zamowienia@rockmetalshop.pl,https://rockmetalshop.pl,,t,f,f,f,50,50.0,50.0
+Rockowa Lista Przebojów,radio,,airwolf116@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+Rockowa Wyspa,radio,,rockowawyspa@interia.pl,https://interia.pl,,t,f,f,f,50,50.0,50.0
+Rockowa lista przebojów Radia Aspekt,radio,,iza@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
+Rockowy Alfabet Banacha i Zbycha,radio,,zbychowiec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Rockserwis FM,radio,,bok@rockserwis.pl,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
+Rockserwis.pl,local_press,,,https://rockserwis.pl,,t,f,f,f,50,50.0,50.0
+Rockshock,reviewer,,rockshock@rockshock.pl,https://rockshock.pl,,t,f,f,f,50,50.0,50.0
+Roksana Orlicka,radio,,studio@radiopanda.pl,https://radiopanda.pl,,t,f,f,f,50,50.0,50.0
+Romuald Jakubowski,radio,,biuro@rocktime.pl,https://rocktime.pl,,t,f,f,f,50,50.0,50.0
+Rox,radio,,redakcja@radiorox.pl,https://radiorox.pl,,t,f,f,f,50,50.0,50.0
+Ryszard Gloger,radio,,ryszard.gloger@radiomerkury.pl,https://radiomerkury.pl,,t,f,f,f,50,50.0,50.0
+Rzeszów,radio,,sekretariat@radio.rzeszow.pl,https://radio.rzeszow.pl,,t,f,f,f,50,50.0,50.0
+Rzyg Kulturalny,local_press,,tormentor@poczta.onet.pl,https://poczta.onet.pl,,t,f,f,f,50,50.0,50.0
+Rádio Beat,radio,,studio@radiobeat.cz,https://radiobeat.cz,,t,f,f,f,50,50.0,50.0
+Rádio ROCK,radio,,studio@radiorock.sk,https://radiorock.sk,,t,f,f,f,50,50.0,50.0
+S.P. Records,patron,,sprecords@sprecords.com.pl,https://sprecords.com.pl,,t,f,f,f,50,50.0,50.0
+SETA Studencka Telewizja Uniwersytetu Opolskiego,local_press,,tv@uni.opole.pl,https://uni.opole.pl,,t,f,f,f,50,50.0,50.0
+SGHTV,local_press,,patronat@sghtv.pl,https://sghtv.pl,,t,f,f,f,50,50.0,50.0
+SOUL - Society of Urban Life,local_press,,redakcja@soul.pl,https://soul.pl,,t,f,f,f,50,50.0,50.0
+SUD,radio,,zaczyk@radiosud.pl,https://radiosud.pl,,t,f,f,f,50,50.0,50.0
+SZN TV,local_press,,redakcja@szntv.pl,https://szntv.pl,,t,f,f,f,50,50.0,50.0
+Scena Rozmaitości,radio,,kontakt@radiofoniakrakow.pl,https://radiofoniakrakow.pl,,t,f,f,f,50,50.0,50.0
+Scena Wrocławska,local_press,,scena.wroclawska@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sebastian SKROBOL,creator,,skrobol.sebastian@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sebol,local_press,,jozwiak.sebastian@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+SecondRadio,radio,,studio@secondradio.de,https://secondradio.de,,t,f,f,f,50,50.0,50.0
+Siadaj Pała!,radio,,siadajpala@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sie Klei,reviewer,,klej@sieklei.com,https://sieklei.com,,t,f,f,f,50,50.0,50.0
+Sie kręci,radio,,jerzy.owsiak@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Silent Scream Graphics,creator,,sala@silent-scream.pl,https://silent-scream.pl,,t,f,f,f,50,50.0,50.0
+Silesia Kultura,local_press,,redakcja@silesiakultura.pl,https://silesiakultura.pl,,t,f,f,f,50,50.0,50.0
+Siostry ZŁO,reviewer,,thealmightytwins@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sky,radio,,michal.organek@radiosky.pl,https://radiosky.pl,,t,f,f,f,50,50.0,50.0
+Slowdown Records,patron,,slowdownrec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+So Music,local_press,,redakcja.somusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sonic Records,patron,,sonic@sonicrecords.pl,https://sonicrecords.pl,,t,f,f,f,50,50.0,50.0
+Souloovka,radio,,ania.duszczynska@radiofonia.net,https://radiofonia.net,,t,f,f,f,50,50.0,50.0
+Soundplate metal directory,creator,,,https://soundplate.com/new-spotify-playlists1/metal/,https://soundplate.com/new-spotify-playlists1/metal/,t,f,f,f,50,50.0,50.0
+Soundrive,local_press,,redakcja@soundrive.pl,https://soundrive.pl,,t,f,f,f,50,50.0,50.0
+Sounduniverse,local_press,,sounduniverse.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Spotify for Artists editorial pitch,creator,,,https://artists.spotify.com/,https://support.spotify.com/nz/artists/article/pitching-music-to-playlist-editors/,t,f,f,f,50,50.0,50.0
+Sputnikmusic,local_press,,,https://sputnikmusic.com,,t,f,f,f,50,50.0,50.0
+Sreenagers PL,local_press,,redakcja@screenagers.pl,https://screenagers.pl,,t,f,f,f,50,50.0,50.0
+Stacja Kultura,local_press,,redakcja@stacjakultura.pl,https://stacjakultura.pl,,t,f,f,f,50,50.0,50.0
+Stanley Recenzuje,local_press,,stanleyrecenzuje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Stanleyowy,local_press,,fkrbzm@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Stargard,radio,,biuro@radiostargard.fm,https://radiostargard.fm,,t,f,f,f,50,50.0,50.0
+Stars TV,local_press,,redakcja@starstv.eu,https://starstv.eu,,t,f,f,f,50,50.0,50.0
+Stay In Tune Music — ROCK & METAL,creator,,stayintunemusic@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Strefa Młodych w Radiu Koszalin,radio,,strefamlodych@radio.koszalin.pl,https://radio.koszalin.pl,,t,f,f,f,50,50.0,50.0
+Strefa Niepotrzebnych Słów i Dźwięków,radio,,strefa.niepotrzebnych@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Studencki Magazyn Miejski,radio,,smm@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Student News,local_press,,sergiusz.dobosz@studentnews.pl,https://studentnews.pl,,t,f,f,f,50,50.0,50.0
+Students PL,local_press,,aleksandra.gorska@ringieraxelspringer.com,https://ringieraxelspringer.com,,t,f,f,f,50,50.0,50.0
+Students TV,local_press,,marcin@students.pl,https://students.pl,,t,f,f,f,50,50.0,50.0
+Styk Telewizja Studencka,local_press,,redakcja@styk.pwr.edu.pl,https://styk.pwr.edu.pl,,t,f,f,f,50,50.0,50.0
+Subiektywna Płytoteka,local_press,,ddaanneekk@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+SubmitHub free standard credits,creator,,,https://www.submithub.com/,https://www.submithub.com/,t,f,f,f,50,50.0,50.0
+Superstacja,local_press,,sekretariat@superstacja.tv,https://superstacja.tv,,t,f,f,f,50,50.0,50.0
+Surfblog,local_press,,kontakt@surfblog.pl,https://surfblog.pl,,t,f,f,f,50,50.0,50.0
+Swallowing The Decibels,local_press,,redakcja.thedecibels@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sweet Home Bielsko-Biała,local_press,,ilovebb.pl@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Sylwester Poleca,local_press,,dogitary@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Syntezator,radio,,syntezator@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Syrenka,radio,,projekt.syrenka@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Szadek Południową Porą [RIP],radio,,radoslaw.szatkowski@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+Szafa Muzyczna,local_press,,szafamuzyczna@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Szamaj Na Rockowo [RIP],radio,,damian.szemraj@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+"Szamotuła Anna, Szmyd Szymon, Malinowska Katarzyna, Marć Joanna, Miszkowicz-Adamowicz Emil",radio,,szymon.szmyd@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Szczecin Aloud,local_press,,blog@szczecin.eu,https://szczecin.eu,,t,f,f,f,50,50.0,50.0
+Szczecin BLOG,local_press,,pawelbloger@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Szczecin FM,radio,,kontakt@94i4.fm,https://94i4.fm,,t,f,f,f,50,50.0,50.0
+Szczecin Główny,local_press,,kbieniecka@szczecinglowny.org,https://szczecinglowny.org,,t,f,f,f,50,50.0,50.0
+Szczecin in Progress,local_press,,redakcja@grupaprogress.pl,https://grupaprogress.pl,,t,f,f,f,50,50.0,50.0
+Szczecin nie jest wioską z tramwajami,local_press,,szczecin@blogx.pl,https://blogx.pl,,t,f,f,f,50,50.0,50.0
+SzczecinNaFali,local_press,,redakcja@szczecinnafali.pl,https://szczecinnafali.pl,,t,f,f,f,50,50.0,50.0
+Szczeciner,local_press,,pawel.knap@szczeciner.pl,https://szczeciner.pl,,t,f,f,f,50,50.0,50.0
+Szron Productions,patron,,szronproductions@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Szymon Wolf,radio,,studiodzwieku@radiosygnaly.pl,https://radiosygnaly.pl,,t,f,f,f,50,50.0,50.0
+Słabe Radio,radio,,radio@slaberadio.pl,https://slaberadio.pl,,t,f,f,f,50,50.0,50.0
+Sławek Orwat,radio,,slaorw@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Sławomir Bajew,radio,,slawomir.bajew@radiopoznan.fm,https://radiopoznan.fm,,t,f,f,f,50,50.0,50.0
+Słyszymisię,local_press,,slyszymisie@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+T-Mobile Music PL,local_press,,redakcja@t-mobile-trendy.pl,https://t-mobile-trendy.pl,,t,f,f,f,50,50.0,50.0
+TALKSEEK Dawid Ryski,creator,,talkseek@yahoo.com,https://yahoo.com,,t,f,f,f,50,50.0,50.0
+TBA [RIP],radio,,anita.zuchora@bemowo.fm,https://bemowo.fm,,t,f,f,f,50,50.0,50.0
+TEAM,radio,,kontakt@teamradio.pl,https://teamradio.pl,,t,f,f,f,50,50.0,50.0
+TEMI - Galicyjski Tygodnik Informacyjny,local_press,,mwolak@temi.pl,https://temi.pl,,t,f,f,f,50,50.0,50.0
+TOO MANY SKULLS Raf The Might,creator,,xwechterx@o2.pl,https://o2.pl,,t,f,f,f,50,50.0,50.0
+TOP METAL NEXT HITS — Olli Prohorova,creator,,submit.olli@gmail.com,,https://open.spotify.com/playlist/6Y9FrCv7c7dkWs0B30PYas,t,f,f,f,50,50.0,50.0
+TRENDY Magazyn,local_press,,facebook@trendymagazyn.pl,https://trendymagazyn.pl,,t,f,f,f,50,50.0,50.0
+TV Kortowo,local_press,,wiolau@uwm.edu.pl,https://uwm.edu.pl,,t,f,f,f,50,50.0,50.0
+TV Net,local_press,,telewizja@tvnet.com.pl,https://tvnet.com.pl,,t,f,f,f,50,50.0,50.0
+TVP 3 Łódź,local_press,,sekretariat.lodz@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
+TVP KULTURA,local_press,,tvpkultura@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
+TVP Szczecin,local_press,,joanna.lisowska@tvp.pl,https://tvp.pl,,t,f,f,f,50,50.0,50.0
+TVPW Studencka Telewizja Internetowa,local_press,,redakcja@tvpw.pl,https://tvpw.pl,,t,f,f,f,50,50.0,50.0
+Tableau! rekomendacje muzyczne,local_press,,rekomendacje@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Tak dużo genialnej muzyki,local_press,,magda.rogoz@takduzogenialnejmuzyki.pl,https://takduzogenialnejmuzyki.pl,,t,f,f,f,50,50.0,50.0
+Tego Słucham PL,local_press,,radek@tegoslucham.pl,https://tegoslucham.pl,,t,f,f,f,50,50.0,50.0
+Telewizja M KRAKÓW,local_press,,krakow@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
+Telewizja M SILESIA,local_press,,slask@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
+Telewizja M ŁÓDŹ,local_press,,lodz@telewizjam.pl,https://telewizjam.pl,,t,f,f,f,50,50.0,50.0
+Telewizja Polonijna Tv Culture,local_press,,kontakt@tvculture.pl,https://tvculture.pl,,t,f,f,f,50,50.0,50.0
+Telewizja Warszawa,local_press,,produkcja@telewizjawarszawa.tv,https://telewizjawarszawa.tv,,t,f,f,f,50,50.0,50.0
+Teoria Strun,radio,,teoria.strun@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Teraz Rock,local_press,,,https://terazrock.pl,,t,f,f,f,50,50.0,50.0
+Teraz Wrocław,local_press,,redakcja@terazwroclaw.pl,https://terazwroclaw.pl,,t,f,f,f,50,50.0,50.0
+The Autopsy Report Rock & Metal Radio Show,radio,,soundsofchaos@hotmail.com,https://hotmail.com,,t,f,f,f,50,50.0,50.0
+The Metalcore Union — ANCProductions,creator,,ancagency.zach@gmail.com,,https://open.spotify.com/playlist/0URkqjgDRGgjc8tcyUkpO8,t,f,f,f,50,50.0,50.0
+The Nwothm,local_press,,thenwothm@gmail.com,https://thenwothm.com,,t,f,f,f,50,50.0,50.0
+The Rockferry,local_press,,zuziio@onet.eu,https://onet.eu,,t,f,f,f,50,50.0,50.0
+Thin Man Records,patron,,info@thinman.pl,https://thinman.pl,,t,f,f,f,50,50.0,50.0
+Thrashing Madness Radio Show,radio,,maciej.minczykowski@afera.com.pl,https://afera.com.pl,,t,f,f,f,50,50.0,50.0
+Toksyna FM,radio,,radio@toksyna.fm,https://toksyna.fm,,t,f,f,f,50,50.0,50.0
+Tomasz Bilak,creator,,tomaszbilak@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Tomasz Kasprzyk,radio,,kasprol@antyradio.pl,https://antyradio.pl,,t,f,f,f,50,50.0,50.0
+"Tomasz Żąda, Bartosz Gil",radio,,godzinazero@polskieradio.pl,https://polskieradio.pl,,t,f,f,f,50,50.0,50.0
+Tomek Kowalewicz,radio,,tomek@centrum.fm,https://centrum.fm,,t,f,f,f,50,50.0,50.0
+Tommaso Scalici,creator,,,https://submitlink.io,,t,f,f,f,50,50.0,50.0
+Tony Suwerenne,local_press,,redakcja.tosu@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Traffic,radio,,redakcja@radiotraffic.fm,https://radiotraffic.fm,,t,f,f,f,50,50.0,50.0
+Trasa 66,radio,,trasa66@radiokampus.waw.pl,https://radiokampus.waw.pl,,t,f,f,f,50,50.0,50.0
+Trojmiasto PL,local_press,,info@trojmiasto.pl,https://trojmiasto.pl,,t,f,f,f,50,50.0,50.0
+TuWroclaw,local_press,,patronaty@tuwroclaw.com,https://tuwroclaw.com,,t,f,f,f,50,50.0,50.0
+Tuba PL,local_press,,tubapl@gazeta.pl,https://gazeta.pl,,t,f,f,f,50,50.0,50.0
+Turn OFF The Night,radio,,olek.adamski@radioazyll.pl,https://radioazyll.pl,,t,f,f,f,50,50.0,50.0
+Twarze Warszawy,local_press,,kontakt@twarzewarszawy.pl,https://twarzewarszawy.pl,,t,f,f,f,50,50.0,50.0
+TwoToeTags,creator,,,https://youtube.com/@TwoToeTags,,t,f,f,f,50,50.0,50.0
+Twoja Telewizja Morska,local_press,,redakcja@telewizjattm.pl,https://telewizjattm.pl,,t,f,f,f,50,50.0,50.0
+UKSW,radio,,d.szafraniec@uksw.edu.pl,https://uksw.edu.pl,,t,f,f,f,50,50.0,50.0
+UMK TV,local_press,,studenckatv@stud.umk.pl,https://stud.umk.pl,,t,f,f,f,50,50.0,50.0
+UPRADGE DESIGN TUDIO,creator,,marcin@upgradestudio.pl,https://upgradestudio.pl,,t,f,f,f,50,50.0,50.0
+URSS TV,local_press,,ursstv@agh.edu.pl,https://agh.edu.pl,,t,f,f,f,50,50.0,50.0
+UWM FM,radio,,biuro@uwmfm.pl,https://uwmfm.pl,,t,f,f,f,50,50.0,50.0
+Ukryta cytadela,radio,,ukryta.cytadela@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Ultra Żurnal,local_press,,ultra@ultrazurnal.pl,https://ultrazurnal.pl,,t,f,f,f,50,50.0,50.0
+Ultramaryna,local_press,,poczta@ultramaryna.pl,https://ultramaryna.pl,,t,f,f,f,50,50.0,50.0
+Under the Sign of Garazel,patron,,lezarag@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Unicorn,reviewer,,unicorntorun@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Universal Music,patron,,universal@universalmusic.pl,https://universalmusic.pl,,t,f,f,f,50,50.0,50.0
+Uniwerek TV,local_press,,patronaty@uniwerek.tv,https://uniwerek.tv,,t,f,f,f,50,50.0,50.0
+Uniwersal info,local_press,,stawiskibohdan23@wp.pl,https://wp.pl,,t,f,f,f,50,50.0,50.0
+Upiór w eterze,radio,,pawel.bakowski@meteor.amu.edu.pl,https://meteor.amu.edu.pl,,t,f,f,f,50,50.0,50.0
+Usłysz,local_press,,hej@uslysz.com,https://uslysz.com,,t,f,f,f,50,50.0,50.0
+Uwolnij Muzyke,local_press,,redakcja@uwolnijmuzyke.pl,https://uwolnijmuzyke.pl,,t,f,f,f,50,50.0,50.0
+VM-Underground — death/black metal zine,local_press,,,https://www.vm-underground.com/submitting-music/,https://www.vm-underground.com/submitting-music/,t,f,f,f,50,50.0,50.0
+Via Nocturna,patron,,info@vianocturna.com,https://vianocturna.com,,t,f,f,f,50,50.0,50.0
+Victoria,radio,,sekretariat@radiovictoria.pl,https://radiovictoria.pl,,t,f,f,f,50,50.0,50.0
+Visula Kei,reviewer,,sklep@v-kei.pl,https://v-kei.pl,,t,f,f,f,50,50.0,50.0
+Von Trupka Records,patron,,vontrupkarec@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+W Nas,local_press,,redakcja@wnas.pl,https://wnas.pl,,t,f,f,f,50,50.0,50.0
+W Pełni Dźwięków,radio,,ish@radiopanteon.pl,https://radiopanteon.pl,,t,f,f,f,50,50.0,50.0
+W Pół Rocku,radio,,przemo@radio-aspekt.de,https://radio-aspekt.de,,t,f,f,f,50,50.0,50.0
+W Szczecinie TV,local_press,,w.wirwicki@wszczecinie.tv,https://wszczecinie.tv,,t,f,f,f,50,50.0,50.0
+W.Kolińska,creator,,kolinska.weronika@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+WAFP!,local_press,,wearefrompoland@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+WARNER Music Poland,patron,,facebook@warnermusic.pl,https://warnermusic.pl,,t,f,f,f,50,50.0,50.0
+WHY DUCK illustrates,creator,,krystian.scigalski@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+WaWa Love,local_press,,tomasz.jakubowski@grupawp.pl,https://grupawp.pl,,t,f,f,f,50,50.0,50.0
+Wacken Radio by RADIO BOB,radio,,kontakt@wackenradio.de,https://wackenradio.de,,t,f,f,f,50,50.0,50.0
+War Office Propaganda,patron,,info@rageineden.org,https://rageineden.org,,t,f,f,f,50,50.0,50.0
+Warsawholic,local_press,,contributors@warsawholic.com,https://warsawholic.com,,t,f,f,f,50,50.0,50.0
+Warszawa,radio,,reklama@radiowarszawa.com.pl,https://radiowarszawa.com.pl,,t,f,f,f,50,50.0,50.0
+Warszawska Telewizja Społecznościowa,local_press,,iwona.klorek@warszawskatv.pl,https://warszawskatv.pl,,t,f,f,f,50,50.0,50.0
+Warszawski Serwis Prasowy,local_press,,redakcja@wsp.waw.pl,https://wsp.waw.pl,,t,f,f,f,50,50.0,50.0
+Warthog Records,patron,,warthogrecords@gmail.com,https://gmail.com,,t,f,f,f,50,50.0,50.0
+Wiadomości Ogólnopolskie 24h,local_press,,redakcja@wo24.pl,https://wo24.pl,,t,f,f,f,50,50.0,50.0

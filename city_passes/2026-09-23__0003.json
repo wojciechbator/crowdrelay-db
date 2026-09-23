@@ -1,0 +1,56 @@
+{
+  "date": "2026-09-23",
+  "pass_id": 3,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz"
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw"
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź"
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 1,
+      "peer_candidates": 1,
+      "beacon_candidates": 0,
+      "contact_candidates": 0
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 23,
+      "peer_candidates": 2,
+      "beacon_candidates": 2,
+      "contact_candidates": 0
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 8,
+      "peer_candidates": 1,
+      "beacon_candidates": 0,
+      "contact_candidates": 0
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 41,
+      "peer_candidates": 5,
+      "beacon_candidates": 17,
+      "contact_candidates": 0
+    }
+  ]
+}

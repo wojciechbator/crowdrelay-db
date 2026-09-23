@@ -1,6 +1,10 @@
 name: Apply database updates
 
 on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Daily city micro-pass"]
+    types: [completed]
   push:
     paths:
       - "updates/pending/**"
@@ -17,7 +21,7 @@ permissions:
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical database

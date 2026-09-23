@@ -20,15 +20,20 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 4
-FORCED_CITY_MIN_VERSION = {"poland/bydgoszcz": 4}
+PASS_FORMAT_VERSION = 5
+FORCED_CITY_MIN_VERSION = {
+    "poland/bydgoszcz": 5,
+    "poland/warsaw": 5,
+    "poland/łódź": 5,
+    "germany/berlin": 5,
+}
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
 MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
 MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
 MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
 MIN_SOCIAL_FAMILIES = int(os.environ.get("CITY_MIN_SOCIAL_FAMILIES", "1"))
 MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "1"))
-UA = "CrowdRelayDB-CityResearch/4.0"
+UA = "CrowdRelayDB-CityResearch/5.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
@@ -89,6 +94,37 @@ GENERIC_ARTICLE_RE = re.compile(
     r"party|show|gig|series|season|soundtrack|could|why|how|the \w+ list)\b",
     re.I,
 )
+
+
+NON_ACTIONABLE_DOMAINS = {
+    "wikipedia.org", "pinterest.com", "tripadvisor.com", "randomcity.net",
+    "time.global", "fresha.com", "skyscanner.com", "anywayanyday.com",
+    "rome2rio.com", "numbeo.com", "airbnb.com", "weather.com", "weathervio.com",
+    "aqicn.org", "play.google.com", "google.com", "news.google.com",
+    "msn.com", "yahoo.com", "bing.com",
+}
+
+NON_ACTIONABLE_TITLE_RE = re.compile(
+    r"\b(wikipedia|random city generator|tripadvisor|cost of living|cheap flights|flights|taxi|"
+    r"sunbed|solarium|weather|air quality|google news|msn|yahoo|youtube terms of service|"
+    r"privacy policy|terms of service|cookies?|login|sign in)\b",
+    re.I,
+)
+
+OUTREACH_SIGNAL_RE = re.compile(
+    r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|"
+    r"music|muzyka|musik|hudba|concert|koncert|konzert|festival|festiwal|"
+    r"club|klub|venue|radio|podcast|magazine|magazyn|gazeta|zeitung|"
+    r"culture|kultura|kultur|artist|artyst|photograph|fotograf|creator|"
+    r"promoter|promotor|organizer|organizator|booking|vinyl|record store|sklep muzyczny)\b",
+    re.I,
+)
+
+GENERIC_SOCIAL_NAMES = {
+    "facebook", "facebook page", "facebook group", "instagram", "instagram creator",
+    "youtube", "youtube channel", "tiktok", "tiktok creator", "link to facebook.com",
+    "link to instagram.com", "link to youtube.com", "twitter", "x",
+}
 
 
 def norm(v: object) -> str:
@@ -185,6 +221,55 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
 def is_newsish(url: str) -> bool:
     d = domain(url)
     return d in NEWSISH_DOMAINS or d.startswith("news.")
+
+
+def beacon_candidate_ok(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False) -> bool:
+    if not url.startswith("http") or not name:
+        return False
+
+    d = domain(url)
+    path = urlparse(url).path.casefold().rstrip("/")
+    title_blob = norm(f"{name} {context}")
+
+    if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
+        return False
+    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+        return False
+    if is_newsish(url):
+        return False
+
+    if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+        if not usable_direct_url(url):
+            return False
+        if kind == "facebook_community" and not path.startswith("/groups/"):
+            return False
+        if kind == "youtube_channel" and not path.startswith(("/channel/", "/@", "/c/", "/user/")):
+            return False
+        clean_name = norm(name)
+        if clean_name in GENERIC_SOCIAL_NAMES:
+            return False
+        return bool(OUTREACH_SIGNAL_RE.search(title_blob))
+
+    if not allow_non_direct:
+        return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
+
+    kind_terms = {
+        "independent_radio": r"radio|rádio|radio station|radiostacja|musik|music|muzyka|koncert|concert",
+        "podcast": r"podcast|music|muzyka|musik|hudba|band|koncert|concert|metal",
+        "local_media": r"music|muzyka|musik|hudba|band|koncert|concert|metal|culture|kultura|festival|festiwal",
+        "event_calendar": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|festival|festiwal|music",
+        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event",
+        "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
+        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst",
+        "local_music_resource": r"record store|sklep muzyczny|music store|musikladen|vinyl|winyle|music|muzyka|musik|bandcamp|soundcloud",
+    }
+    pattern = kind_terms.get(kind, r"music|muzyka|musik|hudba|koncert|concert|metal|band|artist")
+    if not re.search(pattern, title_blob, re.I):
+        return False
+
+    if kind == "event_calendar" and re.search(r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b", title_blob, re.I):
+        return False
+    return True
 
 
 def domain(url: str) -> str:
@@ -685,7 +770,23 @@ def band_candidate_score(name: str, context: str, url: str) -> int:
 def likely_band_entity(name: str, context: str, url: str) -> bool:
     if not name or len(name) > 120:
         return False
-    return band_candidate_score(name, context, url) >= 4
+    clean = norm(name)
+    if NON_BAND_RE.search(clean) or NON_ACTIONABLE_TITLE_RE.search(clean):
+        return False
+    if clean in GENERIC_SOCIAL_NAMES or clean in {
+        "wiadomości", "wiadomosci", "facebook", "instagram", "youtube", "tiktok",
+        "facebook page", "youtube channel", "katalog zespołów", "katalog zespolow",
+        "client challenge",
+    }:
+        return False
+    band_domain = any(x in domain(url) for x in (
+        "bandcamp.com", "soundcloud.com", "metal-archives.com",
+        "bandsintown.com", "songkick.com",
+    ))
+    score = band_candidate_score(name, context, url)
+    if band_domain:
+        return score >= 5
+    return score >= 6 and bool(BAND_RE.search(f"{name} {context}"))
 
 
 def confidence(url: str, snippet: str, page_text: str = "") -> int:
@@ -872,9 +973,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     media_kinds = {"local_news", "local_press", "radio", "podcasts"}
 
     def add_beacon(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False):
-        if not url.startswith("http") or not name:
-            return
-        if is_newsish(url) and not is_direct_domain(url) and not allow_non_direct:
+        if not beacon_candidate_ok(name, kind, url, context, allow_non_direct):
             return
         found_emails = emails(context)
         conf = confidence(url, "", context)
@@ -955,7 +1054,8 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):
                 continue
-            add_beacon(entity["name"], entity["kind"], entity["url"], context)
+            if beacon_candidate_ok(entity["name"], entity["kind"], entity["url"], context):
+                add_beacon(entity["name"], entity["kind"], entity["url"], context)
             source_families.add(entity["kind"])
             if entity["kind"] in {
                 "facebook_community","facebook_page","instagram_creator",

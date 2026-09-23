@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/research-source-probe-2.yml"
+      - "probe_trigger.txt"
   workflow_dispatch:
 
 permissions:

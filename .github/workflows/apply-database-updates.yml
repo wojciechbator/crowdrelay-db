@@ -41,6 +41,7 @@ jobs:
               "Contacts": ["Email","Name","Organization","City","Kind","Phone","Notes","Last_Seen","Disappeared"],
           }
           wb = load_workbook("database.xlsx", read_only=True)
+          counts = {}
           for sheet, header in required.items():
               ws = wb[sheet]
               header_row = None
@@ -51,7 +52,31 @@ jobs:
                       break
               if header_row is None:
                   raise SystemExit(f"{sheet} header mismatch")
-              print(sheet, "header_row=", header_row, "rows=", ws.max_row - header_row)
+              counts[sheet] = ws.max_row - header_row
+              print(sheet, "header_row=", header_row, "rows=", counts[sheet])
+
+          minimums = {
+              "Venues": 92,
+              "Peer Bands": 1277,
+              "Beacons": 1084,
+              "Booking Agents": 11,
+              "Contacts": 909,
+          }
+          for sheet, minimum in minimums.items():
+              if counts[sheet] < minimum:
+                  raise SystemExit(f"{sheet} regressed: {counts[sheet]} < {minimum}")
+
+          # Sanity-check the venue layer: events/tours must never masquerade as venues.
+          ws = wb["Venues"]
+          bad = []
+          for row in ws.iter_rows(min_row=2, values_only=True):
+              name = str(row[0] or "").strip().casefold()
+              if name in {"sanity check tour", "seiðr 2026", "pole festiwalowe zakręć śmigłem"}:
+                  bad.append(name)
+          if bad:
+              raise SystemExit(f"Invalid venue records remain: {bad}")
+
+          print("INTEGRITY_OK", counts)
           PY
 
       - name: Commit canonical workbook

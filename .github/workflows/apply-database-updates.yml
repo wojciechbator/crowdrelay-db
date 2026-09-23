@@ -144,6 +144,7 @@ jobs:
 
           # Surface legacy/underspecified Peer Bands for manual semantic review.
           bad = []
+          idx = {name: i for i, name in enumerate(header)}
           for r in rows:
               name = str(r[idx["Name"]] or "").strip()
               country = str(r[idx["Country"]] or "").strip()

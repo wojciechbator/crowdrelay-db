@@ -8,13 +8,17 @@ on:
       - ".github/workflows/full-peer-band-audit.yml"
   workflow_dispatch:
 
+concurrency:
+  group: peer-band-full-audit
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4

@@ -335,6 +335,35 @@ def _parse_rss(xml: str) -> list[dict]:
     return out
 
 
+def jina_search(query: str, headers: dict) -> list[dict]:
+    results = []
+    for host in ("http://www.google.com/search?q=", "http://www.bing.com/search?q="):
+        try:
+            r = requests.get(
+                "https://r.jina.ai/" + host + quote_plus(query),
+                timeout=20,
+                headers=headers,
+                allow_redirects=True,
+            )
+            if r.status_code == 200 and r.text:
+                results.extend(_parse_markdown_search(r.text))
+        except requests.RequestException:
+            pass
+
+    seen = set()
+    out = []
+    for item in results:
+        url = item.get("url", "")
+        key = norm(url.rstrip("/"))
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+        if len(out) >= 20:
+            break
+    return out
+
+
 def search_engine(query: str) -> list[dict]:
     headers = {
         "User-Agent": (
@@ -560,6 +589,29 @@ def discover(city: str, country: str) -> dict:
     all_results: list[tuple[str, dict]] = []
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {ex.submit(search_engine, q): kind for kind, q in queries}
+        for fut in as_completed(futures):
+            kind = futures[fut]
+            try:
+                all_results.extend((kind, x) for x in fut.result())
+            except Exception:
+                pass
+
+    # The hosted runner can receive noisy/irrelevant HTML search results.
+    # Add a second, text-based search path specifically for direct local entities.
+    direct_query_kinds = {
+        "facebook", "facebook_groups", "youtube", "culture",
+        "promoters_media", "creators",
+    }
+    jina_jobs = [
+        (kind, query)
+        for kind, query in queries
+        if kind in direct_query_kinds
+    ]
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futures = {
+            ex.submit(jina_search, query, headers): kind
+            for kind, query in jina_jobs
+        }
         for fut in as_completed(futures):
             kind = futures[fut]
             try:

@@ -22,13 +22,16 @@ SHEET_MAP = {
 
 REMOVAL_HEADER = ["Sheet", "Key_Type", "Key", "Reason", "Source_URL", "Verified_Date"]
 
+
 def norm(v: object) -> str:
     if v is None:
         return ""
     return str(v).strip().casefold()
 
+
 def row_sig(row: list[object]) -> tuple[str, ...]:
     return tuple(norm(v) for v in row)
+
 
 def find_header_row(ws, expected: list[str]) -> int:
     expected_sig = tuple(norm(x) for x in expected)
@@ -38,12 +41,82 @@ def find_header_row(ws, expected: list[str]) -> int:
             return row_no
     raise RuntimeError(f"Could not find expected header in sheet {ws.title!r}")
 
+
+def find_existing_header_row(ws) -> int:
+    for row_no in range(1, min(ws.max_row, 10) + 1):
+        values = [norm(ws.cell(row_no, col).value) for col in range(1, min(ws.max_column, 20) + 1)]
+        if "name" in values or "email" in values:
+            return row_no
+    raise RuntimeError(f"Could not locate header row in sheet {ws.title!r}")
+
+
 def load_csv(path: Path) -> tuple[list[str], list[list[str]]]:
     with path.open("r", encoding="utf-8-sig", newline="") as fh:
         rows = list(csv.reader(fh))
     if not rows:
         raise RuntimeError(f"Empty CSV: {path}")
     return rows[0], rows[1:]
+
+
+def apply_removals(wb, csv_path: Path) -> int:
+    header, data = load_csv(csv_path)
+    if [norm(x) for x in header] != [norm(x) for x in REMOVAL_HEADER]:
+        raise RuntimeError(f"Invalid removals header in {csv_path}: {header}")
+
+    removed = 0
+    for raw in data:
+        if not raw or not any(norm(x) for x in raw):
+            continue
+        if len(raw) < len(REMOVAL_HEADER):
+            raise RuntimeError(f"Malformed removal row in {csv_path}: {raw}")
+
+        target_sheet = raw[0].strip()
+        key_type = norm(raw[1])
+        key_raw = raw[2]
+        key = norm(key_raw)
+
+        if target_sheet not in wb.sheetnames:
+            raise RuntimeError(f"Removal references missing sheet {target_sheet!r}")
+
+        ws = wb[target_sheet]
+        header_row = find_existing_header_row(ws)
+        headers = [
+            norm(ws.cell(header_row, c).value)
+            for c in range(1, ws.max_column + 1)
+        ]
+        idx = {value: i + 1 for i, value in enumerate(headers) if value}
+
+        if key_type == "name":
+            required_cols = ["name"]
+            values = [key]
+        elif key_type == "email":
+            required_cols = ["email"]
+            values = [key]
+        elif key_type == "website":
+            required_cols = ["website"]
+            values = [key]
+        elif key_type == "name+city":
+            required_cols = ["name", "city"]
+            values = [norm(x) for x in key_raw.split("||", 1)]
+        elif key_type == "name+country":
+            required_cols = ["name", "country"]
+            values = [norm(x) for x in key_raw.split("||", 1)]
+        else:
+            raise RuntimeError(f"Unsupported removal key type {raw[1]!r}")
+
+        if len(values) != len(required_cols) or any(col not in idx for col in required_cols):
+            raise RuntimeError(f"Removal key cannot be resolved in {target_sheet!r}: {raw}")
+
+        for row_no in range(ws.max_row, header_row, -1):
+            if all(
+                norm(ws.cell(row_no, idx[col]).value) == value
+                for col, value in zip(required_cols, values)
+            ):
+                ws.delete_rows(row_no, 1)
+                removed += 1
+
+    return removed
+
 
 def main() -> None:
     if not DB.exists():
@@ -55,47 +128,12 @@ def main() -> None:
 
     for csv_path in sorted(PENDING.glob("*.csv")):
         if csv_path.name.startswith("Removals__"):
-            header, data = load_csv(csv_path)
-            if header != REMOVAL_HEADER:
-                raise RuntimeError(f"Invalid removals header in {csv_path}: {header}")
-            removed = 0
-            for raw in data:
-                if len(raw) < len(REMOVAL_HEADER):
-                    raise RuntimeError(f"Malformed removal row in {csv_path}: {raw}")
-                target_sheet, key_type, key = raw[0], norm(raw[1]), norm(raw[2])
-                if target_sheet not in wb.sheetnames:
-                    raise RuntimeError(f"Removal references missing sheet {target_sheet!r}")
-                ws = wb[target_sheet]
-                headers = [ws.cell(1, c).value for c in range(1, ws.max_column + 1)]
-                idx = {norm(v): i + 1 for i, v in enumerate(headers) if v not in (None, "")}
-                if key_type == "name":
-                    cols = [idx.get("name")]
-                    vals = [key]
-                elif key_type == "email":
-                    cols = [idx.get("email")]
-                    vals = [key]
-                elif key_type == "website":
-                    cols = [idx.get("website")]
-                    vals = [key]
-                elif key_type == "name+city":
-                    cols = [idx.get("name"), idx.get("city")]
-                    parts = [norm(x) for x in raw[2].split("||", 1)]
-                    vals = parts if len(parts) == 2 else []
-                elif key_type == "name+country":
-                    cols = [idx.get("name"), idx.get("country")]
-                    parts = [norm(x) for x in raw[2].split("||", 1)]
-                    vals = parts if len(parts) == 2 else []
-                else:
-                    raise RuntimeError(f"Unsupported removal key type {raw[1]!r}")
-                if not cols or any(c is None for c in cols) or len(vals) != len(cols):
-                    raise RuntimeError(f"Removal key cannot be resolved in {target_sheet!r}: {raw}")
-                for row_no in range(ws.max_row, 1, -1):
-                    if all(norm(ws.cell(row_no, col).value) == val for col, val in zip(cols, vals)):
-                        ws.delete_rows(row_no, 1)
-                        removed += 1
-                        changed = True
+            removed = apply_removals(wb, csv_path)
+            if removed:
+                changed = True
             applied.append((csv_path, removed, "removed"))
             continue
+
         prefix = csv_path.name.split("__", 1)[0]
         sheet = SHEET_MAP.get(prefix)
         if not sheet:
@@ -109,7 +147,12 @@ def main() -> None:
         start_data_row = header_row + 1
 
         existing = set()
-        for row in ws.iter_rows(min_row=start_data_row, max_row=ws.max_row, max_col=len(header), values_only=True):
+        for row in ws.iter_rows(
+            min_row=start_data_row,
+            max_row=ws.max_row,
+            max_col=len(header),
+            values_only=True,
+        ):
             existing.add(row_sig(list(row)))
 
         added = 0
@@ -131,11 +174,12 @@ def main() -> None:
     if applied:
         APPLIED.mkdir(parents=True, exist_ok=True)
         for path, _, _ in applied:
-        shutil.move(str(path), str(APPLIED / path.name))
+            shutil.move(str(path), str(APPLIED / path.name))
 
     print(f"pending_files={len(applied)} changed={changed}")
     for path, count, action in applied:
         print(f"{path.name}: {action}={count}")
+
 
 if __name__ == "__main__":
     main()

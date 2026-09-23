@@ -330,18 +330,24 @@ def inspect(rec: dict) -> dict:
 
 def load_prior_audited_names() -> set[str]:
     audited: set[str] = set()
-    applied_root = Path("updates/applied")
-    if not applied_root.exists():
-        return audited
+    search_roots = [Path("updates/applied"), Path("audit")]
+    patterns = [
+        "Audit_Peer_Bands__*.csv",
+        "peer_bands_audit_batch__*.csv",
+    ]
 
-    for path in applied_root.rglob("Audit_Peer_Bands__*.csv"):
-        try:
-            with path.open("r", encoding="utf-8-sig", newline="") as fh:
-                for row in csv.reader(fh):
-                    if row and row[0].strip() and row[0].strip().casefold() != "name":
-                        audited.add(norm(row[0]))
-        except OSError:
+    for root in search_roots:
+        if not root.exists():
             continue
+        for pattern in patterns:
+            for path in root.rglob(pattern):
+                try:
+                    with path.open("r", encoding="utf-8-sig", newline="") as fh:
+                        for row in csv.reader(fh):
+                            if row and row[0].strip() and row[0].strip().casefold() != "name":
+                                audited.add(norm(row[0]))
+                except OSError:
+                    continue
     return audited
 
 

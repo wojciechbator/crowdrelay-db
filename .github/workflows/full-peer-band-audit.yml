@@ -2,6 +2,12 @@ name: Full peer band audit
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "audit/**"
+      - "database.xlsx"
+      - "scripts/full_audit.py"
+      - ".github/workflows/full-peer-band-audit.yml"
 
 concurrency:
   group: peer-band-full-audit
@@ -13,7 +19,7 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -28,7 +34,8 @@ jobs:
 
       - name: Run full row-by-row peer audit
         env:
-          APPLY_AUDIT: "0"
+          APPLY_AUDIT: "1"
+          AUDIT_BATCH_SIZE: "10"
         run: python scripts/full_audit.py
 
       - name: Upload audit report
@@ -39,14 +46,28 @@ jobs:
             audit/peer_bands_audit__*.csv
             audit/peer_bands_audit_summary__*.json
 
-      - name: Commit audit report
+      - name: Validate 10-row batch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv
+          reports = sorted(Path("audit").glob("peer_bands_audit_batch__*.csv"))
+          report = reports[-1]
+          with report.open(encoding="utf-8", newline="") as fh:
+              rows = list(csv.DictReader(fh))
+          if len(rows) > 10:
+              raise SystemExit(f"Batch too large: {len(rows)} > 10")
+          print("BATCH_QA_OK", report.name, len(rows))
+          PY
+
+      - name: Commit 10-row batch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add audit
+          git add database.xlsx audit
           if git diff --cached --quiet; then
-            echo "No audit report changes."
+            echo "No audit batch changes."
             exit 0
           fi
-          git commit -m "chore: audit peer band database"
+          git commit -m "chore: audit next 10 peer bands"
           git push

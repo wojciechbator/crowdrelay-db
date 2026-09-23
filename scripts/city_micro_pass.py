@@ -504,7 +504,7 @@ def search_engine(query: str) -> list[dict]:
         try:
             r = requests.get(
                 base + quote_plus(query),
-                timeout=15,
+                timeout=6,
                 headers=headers,
                 allow_redirects=True,
             )
@@ -522,7 +522,7 @@ def search_engine(query: str) -> list[dict]:
             try:
                 r = requests.get(
                     base + quote_plus(query),
-                    timeout=20,
+                    timeout=8,
                     headers=headers,
                     allow_redirects=True,
                 )

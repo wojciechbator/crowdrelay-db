@@ -29,21 +29,20 @@ jobs:
       - name: Apply pending research in-place
         run: python scripts/apply_pending.py
 
-      - name: Probe public band sources
+      - name: Probe public band source pagination
         run: |
           set -e
-          urls=(
-            "https://www.metalunderground.com/bands/country/Poland/"
-            "https://www.metalunderground.com/bands/country/Germany/"
-            "https://www.metalunderground.com/bands/country/Czech-Republic/"
-            "https://www.metalunderground.com/bands/country/Slovakia/"
-            "https://www.metal-archives.com/search/ajax-band-search/?field=name&query=Lunacy"
-          )
-          for u in "${urls[@]}"; do
-            body="$(curl -ksSL --max-time 20 -A 'Mozilla/5.0 CrowdRelay database audit' -w '\nHTTP_STATUS:%{http_code}' "$u")"
-            printf 'PROBE %s %s\n' "$u" "${body: -16}"
-            printf '%s\n' "${body:0:220}" | tr '\n' ' '
-            echo
+          for u in \
+            "https://www.metalunderground.com/bands/country/Poland/" \
+            "https://www.metalunderground.com/bands/country/Germany/" \
+            "https://www.metalunderground.com/bands/country/Czech-Republic/" \
+            "https://www.metalunderground.com/bands/country/Slovakia/"; do
+            echo "SOURCE $u"
+            curl -ksSL --max-time 30 -A 'Mozilla/5.0 CrowdRelay database audit' "$u" |
+              grep -oE 'href="[^"]+"' |
+              sed 's/^href="//; s/"$//' |
+              grep -E '/bands/country/|[?&]page=|/page/[0-9]+' |
+              sort -u | head -30 || true
           done
 
       - name: Validate canonical workbook

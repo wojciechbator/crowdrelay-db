@@ -69,5 +69,7 @@
       "beacon_candidates": 17,
       "contact_candidates": 1
     }
-  ]
+  ],
+  "invalidated": true,
+  "invalidation_reason": "CityPass 0005 revoked: social/entity filtering was still too permissive; rerun using venue-anchored discovery."
 }

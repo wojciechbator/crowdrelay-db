@@ -513,24 +513,6 @@ def search_engine(query: str) -> list[dict]:
         except requests.RequestException:
             pass
 
-    if not results:
-        for base in (
-            "https://r.jina.ai/http://www.google.com/search?q=",
-            "https://r.jina.ai/http://www.bing.com/search?q=",
-            "https://r.jina.ai/https://html.duckduckgo.com/html/?q=",
-        ):
-            try:
-                r = requests.get(
-                    base + quote_plus(query),
-                    timeout=8,
-                    headers=headers,
-                    allow_redirects=True,
-                )
-                if r.status_code == 200 and r.text:
-                    results.extend(_parse_markdown_search(r.text))
-            except requests.RequestException:
-                pass
-
     seen = set()
     out = []
     for item in results:

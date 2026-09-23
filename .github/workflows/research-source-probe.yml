@@ -1,0 +1,30 @@
+name: Research source probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe sources
+        run: |
+          set -x
+          python3 - <<'PY'
+          import requests, urllib.parse
+          h={"User-Agent":"CrowdRelayDB-ResearchAudit/1.0"}
+          ma="https://www.metal-archives.com/search/ajax-band-search/?field=name&query="+urllib.parse.quote_plus("71TonMan")+"&sEcho=1&iColumns=3&sColumns=&iDisplayStart=0&iDisplayLength=20&mDataProp_0=0&mDataProp_1=1&mDataProp_2=2"
+          for name,url in [
+            ("metal_archives",ma),
+            ("bing","https://www.bing.com/search?q="+urllib.parse.quote_plus('"71TonMan" Poland 2026 metal band')),
+          ]:
+            try:
+              r=requests.get(url,headers=h,timeout=20)
+              print(name, r.status_code, len(r.content), r.url)
+              print(r.text[:500])
+            except Exception as e:
+              print(name,"ERROR",repr(e))
+          PY

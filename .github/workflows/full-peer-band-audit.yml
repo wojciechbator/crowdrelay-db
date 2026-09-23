@@ -1,25 +1,21 @@
-name: Full peer band audit
+name: Daily city micro-pass
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "audit/**"
-      - "database.xlsx"
-      - "scripts/full_audit.py"
-      - ".github/workflows/full-peer-band-audit.yml"
+  schedule:
+    - cron: "30 6 * * *"
 
 concurrency:
-  group: peer-band-full-audit
+  group: crowdrelay-city-micro-pass
   cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  audit:
+  city-pass:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -32,45 +28,44 @@ jobs:
       - name: Install dependencies
         run: python -m pip install openpyxl requests beautifulsoup4
 
-      - name: Run full row-by-row peer audit
+      - name: Research next two eligible cities
         env:
-          APPLY_AUDIT: "1"
-          AUDIT_BATCH_SIZE: "10"
-        run: python scripts/full_audit.py
+          CITY_BATCH_SIZE: "2"
+        run: python scripts/city_micro_pass.py
 
-      - name: Upload audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: peer-band-audit
-          path: |
-            audit/peer_bands_audit__*.csv
-            audit/peer_bands_audit_summary__*.json
-
-      - name: Validate 10-row batch
+      - name: Validate city pass
         run: |
           python3 - <<'PY'
+          import json
           from pathlib import Path
-          import csv
-          reports = sorted(Path("audit").glob("peer_bands_audit_batch__*.csv"))
-          report = reports[-1]
-          with report.open(encoding="utf-8", newline="") as fh:
-              rows = list(csv.DictReader(fh))
-          if len(rows) > 10:
-              raise SystemExit(f"Batch too large: {len(rows)} > 10")
-          print("BATCH_QA_OK", report.name, len(rows))
+
+          files = sorted(Path("city_passes").glob("*.json"))
+          if not files:
+              print("No eligible cities left.")
+              raise SystemExit(0)
+
+          payload = json.loads(files[-1].read_text(encoding="utf-8"))
+          cities = payload.get("cities", [])
+          if len(cities) > 2:
+              raise SystemExit(f"City batch too large: {len(cities)} > 2")
+
+          for city in cities:
+              if city.get("country") not in {"Poland", "Germany", "Czechia", "Slovakia"}:
+                  raise SystemExit(f"Unexpected country: {city}")
+              if not city.get("city"):
+                  raise SystemExit(f"Missing city: {city}")
+
+          print("CITY_PASS_QA_OK", cities)
           PY
 
-      - name: Commit 10-row batch
+      - name: Commit city research queue and pending updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git stash push -u -m "pre-audit-rebase" || true
-          git pull --rebase origin main
-          git stash pop || true
-          git add database.xlsx audit
+          git add city_passes scripts/city_micro_pass.py updates/pending
           if git diff --cached --quiet; then
-            echo "No audit batch changes."
+            echo "No city research changes."
             exit 0
           fi
-          git commit -m "chore: audit next 10 peer bands"
+          git commit -m "research: daily city micro-pass"
           git push

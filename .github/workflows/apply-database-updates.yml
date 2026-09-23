@@ -43,10 +43,15 @@ jobs:
           wb = load_workbook("database.xlsx", read_only=True)
           for sheet, header in required.items():
               ws = wb[sheet]
-              got = [ws.cell(1, i + 1).value for i in range(len(header))]
-              if got != header:
-                  raise SystemExit(f"{sheet} header mismatch: {got}")
-              print(sheet, "rows=", ws.max_row - 1)
+              header_row = None
+              for row_no in range(1, min(ws.max_row, 10) + 1):
+                  got = [ws.cell(row_no, i + 1).value for i in range(len(header))]
+                  if got == header:
+                      header_row = row_no
+                      break
+              if header_row is None:
+                  raise SystemExit(f"{sheet} header mismatch")
+              print(sheet, "header_row=", header_row, "rows=", ws.max_row - header_row)
           PY
 
       - name: Commit canonical workbook

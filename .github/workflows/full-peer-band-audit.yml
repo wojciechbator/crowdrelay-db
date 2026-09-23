@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: peer-band-full-audit
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -64,6 +64,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git stash push -u -m "pre-audit-rebase" || true
+          git pull --rebase origin main
+          git stash pop || true
           git add database.xlsx audit
           if git diff --cached --quiet; then
             echo "No audit batch changes."

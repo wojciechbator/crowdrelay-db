@@ -31,23 +31,20 @@ jobs:
 
       - name: Probe public band sources
         run: |
-          python - <<'PY'
-          from urllib.request import Request, urlopen
-          from urllib.parse import quote
-          headers={"User-Agent":"Mozilla/5.0 CrowdRelay database audit"}
-          urls=[
-            "https://www.metalunderground.com/bands/country/Poland/",
-            "https://www.metalunderground.com/bands/country/Germany/",
-            "https://www.metalunderground.com/bands/country/Czech-Republic/",
-            "https://www.metalunderground.com/bands/country/Slovakia/",
-            "https://www.metal-archives.com/search/ajax-band-search/?field=name&query="+quote("Lunacy"),
-          ]
-          for u in urls:
-              req=Request(u,headers=headers)
-              with urlopen(req,timeout=20) as r:
-                  content=r.read()
-                  print("PROBE",r.status,len(content),r.geturl(),content[:180].decode("utf-8","replace").replace("\n"," "))
-          PY
+          set -e
+          urls=(
+            "https://www.metalunderground.com/bands/country/Poland/"
+            "https://www.metalunderground.com/bands/country/Germany/"
+            "https://www.metalunderground.com/bands/country/Czech-Republic/"
+            "https://www.metalunderground.com/bands/country/Slovakia/"
+            "https://www.metal-archives.com/search/ajax-band-search/?field=name&query=Lunacy"
+          )
+          for u in "${urls[@]}"; do
+            body="$(curl -ksSL --max-time 20 -A 'Mozilla/5.0 CrowdRelay database audit' -w '\nHTTP_STATUS:%{http_code}' "$u")"
+            printf 'PROBE %s %s\n' "$u" "${body: -16}"
+            printf '%s\n' "${body:0:220}" | tr '\n' ' '
+            echo
+          done
 
       - name: Validate canonical workbook
         run: |

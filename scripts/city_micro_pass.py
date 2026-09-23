@@ -222,7 +222,8 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
         if d == "facebook.com":
             kind = "facebook_community" if "/groups/" in href else "facebook_page"
         elif d in {"youtube.com", "youtu.be"}:
-            kind = "youtube_channel"
+            path = urlparse(href).path.casefold()
+            kind = "youtube_video" if path.startswith("/watch") else "youtube_channel"
         elif d == "instagram.com":
             kind = "instagram_creator"
         elif d == "bandcamp.com":
@@ -301,19 +302,28 @@ def _parse_html(engine: str, html: str) -> list[dict]:
                 "snippet": sn.get_text(" ", strip=True) if sn else "",
             })
     elif engine == "google":
-        for item in soup.select("div.MjjYud"):
-            a = item.select_one("a[href]")
-            h = item.select_one("h3")
-            if not a or not h:
+        # Google changes result container classes frequently. Anchor + h3 is much more stable.
+        for h in soup.find_all("h3"):
+            a = h.find_parent("a", href=True)
+            if not a:
                 continue
-            url = a.get("href", "")
+            url = unquote(a.get("href", ""))
             if not url.startswith("http"):
                 continue
-            sn = item.select_one("div.VwiC3b")
+            parent = h
+            snippet = ""
+            for _ in range(5):
+                parent = parent.parent
+                if not parent:
+                    break
+                text = parent.get_text(" ", strip=True)
+                if len(text) > len(h.get_text(" ", strip=True)) + 40:
+                    snippet = text[:800]
+                    break
             out.append({
                 "title": h.get_text(" ", strip=True),
                 "url": url,
-                "snippet": sn.get_text(" ", strip=True) if sn else "",
+                "snippet": snippet,
             })
     return [
         x for x in out
@@ -646,6 +656,10 @@ def discover(city: str, country: str) -> dict:
             final_candidate = page_url or final_url
             search_title = item.get("title", "").strip()
             search_snippet = item.get("snippet", "").strip()
+            scoped_direct = usable_direct_url(item.get("url", "")) and query_kind in {
+                "facebook", "facebook_groups", "youtube", "culture",
+                "promoters_media", "creators",
+            }
             page_local = local_signal(
                 city,
                 page_title or search_title,
@@ -668,7 +682,7 @@ def discover(city: str, country: str) -> dict:
                 "snippet": search_snippet,
                 "text": page_text,
                 "links": links,
-                "local": page_local or search_local,
+                "local": page_local or search_local or scoped_direct,
             })
 
     peers: list[list[str]] = []

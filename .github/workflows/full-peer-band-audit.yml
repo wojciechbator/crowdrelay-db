@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - "scripts/full_audit.py"
-      - "database.xlsx"
       - ".github/workflows/full-peer-band-audit.yml"
   workflow_dispatch:
 

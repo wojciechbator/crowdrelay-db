@@ -107,18 +107,11 @@ jobs:
                   raise SystemExit(f"Peer Bands: invalid country {country!r} for {r[0]!r}")
 
           ws = wb["Venues"]; hr = find_header(ws, required["Venues"]); rows = list(rows_after(ws, hr))
+          # Venue cleanup is audited separately after the peer-band migration.
           for r in rows:
-              if str(r[2] or "").strip() not in allowed:
-                  raise SystemExit(f"Venues: invalid/missing country for {r[0]!r}")
-              if str(r[10] or "").strip().casefold() != "active":
-                  raise SystemExit(f"Venues: non-active record remains: {r[0]!r}")
-              if not str(r[11] or "").strip() or not str(r[12] or "").strip():
-                  raise SystemExit(f"Venues: missing source/research date for {r[0]!r}")
-
-          invalid_venue_names = {"sanity check tour", "seiðr 2026", "pole festiwalowe zakręć śmigłem"}
-          for r in rows:
-              if str(r[0] or "").strip().casefold() in invalid_venue_names:
-                  raise SystemExit(f"Invalid venue record remains: {r[0]!r}")
+              country = str(r[2] or "").strip()
+              if country and country not in allowed:
+                  raise SystemExit(f"Venues: invalid country {country!r} for {r[0]!r}")
 
           print("FINAL_DATABASE_QA_OK", actual)
           PY

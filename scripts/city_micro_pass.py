@@ -113,7 +113,10 @@ def usable_direct_url(url: str) -> bool:
     if d == "facebook.com":
         return path.startswith("/groups/") or (
             len(path.strip("/")) >= 2
-            and not path.startswith(("/search", "/watch", "/events", "/reel"))
+            and not path.startswith((
+                "/search", "/watch", "/events", "/reel", "/biz/", "/sharer.php"
+            ))
+            and path != "/sharer.php"
         )
     if d in {"youtube.com", "youtu.be"}:
         if d == "youtu.be":
@@ -221,7 +224,7 @@ def resolve_url(url: str, headers: dict | None = None) -> str:
 def fetch_page(url: str, headers: dict) -> tuple[str, str, str, list[tuple[str, str]]]:
     try:
         r = requests.get(
-            url, timeout=8, headers=headers, allow_redirects=True
+            url, timeout=6, headers=headers, allow_redirects=True
         )
         if r.status_code != 200 or not r.text:
             return "", "", "", []
@@ -398,7 +401,6 @@ def _parse_rss(xml: str) -> list[dict]:
 
 SEARX_INSTANCES = (
     "https://search.serpensin.com",
-    "https://search.anoni.net",
     "https://search.lumy.live",
 )
 
@@ -415,7 +417,7 @@ def searx_search(query: str, headers: dict) -> list[dict]:
                     "safesearch": 0,
                     "pageno": 1,
                 },
-                timeout=15,
+                timeout=8,
                 headers=headers,
                 allow_redirects=True,
             )

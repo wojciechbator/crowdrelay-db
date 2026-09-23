@@ -1,90 +1,63 @@
-name: Bootstrap canonical database.xlsx
+name: Bootstrap canonical database
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    paths:
+      - "snapshot/**"
+      - "scripts/rebuild_from_snapshot.py"
+      - ".github/workflows/bootstrap-database.yml"
 
 permissions:
   contents: write
-  issues: read
 
 jobs:
-  bootstrap:
-    if: >
-      github.event.issue.number == 2 &&
-      contains(github.event.comment.body, 'CRDB-BOOTSTRAP')
+  rebuild:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rebuild XLSX from issue payload
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 - <<'PY'
-          import base64, gzip, json, os, re, urllib.request
-          issue = 2
-          repo = os.environ["GITHUB_REPOSITORY"]
-          req = urllib.request.Request(
-              f"https://api.github.com/repos/{repo}/issues/{issue}/comments?per_page=100",
-              headers={
-                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
-                  "Accept": "application/vnd.github+json",
-                  "X-GitHub-Api-Version": "2022-11-28",
-              },
-          )
-          with urllib.request.urlopen(req) as r:
-              comments = json.load(r)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-          parts = {}
-          complete = False
-          for c in comments:
-              body = c.get("body", "")
-              m = re.search(r"CRDB-BOOTSTRAP PART (d+)/(d+)
-([A-Za-z0-9+/=
-]+)$", body)
-              if m:
-                  parts[int(m.group(1))] = (int(m.group(2)), re.sub(r"s+", "", m.group(3)))
-              if "CRDB-BOOTSTRAP COMPLETE" in body:
-                  complete = True
+      - name: Install dependencies
+        run: python -m pip install openpyxl
 
-          if not complete or not parts:
-              raise SystemExit("Bootstrap not marked complete yet.")
+      - name: Rebuild from canonical snapshot
+        run: python scripts/rebuild_from_snapshot.py
 
-          total = next(iter(parts.values()))[0]
-          if len(parts) != total or sorted(parts) != list(range(total)):
-              raise SystemExit(f"Missing payload parts: got {sorted(parts)} expected 0..{total-1}")
+      - name: Apply pending research deltas
+        run: python scripts/apply_pending.py
 
-          payload = "".join(parts[i][1] for i in range(total))
-          raw = gzip.decompress(base64.b64decode(payload))
-          with open("database.xlsx", "wb") as f:
-              f.write(raw)
-          print(f"Rebuilt database.xlsx: {len(raw)} bytes")
-          PY
-
-      - name: Validate XLSX
+      - name: Validate workbook
         run: |
           python3 - <<'PY'
           from openpyxl import load_workbook
           wb = load_workbook("database.xlsx", read_only=True)
-          print("sheets:", wb.sheetnames)
-          for s in wb.sheetnames:
-              print(s, wb[s].max_row, wb[s].max_column)
-          required = {"Venues", "Booking Agents", "Peer Bands"}
-          if not required.issubset(set(wb.sheetnames)):
-              raise SystemExit("Required sheets missing")
+          required = {
+              "Venues": ["Name","City","Country","Address","Website","Audience_Genre","Capacity","Booking_Contact","Email","Public_Financial_Info","Status","Source_URL","Research_Date","Target_Fit","Contact_Quality","Outreach_Angle","Notes"],
+              "Booking Agents": ["Name","Agency","Email","Roster_URL","Genres","Source_URL","Research_Date","Notes"],
+              "Peer Bands": ["Name","Country","City","Genre","Email","Social","Website","Links","Source_URL","Activity","Research_Date","Status","Confidence","Contact_Type","Contact_Source","Outreach_Readiness","Notes"],
+          }
+          for sheet, header in required.items():
+              ws = wb[sheet]
+              got = [ws.cell(1, i + 1).value for i in range(len(header))]
+              if got != header:
+                  raise SystemExit(f"{sheet} header mismatch: {got}")
+              print(sheet, "rows=", ws.max_row - 1)
           PY
 
-      - name: Commit canonical XLSX
+      - name: Commit canonical workbook
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add database.xlsx
+          git add database.xlsx updates/applied
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
           git commit -m "chore: bootstrap canonical Virya database"
           git push
-
-      - name: Close bootstrap issue
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh issue close 2 --repo "$GITHUB_REPOSITORY" --comment "Bootstrap complete: canonical database.xlsx reconstructed, validated and committed to main."

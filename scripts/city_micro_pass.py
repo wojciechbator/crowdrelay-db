@@ -325,6 +325,18 @@ def _parse_html(engine: str, html: str) -> list[dict]:
                 "url": url,
                 "snippet": snippet,
             })
+    elif engine in {"brave", "mojeek"}:
+        for a in soup.select("a[href]"):
+            href = unquote(a.get("href", ""))
+            title = a.get_text(" ", strip=True)
+            if not href.startswith("http") or not title or len(title) < 4:
+                continue
+            if domain(href) in {"brave.com", "search.brave.com", "mojeek.com", "www.mojeek.com"}:
+                continue
+            parent = a.parent
+            snippet = parent.get_text(" ", strip=True)[:800] if parent else ""
+            out.append({"title": title[:250], "url": href, "snippet": snippet})
+
     return [
         x for x in out
         if x["url"] and domain(x["url"]) not in {"duckduckgo.com", "bing.com", "google.com"}
@@ -405,6 +417,9 @@ def search_engine(query: str) -> list[dict]:
         ("ddg_lite", "https://lite.duckduckgo.com/lite/?q="),
         ("bing", "https://www.bing.com/search?q="),
         ("google", "https://www.google.com/search?q="),
+        ("google", "https://www.google.com/search?gbv=1&q="),
+        ("brave", "https://search.brave.com/search?q="),
+        ("mojeek", "https://www.mojeek.com/search?q="),
     ]
     for engine, base in endpoints:
         try:

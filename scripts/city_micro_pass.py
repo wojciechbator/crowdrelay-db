@@ -100,14 +100,67 @@ def is_direct_domain(url: str) -> bool:
 
 def usable_direct_url(url: str) -> bool:
     d = domain(url)
-    path = urlparse(url).path.casefold()
+    path = urlparse(url).path.casefold().rstrip("/")
     if not is_direct_domain(url):
         return False
-    if d == "facebook.com" and path.startswith(("/search", "/watch", "/events")):
-        return False
-    if d == "youtube.com" and path.startswith(("/results", "/hashtag", "/feed")):
-        return False
+    if d == "facebook.com":
+        return path.startswith("/groups/") or (
+            len(path.strip("/")) >= 2
+            and not path.startswith(("/search", "/watch", "/events", "/reel"))
+        )
+    if d in {"youtube.com", "youtu.be"}:
+        # A beacon is a channel/profile, never an individual video/short.
+        if d == "youtu.be":
+            return False
+        return path.startswith(("/channel/", "/@","/c/","/user/"))
+    if d == "instagram.com":
+        return len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
+    if d in {"bandcamp.com", "soundcloud.com"}:
+        return len(path.strip("/").split("/")) == 1
+    if d in {"bandsintown.com", "songkick.com"}:
+        return path.startswith("/v/") or path.startswith("/c/")
+    if d == "metal-archives.com":
+        return "/bands/" in path
     return len(path.strip("/")) >= 2
+
+
+ENTITY_RELEVANCE_RE = re.compile(
+    r"\b(metal|metalcore|djent|hardcore|rock|punk|band|music|muzyka|zesp[oó][łl]|"
+    r"koncert|concert|venue|club|klub|radio|media|magazine|magazyn|promoter|booking|"
+    r"fotograf|photograph|photo|creator|kultura|culture|mck|artyst|artist|festival|festiwal)\b",
+    re.I,
+)
+
+
+def social_name(url: str, title: str) -> str:
+    path = urlparse(url).path.strip("/")
+    slug = path.split("/")[1] if path.startswith("groups/") else path.split("/")[0]
+    raw = re.sub(r"[-_]+", " ", slug)
+    raw = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", raw)
+    raw = re.sub(r"\s+", " ", raw).strip()
+    if not raw or raw.isdigit():
+        clean = re.sub(r"\s+", " ", title or "").strip()
+        if clean.casefold() in {"link to facebook.com", "link to instagram.com"}:
+            return ""
+        return clean[:180]
+    return raw.title()[:180]
+
+
+def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, city: str) -> bool:
+    if not usable_direct_url(url):
+        return False
+    blob = f"{title} {snippet} {url}"
+    if query_kind == "youtube":
+        return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
+    if query_kind == "facebook_groups":
+        return "/groups/" in urlparse(url).path.casefold()
+    if query_kind.startswith("facebook"):
+        return bool(ENTITY_RELEVANCE_RE.search(blob)) or ascii_norm(city) in ascii_norm(blob)
+    if query_kind == "creators":
+        return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
+    if query_kind == "culture":
+        return bool(re.search(r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b", blob, re.I))
+    return True
 
 
 def is_newsish(url: str) -> bool:
@@ -779,15 +832,26 @@ def discover(city: str, country: str) -> dict:
 
         # Direct search hits are valuable even when the target page blocks automation.
         # Only accept concrete entity URLs, never generic social search/result pages.
-        if usable_direct_url(url):
+        if relevant_direct_entity(
+            item["query_kind"], url, title, item["snippet"], city
+        ):
             kind = classify_beacon(title, item["snippet"], url)
-            if item["query_kind"] == "facebook_groups" and "facebook.com/groups/" in url:
+            if "facebook.com/groups/" in url:
                 kind = "facebook_community"
-            elif item["query_kind"].startswith("facebook") and "facebook.com/" in url:
+            elif "facebook.com/" in url:
                 kind = "facebook_page"
-            elif item["query_kind"] == "youtube" and "youtube.com/" in url:
+            elif "youtube.com/" in url and urlparse(url).path.casefold().startswith(
+                ("/channel/", "/@", "/c/", "/user/")
+            ):
                 kind = "youtube_channel"
-            add_beacon(title[:180], kind, url, context)
+            elif "instagram.com/" in url:
+                kind = "instagram_creator"
+
+            name = title[:180]
+            if name.casefold() in {"link to facebook.com", "link to instagram.com"}:
+                name = social_name(url, name)
+            if name:
+                add_beacon(name, kind, url, context)
 
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text, entity["url"]):

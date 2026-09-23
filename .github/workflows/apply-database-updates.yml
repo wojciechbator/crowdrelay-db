@@ -142,6 +142,21 @@ jobs:
           qa["Peer Bands"]["missing_status"] = missing_status
           qa["Peer Bands"]["missing_activity"] = missing_activity
 
+          # Surface legacy/underspecified Peer Bands for manual semantic review.
+          bad = []
+          for r in rows:
+              name = str(r[idx["Name"]] or "").strip()
+              country = str(r[idx["Country"]] or "").strip()
+              activity = str(r[idx["Activity"]] or "").strip()
+              status = str(r[idx["Status"]] or "").strip()
+              source = str(r[idx["Source_URL"]] or "").strip()
+              if (not country or not status or not activity):
+                  bad.append({
+                      "Name": name, "Country": country, "Activity": activity,
+                      "Status": status, "Source_URL": source
+                  })
+          print("PEER_REVIEW_SAMPLE", bad[:40])
+
           print("DATA_QA", qa)
           PY
 

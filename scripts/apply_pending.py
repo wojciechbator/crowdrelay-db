@@ -165,13 +165,17 @@ def main() -> None:
                     raise RuntimeError(f"Audit row has empty Name: {raw}")
                 row_no = row_by_name.get(key)
                 if row_no is None:
-                    raise RuntimeError(f"Audit Peer Band not found in canonical DB: {row[0]!r}")
+                    ws.append(row)
+                    row_by_name[key] = ws.max_row
+                    updated += 1
+                    changed = True
+                    continue
                 for col_no, value in enumerate(row, start=1):
                     ws.cell(row_no, col_no).value = value
                 updated += 1
                 changed = True
 
-            applied.append((csv_path, updated, "updated"))
+            applied.append((csv_path, updated, "upserted"))
             continue
 
         prefix = csv_path.name.split("__", 1)[0]

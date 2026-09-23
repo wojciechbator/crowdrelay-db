@@ -97,6 +97,18 @@ def is_direct_domain(url: str) -> bool:
     return d in DIRECT_DOMAINS or any(d.endswith("." + x) for x in DIRECT_DOMAINS)
 
 
+def usable_direct_url(url: str) -> bool:
+    d = domain(url)
+    path = urlparse(url).path.casefold()
+    if not is_direct_domain(url):
+        return False
+    if d == "facebook.com" and path.startswith(("/search", "/watch", "/events")):
+        return False
+    if d == "youtube.com" and path.startswith(("/results", "/hashtag", "/feed")):
+        return False
+    return len(path.strip("/")) >= 2
+
+
 def is_newsish(url: str) -> bool:
     d = domain(url)
     return d in NEWSISH_DOMAINS or d.startswith("news.")
@@ -502,21 +514,32 @@ def discover(city: str, country: str) -> dict:
             except Exception:
                 final_url = item["url"]
             page_url, page_title, page_text, links = fetch_page(final_url, headers)
+            final_candidate = page_url or final_url
+            search_title = item.get("title", "").strip()
+            search_snippet = item.get("snippet", "").strip()
+            page_local = local_signal(
+                city,
+                page_title or search_title,
+                search_snippet,
+                page_text,
+                final_candidate,
+            )
+            search_local = local_signal(
+                city,
+                search_title,
+                search_snippet,
+                "",
+                item.get("url", ""),
+            )
             enriched.append({
                 "query_kind": query_kind,
-                "url": page_url or final_url,
-                "search_title": item.get("title", "").strip(),
-                "title": page_title or item.get("title", "").strip(),
-                "snippet": item.get("snippet", "").strip(),
+                "url": final_candidate,
+                "search_title": search_title,
+                "title": page_title or search_title,
+                "snippet": search_snippet,
                 "text": page_text,
                 "links": links,
-                "local": local_signal(
-                    city,
-                    page_title or item.get("title", ""),
-                    item.get("snippet", ""),
-                    page_text,
-                    page_url or final_url,
-                ),
+                "local": page_local or search_local,
             })
 
     peers: list[list[str]] = []
@@ -562,8 +585,17 @@ def discover(city: str, country: str) -> dict:
                     f"Direct local music entity page. Confidence {conf}%.",
                 ])
 
-        if is_direct_domain(url):
-            add_beacon(title[:180], classify_beacon(title, item["snippet"], url), url, context)
+        # Direct search hits are valuable even when the target page blocks automation.
+        # Only accept concrete entity URLs, never generic social search/result pages.
+        if usable_direct_url(url):
+            kind = classify_beacon(title, item["snippet"], url)
+            if item["query_kind"] == "facebook_groups" and "facebook.com/groups/" in url:
+                kind = "facebook_community"
+            elif item["query_kind"].startswith("facebook") and "facebook.com/" in url:
+                kind = "facebook_page"
+            elif item["query_kind"] == "youtube" and "youtube.com/" in url:
+                kind = "youtube_channel"
+            add_beacon(title[:180], kind, url, context)
 
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text, entity["url"]):

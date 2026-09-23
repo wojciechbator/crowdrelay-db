@@ -1,10 +1,10 @@
 {
   "date": "2026-09-23",
   "rows": 1277,
-  "KEEP": 112,
+  "KEEP": 0,
   "REMOVE": 50,
-  "REVIEW": 1115,
-  "HIGH": 52,
-  "MEDIUM": 110,
-  "LOW": 1115
+  "REVIEW": 1227,
+  "HIGH": 50,
+  "MEDIUM": 0,
+  "LOW": 1227
 }

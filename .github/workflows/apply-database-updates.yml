@@ -29,35 +29,99 @@ jobs:
       - name: Apply pending research in-place
         run: python scripts/apply_pending.py
 
-      - name: Parse live band table sample
+      - name: Build live four-country band index
         run: |
-          curl -ksSL --max-time 30 -A 'Mozilla/5.0 CrowdRelay database audit'             'https://www.metalunderground.com/bands/country/Poland/page/1/' -o /tmp/pl.html
+          set -e
+          mkdir -p /tmp/live_band_index
           python3 - <<'PY'
           from html.parser import HTMLParser
-          class P(HTMLParser):
+          from pathlib import Path
+          from urllib.parse import urljoin
+          import csv, re, subprocess, sys
+
+          BASE="https://www.metalunderground.com"
+          countries={
+              "Poland":"Poland",
+              "Germany":"Germany",
+              "Czechia":"Czech-Republic",
+              "Slovakia":"Slovakia",
+          }
+
+          class Parser(HTMLParser):
               def __init__(self):
                   super().__init__()
-                  self.rows=[]; self.in_tr=False; self.cells=[]; self.in_td=False; self.txt=""; self.links=[]
+                  self.in_tr=False; self.in_td=False; self.in_a=False
+                  self.cells=[]; self.links=[]; self.txt=""; self.rows=[]
               def handle_starttag(self,tag,attrs):
                   attrs=dict(attrs)
                   if tag=="tr":
-                      self.in_tr=True; self.cells=[]; self.links=[]
+                      self.in_tr=True; self.in_td=False; self.cells=[]; self.links=[]
                   elif self.in_tr and tag=="td":
                       self.in_td=True; self.txt=""
                   elif self.in_tr and tag=="a":
-                      self.links.append((attrs.get("href",""),""))
+                      self.in_a=True
+                      self.links.append([attrs.get("href",""),""])
               def handle_data(self,data):
                   if self.in_tr and self.in_td: self.txt += data
-                  if self.in_tr and self.links: self.links[-1]=(self.links[-1][0], self.links[-1][1]+data)
+                  if self.in_tr and self.in_a and self.links:
+                      self.links[-1][1] += data
               def handle_endtag(self,tag):
                   if tag=="td" and self.in_td:
-                      self.cells.append(" ".join(self.txt.split())); self.in_td=False
+                      self.cells.append(" ".join(self.txt.split()))
+                      self.in_td=False
+                  elif tag=="a" and self.in_a:
+                      self.in_a=False
                   elif tag=="tr" and self.in_tr:
-                      self.rows.append((self.cells,self.links)); self.in_tr=False
-          p=P(); p.feed(open("/tmp/pl.html",encoding="utf-8",errors="replace").read())
-          for cells,links in p.rows[:20]:
-              if cells: print("ROW",cells,"LINKS",links)
+                      self.rows.append((self.cells,self.links))
+                      self.in_tr=False
+
+          def fetch(url):
+              p=subprocess.run(
+                  ["curl","-ksSL","--max-time","30","-A","Mozilla/5.0 CrowdRelay database audit",url],
+                  check=True,capture_output=True,text=True
+              )
+              return p.stdout
+
+          out=[]
+          for country,slug in countries.items():
+              first=fetch(f"{BASE}/bands/country/{slug}/")
+              p=Parser(); p.feed(first)
+              last=1
+              for cells,links in p.rows:
+                  for href,text in links:
+                      if text.strip()=="Last":
+                          m=re.search(r"/page/(\d+)/",href)
+                          if m: last=max(last,int(m.group(1)))
+              print(country,"pages",last)
+              for page in range(1,last+1):
+                  url=f"{BASE}/bands/country/{slug}/page/{page}/"
+                  html=first if page==1 else fetch(url)
+                  q=Parser(); q.feed(html)
+                  n=0
+                  for cells,links in q.rows:
+                      band_link=next(((href,text) for href,text in links if "/bands/details.cfm?bandid=" in href),None)
+                      if not band_link or not cells: continue
+                      name=cells[0].strip()
+                      if not name or name.lower().startswith("displaying records"): continue
+                      formed=cells[1].strip() if len(cells)>1 else ""
+                      city=cells[2].strip() if len(cells)>2 else ""
+                      status=cells[3].strip() if len(cells)>3 else ""
+                      articles=cells[4].strip() if len(cells)>4 else ""
+                      href=band_link[0]
+                      out.append([name,country,city,formed,status,articles,url,urljoin(BASE,href)])
+                      n+=1
+                  print(" page",page,"rows",n)
+          with open("/tmp/live_band_index/live_bands.csv","w",newline="",encoding="utf-8") as f:
+              w=csv.writer(f); w.writerow(["Name","Country","City","Formed","Status","Articles","Directory_URL","Details_URL"]); w.writerows(out)
+          print("LIVE_INDEX_ROWS",len(out))
           PY
+
+      - name: Upload live band index
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-band-index
+          path: /tmp/live_band_index/live_bands.csv
+          retention-days: 1
 
       - name: Validate canonical workbook
         run: |

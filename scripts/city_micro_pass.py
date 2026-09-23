@@ -20,6 +20,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
+PASS_FORMAT_VERSION = 3
 UA = "CrowdRelayDB-CityResearch/2.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
@@ -525,11 +526,20 @@ def load_done() -> set[str]:
     for p in PASSES.glob("*.json"):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
-            valid = {
-                city_key(x.get("country", ""), x.get("city", ""))
-                for x in payload.get("summary", [])
-                if int(x.get("raw_results", 0) or 0) > 0
-            }
+            version = int(payload.get("research_version", 1) or 1)
+            valid = set()
+            for x in payload.get("summary", []):
+                raw = int(x.get("raw_results", 0) or 0)
+                direct = int(x.get("direct_leads", 0) or 0)
+                useful = (
+                    int(x.get("peer_candidates", 0) or 0)
+                    + int(x.get("beacon_candidates", 0) or 0)
+                    + int(x.get("contact_candidates", 0) or 0)
+                )
+                quality_ok = version >= PASS_FORMAT_VERSION and direct > 0 and useful >= 2
+                legacy_ok = version < PASS_FORMAT_VERSION and payload.get("date") != TODAY
+                if raw > 0 and (quality_ok or legacy_ok):
+                    valid.add(city_key(x.get("country", ""), x.get("city", "")))
             for x in payload.get("cities", []):
                 key = city_key(x["country"], x["city"])
                 if key in valid:
@@ -946,6 +956,7 @@ def main() -> None:
     PASSES.mkdir(parents=True, exist_ok=True)
     state = {
         "date": TODAY,
+        "research_version": PASS_FORMAT_VERSION,
         "pass_id": pass_id,
         "cities": [{"country": country, "city": city} for city, country in cities],
         "summary": all_summary,

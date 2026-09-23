@@ -1,0 +1,88 @@
+name: Bootstrap canonical database.xlsx
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  bootstrap:
+    if: >
+      github.event.issue.number == 1 &&
+      contains(github.event.comment.body, 'CRDB-BOOTSTRAP')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild XLSX from issue payload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, gzip, json, os, re, subprocess, urllib.request
+          issue = 1
+          repo = os.environ["GITHUB_REPOSITORY"]
+          req = urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/issues/{issue}/comments?per_page=100",
+              headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              },
+          )
+          with urllib.request.urlopen(req) as r:
+              comments = json.load(r)
+
+          parts = {}
+          complete = False
+          for c in comments:
+              body = c.get("body", "")
+              m = re.search(r"CRDB-BOOTSTRAP PART (\d+)/(\d+)\n([A-Za-z0-9+/=\n]+)$", body)
+              if m:
+                  parts[int(m.group(1))] = (int(m.group(2)), re.sub(r"\s+", "", m.group(3)))
+              if "CRDB-BOOTSTRAP COMPLETE" in body:
+                  complete = True
+
+          if not complete or not parts:
+              raise SystemExit("Bootstrap not marked complete yet.")
+
+          total = next(iter(parts.values()))[0]
+          if len(parts) != total:
+              raise SystemExit(f"Missing payload parts: got {len(parts)} expected {total}")
+
+          payload = "".join(parts[i][1] for i in range(total))
+          raw = gzip.decompress(base64.b64decode(payload))
+          with open("database.xlsx", "wb") as f:
+              f.write(raw)
+
+          print(f"Rebuilt database.xlsx: {len(raw)} bytes")
+          PY
+
+      - name: Validate XLSX
+        run: |
+          python3 - <<'PY'
+          from openpyxl import load_workbook
+          wb = load_workbook("database.xlsx", read_only=True)
+          print("sheets:", wb.sheetnames)
+          for s in wb.sheetnames:
+              print(s, wb[s].max_row, wb[s].max_column)
+          if "Venues" not in wb.sheetnames or "Booking Agents" not in wb.sheetnames or "Peer Bands" not in wb.sheetnames:
+              raise SystemExit("Required sheets missing")
+          PY
+
+      - name: Commit canonical XLSX
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add database.xlsx
+          git commit -m "chore: bootstrap canonical Virya database"
+          git push
+
+      - name: Close bootstrap issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close 1 --repo "$GITHUB_REPOSITORY" --comment "Bootstrap complete: canonical database.xlsx reconstructed, validated and committed to main."

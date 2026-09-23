@@ -1,0 +1,12 @@
+name: CRDB runner smoke test
+on:
+  push:
+    paths:
+      - "snapshot/SMOKE_TRIGGER.txt"
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "CRDB_ACTIONS_OK"

@@ -20,8 +20,14 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 3
-UA = "CrowdRelayDB-CityResearch/2.0"
+PASS_FORMAT_VERSION = 4
+MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
+MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
+MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
+MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
+MIN_SOCIAL_FAMILIES = int(os.environ.get("CITY_MIN_SOCIAL_FAMILIES", "1"))
+MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "1"))
+UA = "CrowdRelayDB-CityResearch/4.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
@@ -65,7 +71,7 @@ KIND_TERMS = {
 }
 
 DIRECT_DOMAINS = {
-    "facebook.com", "instagram.com", "youtube.com", "youtu.be",
+    "facebook.com", "instagram.com", "youtube.com", "youtu.be", "tiktok.com",
     "bandcamp.com", "soundcloud.com", "mixcloud.com",
     "bandsintown.com", "songkick.com", "metal-archives.com",
 }
@@ -109,12 +115,13 @@ def usable_direct_url(url: str) -> bool:
             and not path.startswith(("/search", "/watch", "/events", "/reel"))
         )
     if d in {"youtube.com", "youtu.be"}:
-        # A beacon is a channel/profile, never an individual video/short.
         if d == "youtu.be":
             return False
-        return path.startswith(("/channel/", "/@","/c/","/user/"))
+        return path.startswith(("/channel/", "/@", "/c/", "/user/"))
     if d == "instagram.com":
         return len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
+    if d == "tiktok.com":
+        return len(path.strip("/")) >= 2 and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
     if d in {"bandcamp.com", "soundcloud.com"}:
         return len(path.strip("/").split("/")) == 1
     if d in {"bandsintown.com", "songkick.com"}:
@@ -126,18 +133,15 @@ def usable_direct_url(url: str) -> bool:
 
 ENTITY_RELEVANCE_RE = re.compile(
     r"\b(metal|metalcore|djent|hardcore|rock|punk|band|music|muzyka|zesp[oó][łl]|"
-    r"koncert|concert|venue|club|klub|pub|bar|radio|media|magazine|magazyn|promoter|booking|"
+    r"koncert|concert|venue|club|klub|radio|media|magazine|magazyn|promoter|booking|"
     r"fotograf|photograph|photo|creator|kultura|culture|mck|artyst|artist|festival|festiwal)\b",
     re.I,
 )
 
 
 def social_name(url: str, title: str) -> str:
-    parts = [p for p in urlparse(url).path.strip("/").split("/") if p]
-    if parts[:1] in (["groups"], ["people"]) and len(parts) >= 2:
-        slug = parts[1]
-    else:
-        slug = parts[0] if parts else ""
+    path = urlparse(url).path.strip("/")
+    slug = path.split("/")[1] if path.startswith("groups/") else path.split("/")[0]
     raw = re.sub(r"[-_]+", " ", slug)
     raw = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", raw)
     raw = re.sub(r"\s+", " ", raw).strip()
@@ -153,28 +157,17 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
     if not usable_direct_url(url):
         return False
     blob = f"{title} {snippet} {url}"
-    title_low = title.casefold().strip()
     if query_kind == "youtube":
-        return (
-            urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
-            and title_low not in {"youtube", "youtube.com"}
-            and bool(ENTITY_RELEVANCE_RE.search(blob))
-        )
+        return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
     if query_kind == "facebook_groups":
-        return (
-            "/groups/" in urlparse(url).path.casefold()
-            and title_low not in {"link to facebook.com", "facebook", "log in or sign up"}
-            and bool(ENTITY_RELEVANCE_RE.search(blob))
-        )
-    if query_kind == "venue_seed_fb":
-        return (
-            "facebook.com/" in url
-            and title_low not in {"link to facebook.com", "facebook", "log in or sign up"}
-        )
-    if query_kind == "venue_seed_youtube":
-        return (
-            urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
-            and title_low not in {"youtube", "youtube.com"}
+        return "/groups/" in urlparse(url).path.casefold()
+    if query_kind == "facebook_groups":
+        title_low = title.casefold().strip()
+        return "/groups/" in urlparse(url).path.casefold() and title_low not in {
+            "link to facebook.com", "facebook", "log in or sign up"
+        } and (
+            bool(ENTITY_RELEVANCE_RE.search(blob))
+            or ascii_norm(city) in ascii_norm(f"{title} {snippet}")
         )
     if query_kind.startswith("facebook"):
         return bool(ENTITY_RELEVANCE_RE.search(blob))
@@ -260,7 +253,7 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
     out = []
     for href, label in links:
         d = domain(href)
-        if not is_direct_domain(href) or not usable_direct_url(href):
+        if not is_direct_domain(href):
             continue
         if d == "facebook.com":
             kind = "facebook_community" if "/groups/" in href else "facebook_page"
@@ -269,6 +262,8 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             kind = "youtube_video" if path.startswith("/watch") else "youtube_channel"
         elif d == "instagram.com":
             kind = "instagram_creator"
+        elif d == "tiktok.com":
+            kind = "tiktok_creator"
         elif d == "bandcamp.com":
             kind = "bandcamp_artist"
         elif d == "soundcloud.com":
@@ -279,9 +274,9 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             kind = "event_calendar"
         else:
             kind = "local_music_resource"
-        name = re.sub(r"\s+", " ", label or "").strip()
+        name = re.sub(r"s+", " ", label or "").strip()
         if len(name) < 3:
-            name = re.sub(r"\s*[|–-].*$", "", page_title or "").strip()
+            name = re.sub(r"s*[|–-].*$", "", page_title or "").strip()
         if len(name) < 3:
             name = d
         out.append({"name": name[:180], "kind": kind, "url": href, "city": city})
@@ -564,26 +559,26 @@ def load_done() -> set[str]:
     for p in PASSES.glob("*.json"):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
-            if payload.get("invalidated"):
-                continue
             version = int(payload.get("research_version", 1) or 1)
             valid = set()
             for x in payload.get("summary", []):
                 raw = int(x.get("raw_results", 0) or 0)
                 direct = int(x.get("direct_leads", 0) or 0)
-                useful = int(
-                    x.get("useful_leads",
-                        (int(x.get("peer_candidates", 0) or 0)
-                         + int(x.get("beacon_candidates", 0) or 0)
-                         + int(x.get("contact_candidates", 0) or 0)))
+                useful = int(x.get("useful", x.get("useful_leads", 0)) or 0)
+                families = x.get("source_families", []) or []
+                social = x.get("social_families", []) or []
+                media = x.get("media_families", []) or []
+                quality_ok = (
+                    version >= PASS_FORMAT_VERSION
+                    and bool(x.get("quality_ok", False))
+                    and raw >= MIN_RAW_RESULTS
+                    and direct >= MIN_DIRECT_LEADS
+                    and useful >= MIN_USEFUL_LEADS
+                    and len(families) >= MIN_SOURCE_FAMILIES
+                    and len(social) >= MIN_SOCIAL_FAMILIES
+                    and len(media) >= MIN_MEDIA_FAMILIES
                 )
-                quality_ok = bool(
-                    x.get("quality_ok", False)
-                    if version >= PASS_FORMAT_VERSION
-                    else False
-                )
-                legacy_ok = version < PASS_FORMAT_VERSION and payload.get("date") != TODAY
-                if raw > 0 and (quality_ok or legacy_ok):
+                if quality_ok:
                     valid.add(city_key(x.get("country", ""), x.get("city", "")))
             for x in payload.get("cities", []):
                 key = city_key(x["country"], x["city"])
@@ -629,48 +624,85 @@ def classify_beacon(title: str, snippet: str, url: str = "") -> str:
     blob = norm(f"{title} {snippet} {url}")
     if "facebook.com/groups/" in url:
         return "facebook_community"
+    if "facebook.com/" in url:
+        return "facebook_page"
+    if "instagram.com/" in url:
+        return "instagram_creator"
+    if "tiktok.com/" in url:
+        return "tiktok_creator"
     if "youtube.com" in url or "youtu.be" in url:
         return "youtube_channel"
-    if "instagram.com" in url:
-        return "instagram_creator"
-    if "radio" in blob:
+    if "radio" in blob or "rádio" in blob:
         return "independent_radio"
     if "podcast" in blob:
         return "podcast"
-    if any(x in blob for x in ("magazine", "music media", "media")):
-        return "music_media"
-    if any(x in blob for x in ("kalendarz", "calendar", "events", "concert calendar")):
+    if any(x in blob for x in (
+        "magazine", "music media", "media", "gazeta", "wiadom", "wiadomości",
+        "zeitung", "nachrichten", "portal", "lokalnachrichten", "stadtmagazin"
+    )):
+        return "local_media"
+    if any(x in blob for x in (
+        "kalendarz", "calendar", "events", "concert calendar",
+        "veranstaltungen", "veranstaltung", "podujatia"
+    )):
         return "event_calendar"
-    if any(x in blob for x in ("klub", "club", "venue", "concert hall")):
+    if any(x in blob for x in (
+        "klub", "club", "venue", "concert hall", "musikclub"
+    )):
         return "venue"
-    if any(x in blob for x in ("agency", "agencja", "booking")):
+    if any(x in blob for x in (
+        "agency", "agencja", "booking", "booking agency"
+    )):
         return "booking_agency"
-    if "promoter" in blob or "promocj" in blob:
+    if any(x in blob for x in (
+        "promoter", "promocj", "veranstalter", "organizer", "organizator"
+    )):
         return "promoter"
-    if "centrum kultury" in blob or "culture center" in blob or "cultural" in blob:
+    if any(x in blob for x in (
+        "centrum kultury", "culture center", "cultural", "kulturzentrum",
+        "kulturhaus", "kulturní centrum"
+    )):
         return "cultural_hub"
-    if any(x in blob for x in ("photograph", "fotograf", "creator", "youtube")):
+    if any(x in blob for x in (
+        "photograph", "fotograf", "creator", "youtube", "videographer"
+    )):
         return "local_creator"
     return "local_music_resource"
+
+
+def band_candidate_score(name: str, context: str, url: str) -> int:
+    blob = norm(f"{name} {context}")
+    score = 0
+    if is_newsish(url):
+        score -= 4
+    if is_direct_domain(url):
+        score += 2
+    if any(x in domain(url) for x in (
+        "bandcamp.com", "soundcloud.com", "metal-archives.com",
+        "bandsintown.com", "songkick.com", "facebook.com",
+        "instagram.com", "youtube.com", "tiktok.com",
+    )):
+        score += 2
+    if BAND_RE.search(blob):
+        score += 2
+    if any(x in blob for x in ("2026", "2025", "2024")):
+        score += 1
+    if any(x in norm(name) for x in (
+        "concert", "festival", "radio", "gazeta", "wiadom",
+        "kalendarz", "calendar", "klub", "club", "promoter",
+        "booking", "events", "veranstaltung", "veranstalter"
+    )):
+        score -= 2
+    words = re.findall(r"[A-Za-zÀ-ž0-9&'.-]+", name)
+    if len(words) >= 7 or re.search(r"[.!?]", name):
+        score -= 2
+    return score
 
 
 def likely_band_entity(name: str, context: str, url: str) -> bool:
     if not name or len(name) > 120:
         return False
-    if is_newsish(url) or GENERIC_ARTICLE_RE.search(name):
-        return False
-    strong_domain = (
-        is_direct_domain(url)
-        and any(x in domain(url) for x in (
-            "facebook.com", "instagram.com", "youtube.com", "bandcamp.com",
-            "soundcloud.com", "metal-archives.com", "bandsintown.com",
-            "songkick.com",
-        ))
-    )
-    genre = bool(BAND_RE.search(context))
-    words = re.findall(r"[A-Za-zÀ-ž0-9&'.-]+", name)
-    looks_sentence = len(words) >= 7 or re.search(r"[.!?]", name)
-    return strong_domain and genre and not looks_sentence
+    return band_candidate_score(name, context, url) >= 4
 
 
 def confidence(url: str, snippet: str, page_text: str = "") -> int:
@@ -687,130 +719,154 @@ def confidence(url: str, snippet: str, page_text: str = "") -> int:
     return min(score, 95)
 
 
-def discover(city: str, country: str, venue_names: list[str] | None = None) -> dict:
-    venue_names = [x for x in (venue_names or []) if x][:2]
-    queries = [
-        ("bands", f'"{city}" {country} metal metalcore hardcore djent band'),
-        ("bands_local", f'"{city}" {country} zespół metal koncert rock'),
-        ("facebook", f'"{city}" {country} site:facebook.com music metal concert'),
-        ("facebook_groups", f'"{city}" {country} site:facebook.com/groups muzyka koncert metal'),
-        ("youtube", f'"{city}" {country} site:youtube.com metal concert music'),
-        ("ecosystem", f'"{city}" {country} music club venue concerts calendar'),
-        ("culture", f'"{city}" {country} "music city" OR "miasto muzyki" OR MCK kultura koncerty'),
-        ("promoters_media", f'"{city}" {country} promoter booking radio music media'),
-        ("creators", f'"{city}" {country} music photographer creator local'),
-    ]
-    for venue in venue_names:
-        queries.extend([
-            ("venue_seed_fb", f'"{venue}" "{city}" site:facebook.com'),
-            ("venue_seed_youtube", f'"{venue}" "{city}" site:youtube.com'),
-        ])
-
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/140.0 Safari/537.36"
-        ),
-        "Accept-Language": "en-US,en;q=0.9",
+def language_query_terms(country: str) -> str:
+    terms = {
+        "Poland": "zespół metal metalcore hardcore djent koncert muzyka gazeta wiadomości portal radio klub kultura fotograf",
+        "Germany": "Band Metal Metalcore Hardcore Djent Konzert Musik Zeitung Lokalnachrichten Portal Radio Club Kultur Fotograf",
+        "Czechia": "kapela metal metalcore hardcore koncert hudba noviny místní rádio klub kultura fotograf",
+        "Slovakia": "kapela metal metalcore hardcore koncert hudba noviny miestne rádio klub kultúra fotograf",
     }
+    return terms.get(country, "band metal concert music local news radio club culture")
 
-    all_results: list[tuple[str, dict]] = []
-    searx_results_by_kind: dict[str, list[dict]] = {}
 
-    # Primary source: structured metasearch. One request per query, with ordered failover.
-    with ThreadPoolExecutor(max_workers=len(queries)) as ex:
-        futures = {
-            ex.submit(searx_search, query, headers): kind
-            for kind, query in queries
-        }
-        for fut in as_completed(futures):
-            kind = futures[fut]
-            try:
-                found = fut.result()
-            except Exception:
-                found = []
-            searx_results_by_kind[kind] = found
-            all_results.extend((kind, x) for x in found)
-
-    # Only queries that returned nothing get the slower scraper fallback.
-    fallback_jobs = [
-        (kind, query)
-        for kind, query in queries
-        if not searx_results_by_kind.get(kind)
+def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[str, str]]:
+    language = language_query_terms(country)
+    if recovery:
+        return [
+            ("facebook_groups", f'"{city}" {country} site:facebook.com/groups (music OR muzyka OR musik OR hudba OR metal)'),
+            ("facebook_pages", f'"{city}" {country} site:facebook.com (concert OR koncert OR metal OR music OR muzyka)'),
+            ("instagram", f'"{city}" {country} site:instagram.com (metal OR band OR koncert OR concert OR music)'),
+            ("tiktok", f'"{city}" {country} site:tiktok.com (metal OR band OR concert OR koncert OR music)'),
+            ("local_press", f'"{city}" {country} (gazeta OR wiadomości OR portal OR zeitung OR lokalnachrichten OR noviny) (koncert OR metal OR muzyka OR musik OR hudba)'),
+            ("events", f'"{city}" {country} (koncert OR koncerty OR konzert OR Veranstaltungen OR hudba) 2026'),
+            ("radio", f'"{city}" {country} (radio OR rádiu OR rádio) (muzyka OR music OR musik OR hudba)'),
+            ("promoters", f'"{city}" {country} (promoter OR organizator OR Veranstalter OR booking OR promotor) (music OR concert)'),
+            ("culture", f'"{city}" {country} (centrum kultury OR dom kultury OR Kulturzentrum OR Kulturhaus OR kulturní centrum) (koncert OR music OR musik)'),
+        ]
+    return [
+        ("bands", f'"{city}" {country} band {language}'),
+        ("bands_events", f'"{city}" {country} (band OR zespół OR kapela) (concert OR koncert OR konzert) 2026'),
+        ("facebook_groups", f'"{city}" {country} site:facebook.com/groups (music OR muzyka OR musik OR hudba OR metal OR koncert)'),
+        ("facebook_pages", f'"{city}" {country} site:facebook.com (music OR muzyka OR musik OR metal OR concert OR koncert)'),
+        ("instagram", f'"{city}" {country} site:instagram.com (metal OR band OR koncert OR concert OR music OR muzyka)'),
+        ("tiktok", f'"{city}" {country} site:tiktok.com (metal OR band OR koncert OR concert OR music)'),
+        ("youtube", f'"{city}" {country} site:youtube.com (metal OR band OR concert OR koncert)'),
+        ("local_news", f'"{city}" {country} (gazeta OR wiadomości OR portal OR lokalny OR zeitung OR lokalnachrichten OR noviny OR miestne) (koncert OR metal OR muzyka OR musik OR hudba)'),
+        ("local_press", f'"{city}" {country} (lokalna gazeta OR lokalny portal OR regionalny portal OR Lokalzeitung OR Stadtmagazin OR lokale Nachrichten) music'),
+        ("radio", f'"{city}" {country} (radio OR rádio OR radiostacja) (music OR muzyka OR musik OR hudba)'),
+        ("events", f'"{city}" {country} (event calendar OR kalendarz wydarzeń OR koncerty OR Veranstaltungen OR kulturní akce OR podujatia)'),
+        ("culture", f'"{city}" {country} (centrum kultury OR dom kultury OR MCK OR Kulturzentrum OR Kulturhaus OR kulturní centrum) (koncert OR music)'),
+        ("promoters", f'"{city}" {country} (promoter OR organizator koncertów OR organizator OR Veranstalter OR booking)'),
+        ("creators", f'"{city}" {country} (music photographer OR fotograf koncertowy OR Musiker Fotograf OR koncert photographer OR creator)'),
+        ("podcasts", f'"{city}" {country} (podcast OR radio show OR audycja muzyczna OR Musikpodcast)'),
+        ("record_stores", f'"{city}" {country} (record store OR sklep muzyczny OR Musikladen OR vinyl OR winyle)'),
     ]
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futures = {
-            ex.submit(search_engine, query): kind
-            for kind, query in fallback_jobs
-        }
+
+
+def merge_results(results: list[tuple[str, dict]]) -> list[tuple[list[str], dict]]:
+    merged: dict[str, dict] = {}
+    for query_kind, item in results:
+        url = item.get("url", "")
+        if not url.startswith("http"):
+            continue
+        key = norm(url.rstrip("/"))
+        if not key:
+            continue
+        current = merged.get(key)
+        if current is None:
+            current = {
+                "url": url,
+                "title": item.get("title", ""),
+                "snippet": item.get("snippet", ""),
+                "kinds": set(),
+            }
+            merged[key] = current
+        current["kinds"].add(query_kind)
+        if len(item.get("title", "")) > len(current["title"]):
+            current["title"] = item.get("title", "")
+        if len(item.get("snippet", "")) > len(current["snippet"]):
+            current["snippet"] = item.get("snippet", "")
+    return [(sorted(v["kinds"]), v) for v in merged.values()]
+
+
+def discover(city: str, country: str, recovery: bool = False) -> dict:
+    queries = city_queries(city, country, recovery)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
+        "Accept-Language": "pl-PL,pl;q=0.9,en-US;q=0.7,en;q=0.5",
+    }
+    results: list[tuple[str, dict]] = []
+
+    # Three search layers: SearXNG, direct engines/RSS, then Jina text search.
+    with ThreadPoolExecutor(max_workers=min(16, len(queries))) as ex:
+        futures = {ex.submit(searx_search, q, headers): kind for kind, q in queries}
         for fut in as_completed(futures):
             kind = futures[fut]
             try:
-                all_results.extend((kind, x) for x in fut.result())
+                results.extend((kind, x) for x in fut.result())
             except Exception:
                 pass
 
-    raw_seen = set()
-    unique_results = []
-    for query_kind, item in all_results:
-        url = item.get("url", "")
-        key = norm(url.rstrip("/"))
-        if not url.startswith("http") or key in raw_seen:
-            continue
-        raw_seen.add(key)
-        unique_results.append((query_kind, item))
-    # Prioritize direct entity results; only fetch non-direct pages to mine outbound links.
-    unique_results.sort(
-        key=lambda x: (
-            0 if usable_direct_url(x[1].get("url", "")) else 1,
-            0 if x[0] in {"facebook", "facebook_groups", "youtube", "creators", "culture"} else 1,
-        )
-    )
-    unique_results = unique_results[:35]
+    with ThreadPoolExecutor(max_workers=min(16, len(queries))) as ex:
+        futures = {ex.submit(search_engine, q): kind for kind, q in queries}
+        for fut in as_completed(futures):
+            kind = futures[fut]
+            try:
+                results.extend((kind, x) for x in fut.result())
+            except Exception:
+                pass
+
+    jina_kinds = {
+        "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube",
+        "local_news", "local_press", "events", "culture", "promoters", "creators",
+        "podcasts", "record_stores",
+    }
+    jina_jobs = [(kind, q) for kind, q in queries if kind in jina_kinds]
+    with ThreadPoolExecutor(max_workers=min(14, len(jina_jobs))) as ex:
+        futures = {ex.submit(jina_search, q, headers): kind for kind, q in jina_jobs}
+        for fut in as_completed(futures):
+            kind = futures[fut]
+            try:
+                results.extend((kind, x) for x in fut.result())
+            except Exception:
+                pass
+
+    merged = merge_results(results)[:140]
 
     enriched: list[dict] = []
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        future_map = {
-            ex.submit(resolve_url, item["url"], headers): (query_kind, item)
-            for query_kind, item in unique_results
+    with ThreadPoolExecutor(max_workers=12) as ex:
+        futures = {
+            ex.submit(resolve_url, item["url"], headers): (kinds, item)
+            for kinds, item in merged
         }
-        for fut in as_completed(future_map):
-            query_kind, item = future_map[fut]
+        for fut in as_completed(futures):
+            kinds, item = futures[fut]
             try:
                 final_url = fut.result() or item["url"]
             except Exception:
                 final_url = item["url"]
 
-            if usable_direct_url(item["url"]):
+            is_direct = any(
+                relevant_direct_entity(kind, item["url"], item.get("title",""), item.get("snippet",""), city)
+                for kind in kinds
+            )
+            if is_direct:
                 page_url, page_title, page_text, links = item["url"], "", "", []
             else:
                 page_url, page_title, page_text, links = fetch_page(final_url, headers)
+
             final_candidate = page_url or final_url
             search_title = item.get("title", "").strip()
             search_snippet = item.get("snippet", "").strip()
-            scoped_direct = usable_direct_url(item.get("url", "")) and (
-                query_kind in {
-                    "facebook", "facebook_groups", "youtube", "culture",
-                    "promoters_media", "creators",
-                }
-                or query_kind.startswith("venue_seed")
-            )
-            page_local = local_signal(
-                city,
-                page_title or search_title,
-                search_snippet,
-                page_text,
-                final_candidate,
-            )
-            search_local = local_signal(
-                city,
-                search_title,
-                search_snippet,
-                "",
-                item.get("url", ""),
-            )
+            social_query = bool(set(kinds) & {
+                "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
+            })
+            page_local = local_signal(city, page_title or search_title, search_snippet, page_text, final_candidate)
+            search_local = local_signal(city, search_title, search_snippet, "", item["url"])
+            scoped_direct = usable_direct_url(item["url"]) and social_query
+
             enriched.append({
-                "query_kind": query_kind,
+                "kinds": kinds,
                 "url": final_candidate,
                 "search_title": search_title,
                 "title": page_title or search_title,
@@ -823,13 +879,19 @@ def discover(city: str, country: str, venue_names: list[str] | None = None) -> d
     peers: list[list[str]] = []
     beacons: list[list[str]] = []
     contacts: list[list[str]] = []
-    direct_entities = 0
+    direct_urls: set[str] = set()
+    source_families: set[str] = set()
+    social_families: set[str] = set()
+    media_families: set[str] = set()
+    evidence_urls: list[str] = []
 
-    def add_beacon(name: str, kind: str, url: str, context: str):
-        nonlocal direct_entities
+    social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
+    media_kinds = {"local_news", "local_press", "radio", "podcasts"}
+
+    def add_beacon(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False):
         if not url.startswith("http") or not name:
             return
-        if is_newsish(url) and not is_direct_domain(url):
+        if is_newsish(url) and not is_direct_domain(url) and not allow_non_direct:
             return
         found_emails = emails(context)
         conf = confidence(url, "", context)
@@ -838,81 +900,104 @@ def discover(city: str, country: str, venue_names: list[str] | None = None) -> d
             found_emails[0] if found_emails else "",
             url, url, "t", "t", "t", "f", 65, conf, conf,
         ])
-        direct_entities += 1
+        direct_urls.add(norm(url.rstrip("/")))
 
     for item in enriched:
-        url = item["url"]
-        title = item["title"]
-        text = item["text"]
-        context = f"{item['search_title']} {item['snippet']} {title} {text} {url}"
         if not item["local"]:
             continue
 
-        if item["query_kind"].startswith("bands"):
-            if is_direct_domain(url) and likely_band_entity(title, context, url):
-                found_emails = emails(context)
-                conf = confidence(url, item["snippet"], text)
-                peers.append([
-                    title[:180], country, city, "", found_emails[0] if found_emails else "",
-                    url if "facebook.com" in url or "instagram.com" in url else "",
-                    url if "facebook.com" not in url and "instagram.com" not in url else "",
-                    url, "2026/current activity signal from direct entity page", TODAY,
-                    "Needs verification",
-                    "public" if found_emails else "social",
-                    url, "Research candidate", "City micro-pass",
-                    f"Direct local music entity page. Confidence {conf}%.",
-                ])
+        url = item["url"]
+        title = item["title"]
+        text_body = item["text"]
+        context = f'{item["search_title"]} {item["snippet"]} {title} {text_body}'
+        kinds = set(item["kinds"])
 
-        # Direct search hits are valuable even when the target page blocks automation.
-        # Only accept concrete entity URLs, never generic social search/result pages.
-        if relevant_direct_entity(
-            item["query_kind"], url, title, item["snippet"], city
-        ):
+        source_families.update(kinds)
+        social_families.update(kinds & social_kinds)
+        media_families.update(kinds & media_kinds)
+        if len(evidence_urls) < 30 and url.startswith("http"):
+            evidence_urls.append(url)
+
+        if kinds & {"bands", "bands_events"} and likely_band_entity(title, context, url):
+            found_emails = emails(context)
+            conf = confidence(url, item["snippet"], text_body)
+            dmn = domain(url)
+            social = url if dmn in {"facebook.com","instagram.com","youtube.com","tiktok.com"} else ""
+            website = "" if social else url
+            peers.append([
+                title[:180], country, city, "", found_emails[0] if found_emails else "",
+                social, website, url,
+                "2026/current activity signal from deep city research", TODAY,
+                "Needs verification",
+                "public" if found_emails else "social", url,
+                "Research candidate", "City micro-pass",
+                f"Deep multi-source scan. Confidence {conf}%.",
+            ])
+
+        if usable_direct_url(url) and (kinds & social_kinds):
             kind = classify_beacon(title, item["snippet"], url)
-            if "facebook.com/groups/" in url:
+            if "facebook_groups" in kinds and "/groups/" in urlparse(url).path.casefold():
                 kind = "facebook_community"
-            elif "facebook.com/" in url:
+            elif "facebook_pages" in kinds and "facebook.com/" in url:
                 kind = "facebook_page"
-            elif "youtube.com/" in url and urlparse(url).path.casefold().startswith(
-                ("/channel/", "/@", "/c/", "/user/")
-            ):
-                kind = "youtube_channel"
-            elif "instagram.com/" in url:
+            elif "instagram" in kinds and "instagram.com/" in url:
                 kind = "instagram_creator"
-
-            name = title[:180]
-            if name.casefold() in {"link to facebook.com", "link to instagram.com"}:
-                name = social_name(url, name)
-            # Facebook group IDs without a visible group name are not actionable records.
-            if kind == "facebook_community" and (not name or name.casefold().startswith("link to ")):
-                continue
-            # Avoid storing watch URLs accidentally classified as direct YouTube results.
-            if kind == "youtube_channel" and not urlparse(url).path.casefold().startswith(
-                ("/channel/", "/@", "/c/", "/user/")
-            ):
-                continue
+            elif "tiktok" in kinds and "tiktok.com/" in url:
+                kind = "tiktok_creator"
+            elif "youtube" in kinds and "youtube.com/" in url:
+                kind = "youtube_channel"
+            name = title if title.casefold() not in {"link to facebook.com","link to instagram.com"} else social_name(url, title)
             if name:
                 add_beacon(name, kind, url, context)
 
+        if kinds & media_kinds:
+            media_kind = (
+                "independent_radio" if "radio" in kinds
+                else "podcast" if "podcasts" in kinds
+                else "local_media"
+            )
+            add_beacon(title[:180], media_kind, url, context, allow_non_direct=True)
+
+        if "events" in kinds:
+            add_beacon(title[:180], "event_calendar", url, context, allow_non_direct=True)
+        if "culture" in kinds:
+            add_beacon(title[:180], "cultural_hub", url, context, allow_non_direct=True)
+        if "promoters" in kinds:
+            add_beacon(title[:180], "promoter", url, context, allow_non_direct=True)
+        if "creators" in kinds:
+            add_beacon(title[:180], "local_creator", url, context, allow_non_direct=True)
+        if "record_stores" in kinds:
+            add_beacon(title[:180], "local_music_resource", url, context, allow_non_direct=True)
+
         for entity in direct_links(city, title, item["links"]):
-            if not local_signal(city, entity["name"], "", text, entity["url"]):
+            if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):
                 continue
             add_beacon(entity["name"], entity["kind"], entity["url"], context)
-
-            if item["query_kind"].startswith("bands") and entity["kind"] in {
-                "facebook_page", "instagram_creator", "youtube_channel",
-                "bandcamp_artist", "soundcloud_artist", "metal_database",
+            source_families.add(entity["kind"])
+            if entity["kind"] in {
+                "facebook_community","facebook_page","instagram_creator",
+                "tiktok_creator","youtube_channel",
             }:
-                if likely_band_entity(entity["name"], f"{entity['name']} {context}", entity["url"]):
-                    peers.append([
-                        entity["name"], country, city, "", "",
-                        entity["url"] if "facebook.com" in entity["url"] or "instagram.com" in entity["url"] else "",
-                        entity["url"] if "facebook.com" not in entity["url"] and "instagram.com" not in entity["url"] else "",
-                        entity["url"], "2026/current activity signal from direct local source", TODAY,
-                        "Needs verification", "social", entity["url"], "Research candidate",
-                        "City micro-pass",
-                        "Band/artist candidate extracted from a local page; verify current activity.",
-                    ])
+                social_families.add(entity["kind"])
+
+            if kinds & {"bands", "bands_events"} and entity["kind"] in {
+                "facebook_page","instagram_creator","tiktok_creator",
+                "youtube_channel","bandcamp_artist","soundcloud_artist",
+                "metal_database",
+            } and likely_band_entity(entity["name"], f'{entity["name"]} {context}', entity["url"]):
+                peers.append([
+                    entity["name"], country, city, "", "",
+                    entity["url"] if entity["kind"] in {
+                        "facebook_page","instagram_creator","tiktok_creator","youtube_channel"
+                    } else "",
+                    entity["url"] if entity["kind"] not in {
+                        "facebook_page","instagram_creator","tiktok_creator","youtube_channel"
+                    } else "",
+                    entity["url"], "2026/current activity signal from direct local source", TODAY,
+                    "Needs verification", "social", entity["url"],
+                    "Research candidate", "City micro-pass",
+                    "Band/artist candidate extracted from deep local source.",
+                ])
 
         for email in emails(context):
             contacts.append([
@@ -921,43 +1006,57 @@ def discover(city: str, country: str, venue_names: list[str] | None = None) -> d
                 f"Found on local source: {url}", TODAY, "f",
             ])
 
-    unique_peers = {}
-    for row in peers:
-        unique_peers.setdefault((norm(row[0]), norm(row[2])), row)
-    unique_beacons = {}
-    for row in beacons:
-        unique_beacons.setdefault((norm(row[0]), norm(row[1]), norm(row[2])), row)
-    unique_contacts = {}
-    for row in contacts:
-        unique_contacts.setdefault((norm(row[0]), norm(row[3])), row)
-
-    beacon_priority = {
-        "facebook_community": 100, "facebook_page": 95,
-        "youtube_channel": 90, "instagram_creator": 85,
-        "venue": 90, "independent_radio": 88, "music_media": 88,
-        "booking_agency": 88, "promoter": 88, "cultural_hub": 88,
-        "event_calendar": 82, "local_creator": 80,
-        "local_music_resource": 60,
-    }
-    beacons_sorted = sorted(
-        beacons,
-        key=lambda r: (
-            beacon_priority.get(str(r[1]), 50),
-            confidence(r[4], "", r[0]),
-        ),
-        reverse=True,
-    )[:15]
-    unique_beacons = {}
-    for row in beacons_sorted:
-        unique_beacons.setdefault((norm(row[0]), norm(row[1]), norm(row[2])), row)
+    unique_peers = {(norm(r[0]), norm(r[2])): r for r in peers}
+    unique_beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in beacons}
+    unique_contacts = {(norm(r[0]), norm(r[3])): r for r in contacts}
 
     return {
         "peers": list(unique_peers.values()),
         "beacons": list(unique_beacons.values()),
         "contacts": list(unique_contacts.values()),
-        "raw_results": len(unique_results),
-        "direct_leads": len(unique_beacons),
+        "raw_results": len(merged),
+        "direct_leads": len(direct_urls),
+        "useful": len(unique_peers) + len(unique_beacons) + len(unique_contacts),
+        "source_families": sorted(source_families),
+        "social_families": sorted(social_families),
+        "media_families": sorted(media_families),
+        "evidence_urls": evidence_urls,
+        "recovery": recovery,
     }
+
+
+def result_quality_ok(result: dict) -> bool:
+    return (
+        int(result.get("raw_results", 0) or 0) >= MIN_RAW_RESULTS
+        and int(result.get("direct_leads", 0) or 0) >= MIN_DIRECT_LEADS
+        and int(result.get("useful", 0) or 0) >= MIN_USEFUL_LEADS
+        and len(result.get("source_families", []) or []) >= MIN_SOURCE_FAMILIES
+        and len(result.get("social_families", []) or []) >= MIN_SOCIAL_FAMILIES
+        and len(result.get("media_families", []) or []) >= MIN_MEDIA_FAMILIES
+    )
+
+
+def merge_discovery(primary: dict, recovery: dict) -> dict:
+    peers = {(norm(r[0]), norm(r[2])): r for r in primary["peers"]}
+    peers.update({(norm(r[0]), norm(r[2])): r for r in recovery["peers"]})
+    beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in primary["beacons"]}
+    beacons.update({(norm(r[0]), norm(r[1]), norm(r[2])): r for r in recovery["beacons"]})
+    contacts = {(norm(r[0]), norm(r[3])): r for r in primary["contacts"]}
+    contacts.update({(norm(r[0]), norm(r[3])): r for r in recovery["contacts"]})
+    return {
+        "peers": list(peers.values()),
+        "beacons": list(beacons.values()),
+        "contacts": list(contacts.values()),
+        "raw_results": int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
+        "direct_leads": int(primary.get("direct_leads", 0)) + int(recovery.get("direct_leads", 0)),
+        "useful": len(peers) + len(beacons) + len(contacts),
+        "source_families": sorted(set(primary.get("source_families", [])) | set(recovery.get("source_families", []))),
+        "social_families": sorted(set(primary.get("social_families", [])) | set(recovery.get("social_families", []))),
+        "media_families": sorted(set(primary.get("media_families", [])) | set(recovery.get("media_families", []))),
+        "evidence_urls": list(dict.fromkeys(primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])))[:40],
+        "recovery": True,
+    }
+
 
 def existing_names(wb, sheet: str, header_name: str = "Name") -> set[str]:
     ws = wb[sheet]
@@ -991,99 +1090,111 @@ def write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
         w.writerows(rows)
 
 
+def safe_filename(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = re.sub(r"[^A-Za-z0-9._-]+", "_", value).strip("_")
+    return value or "city"
+
+
 def main() -> None:
     limit = int(os.environ.get("CITY_BATCH_SIZE", "4"))
+    candidate_window = int(os.environ.get("CITY_CANDIDATE_WINDOW", str(max(limit * 3, limit))))
     wb = load_workbook(DB)
-    cities = choose_cities(wb, limit)
-    if not cities:
+    candidates = choose_cities(wb, candidate_window)
+    if not candidates:
         print("CITY_PASS_DONE no eligible unprocessed cities")
         return
 
     pass_id = len(list(PASSES.glob("*.json"))) + 1
+    while (PASSES / f"{TODAY}__{pass_id:04d}.json").exists():
+        pass_id += 1
     stamp = f"{TODAY}__{pass_id:04d}"
-    all_summary = []
 
+    accepted = []
+    rejected = []
     existing_peer = existing_names(wb, "Peer Bands")
     existing_beacon = existing_names(wb, "Beacons")
     existing_contact = existing_emails(wb)
 
-    def venue_seeds_for(city: str, country: str) -> list[str]:
-        ws = wb["Venues"]
-        headers = [norm(c.value) for c in ws[2]]
-        idx = {h: i + 1 for i, h in enumerate(headers) if h}
-        if not {"name","city","country","status"}.issubset(idx):
-            return []
-        out = []
-        for row in range(3, ws.max_row + 1):
-            name = str(ws.cell(row, idx["name"]).value or "").strip()
-            c = str(ws.cell(row, idx["city"]).value or "").strip()
-            co = str(ws.cell(row, idx["country"]).value or "").strip()
-            status = norm(ws.cell(row, idx["status"]).value)
-            if (
-                name and norm(c) == norm(city) and norm(co) == norm(country)
-                and status in {"active", "open", "operating", "current"}
-                and not re.search(r"\b(festival|event|tour)\b", name, re.I)
-            ):
-                out.append(name)
-        return list(dict.fromkeys(out))[:2]
+    for city, country in candidates:
+        if len(accepted) >= limit:
+            break
 
-    for city, country in cities:
-        venue_names = venue_seeds_for(city, country)
-        print(f"CITY_VENUE_SEEDS {country}/{city}: {venue_names}")
-        result = discover(city, country, venue_names)
+        result = discover(city, country)
+        if not result_quality_ok(result):
+            print(
+                f"CITY_RESEARCH_RECOVERY {country}/{city}: "
+                f"primary raw={result['raw_results']} direct={result['direct_leads']} useful={result['useful']} "
+                f"families={len(result['source_families'])} social={result['social_families']} media={result['media_families']}"
+            )
+            result = merge_discovery(result, discover(city, country, recovery=True))
+
+        quality_ok = result_quality_ok(result)
         print(
-            f"CITY_RESEARCH {country}/{city}: "
-            f"raw_results={result['raw_results']} "
-            f"direct_leads={result['direct_leads']} "
-            f"peers={len(result['peers'])} "
-            f"beacons={len(result['beacons'])} "
-            f"contacts={len(result['contacts'])}"
+            f"CITY_RESEARCH {country}/{city}: raw_results={result['raw_results']} "
+            f"direct_leads={result['direct_leads']} useful={result['useful']} "
+            f"families={len(result['source_families'])} social={result['social_families']} "
+            f"media={result['media_families']} peers={len(result['peers'])} "
+            f"beacons={len(result['beacons'])} contacts={len(result['contacts'])} quality_ok={quality_ok}"
         )
-        useful = len(result["peers"]) + len(result["beacons"]) + len(result["contacts"])
-        kinds = [str(r[1]) for r in result["beacons"]]
-        social_hits = sum(
-            1 for kind in kinds
-            if kind in {"facebook_community", "facebook_page", "youtube_channel", "instagram_creator"}
-        )
-        quality_ok = (
-            result["raw_results"] > 0
-            and result["direct_leads"] >= 3
-            and useful >= 3
-            and social_hits >= 1
-        )
-        print(
-            f"CITY_QUALITY {country}/{city}: quality_ok={quality_ok} "
-            f"social_hits={social_hits} "
-            f"beacon_kinds={','.join(sorted(set(kinds)))}"
-        )
-        for row in result["beacons"][:8]:
-            print(f"CITY_LEAD {country}/{city}: {row[1]} | {row[0]} | {row[4]}")
-        # Never let one weak city abort the whole four-city batch. It remains unfinished
-        # when load_done() evaluates research_version/quality fields and will be retried.
+
+        if not quality_ok:
+            rejected.append({
+                "country": country,
+                "city": city,
+                "raw_results": result["raw_results"],
+                "direct_leads": result["direct_leads"],
+                "useful": result["useful"],
+                "source_families": result["source_families"],
+                "social_families": result["social_families"],
+                "media_families": result["media_families"],
+                "recovery_used": bool(result.get("recovery")),
+            })
+            continue
 
         peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
         beacons = [r for r in result["beacons"] if norm(r[0]) not in existing_beacon]
         contacts = [r for r in result["contacts"] if norm(r[0]) not in existing_contact]
 
-        write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city}.csv", PEER_HEADER, peers)
-        write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city}.csv", BEACON_HEADER, beacons)
-        write_csv(PENDING / f"Contacts__CityPass__{stamp}__{city}.csv", CONTACT_HEADER, contacts)
+        city_file = safe_filename(city)
+        write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city_file}.csv", PEER_HEADER, peers)
+        write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city_file}.csv", BEACON_HEADER, beacons)
+        write_csv(PENDING / f"Contacts__CityPass__{stamp}__{city_file}.csv", CONTACT_HEADER, contacts)
 
         existing_peer.update(norm(r[0]) for r in peers)
         existing_beacon.update(norm(r[0]) for r in beacons)
         existing_contact.update(norm(r[0]) for r in contacts)
 
-        all_summary.append({
+        accepted.append((city, country, result, peers, beacons, contacts))
+
+    if len(accepted) < min(limit, len(candidates)):
+        raise RuntimeError(
+            f"Daily city micro-pass could only qualify {len(accepted)} of requested {limit} "
+            f"from candidate window {len(candidates)}; rejected={len(rejected)}"
+        )
+
+    summary = []
+    for city, country, result, peers, beacons, contacts in accepted:
+        summary.append({
             "country": country,
             "city": city,
             "raw_results": result["raw_results"],
             "direct_leads": result["direct_leads"],
-            "useful_leads": useful,
-            "social_hits": social_hits,
-            "quality_ok": quality_ok,
-            "peer_candidates": len(peers),
-            "beacon_candidates": len(beacons),
-            "contact_candidates": len(contacts),
+            "useful": result["useful"],
+            "useful_leads": result["useful"],
+            "quality_ok": True,
+            "peer_candidates": len(result["peers"]),
+            "beacon_candidates": len(result["beacons"]),
+            "contact_candidates": len(result["contacts"]),
+            "new_peer_candidates": len(peers),
+            "new_beacon_candidates": len(beacons),
+            "new_contact_candidates": len(contacts),
+            "source_families": result["source_families"],
+            "social_families": result["social_families"],
+            "media_families": result["media_families"],
+            "evidence_urls": result["evidence_urls"],
+            "recovery_used": bool(result.get("recovery")),
         })
 
     PASSES.mkdir(parents=True, exist_ok=True)
@@ -1091,8 +1202,11 @@ def main() -> None:
         "date": TODAY,
         "research_version": PASS_FORMAT_VERSION,
         "pass_id": pass_id,
-        "cities": [{"country": country, "city": city} for city, country in cities],
-        "summary": all_summary,
+        "batch_size_requested": limit,
+        "candidate_window": len(candidates),
+        "cities": [{"country": country, "city": city} for city, country, *_ in accepted],
+        "summary": summary,
+        "rejected_candidates": rejected,
     }
     (PASSES / f"{stamp}.json").write_text(
         json.dumps(state, ensure_ascii=False, indent=2),

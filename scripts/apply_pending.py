@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import csv
+import json
+import re
 import shutil
 from datetime import date
 from pathlib import Path
@@ -21,6 +23,23 @@ SHEET_MAP = {
 }
 
 REMOVAL_HEADER = ["Sheet", "Key_Type", "Key", "Reason", "Source_URL", "Verified_Date"]
+CITY_PASS_PENDING_RE = re.compile(r"^.+__CityPass__(\d{4}-\d{2}-\d{2})__(\d{4})__.+\.csv$")
+REJECTED_ROOT = ROOT / "updates" / "rejected"
+
+
+def city_pass_pending_allowed(csv_path: Path) -> bool:
+    match = CITY_PASS_PENDING_RE.match(csv_path.name)
+    if not match:
+        return True
+    pass_file = ROOT / "city_passes" / f"{match.group(1)}__{match.group(2)}.json"
+    if not pass_file.exists():
+        return False
+    try:
+        payload = json.loads(pass_file.read_text(encoding="utf-8"))
+        return int(payload.get("research_version", 0) or 0) >= 4 and not bool(payload.get("invalidated", False))
+    except Exception:
+        return False
+
 
 
 def norm(v: object) -> str:
@@ -101,6 +120,20 @@ def apply_removals(wb, csv_path: Path) -> int:
         elif key_type == "name+country":
             required_cols = ["name", "country"]
             values = [norm(x) for x in key_raw.split("||", 1)]
+        elif key_type == "name+city+url":
+            parts = key_raw.split("||", 2)
+            if len(parts) != 3:
+                raise RuntimeError(f"Malformed name+city+url removal key: {raw}")
+            if "destination_url" in idx:
+                url_col = "destination_url"
+            elif "source_url" in idx:
+                url_col = "source_url"
+            elif "website" in idx:
+                url_col = "website"
+            else:
+                raise RuntimeError(f"No URL column available for exact removal in {target_sheet!r}")
+            required_cols = ["name", "city", url_col]
+            values = [norm(parts[0]), norm(parts[1]), norm(parts[2])]
         else:
             raise RuntimeError(f"Unsupported removal key type {raw[1]!r}")
 
@@ -126,7 +159,16 @@ def main() -> None:
     changed = False
     applied: list[tuple[Path, int, str]] = []
 
+    rejected_dir = REJECTED_ROOT / date.today().isoformat()
+
     for csv_path in sorted(PENDING.glob("*.csv")):
+        if not city_pass_pending_allowed(csv_path):
+            rejected_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(csv_path), str(rejected_dir / csv_path.name))
+            applied.append((csv_path, 0, "rejected-legacy-city-pass"))
+            print(f"Rejected legacy city-pass pending file: {csv_path.name}")
+            continue
+
         if csv_path.name.startswith("Removals__"):
             removed = apply_removals(wb, csv_path)
             if removed:

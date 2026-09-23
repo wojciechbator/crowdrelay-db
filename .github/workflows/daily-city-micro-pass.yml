@@ -19,7 +19,7 @@ permissions:
 jobs:
   city-pass:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -35,6 +35,13 @@ jobs:
       - name: Research next four eligible cities
         env:
           CITY_BATCH_SIZE: "4"
+          CITY_CANDIDATE_WINDOW: "12"
+          CITY_MIN_RAW_RESULTS: "8"
+          CITY_MIN_DIRECT_LEADS: "3"
+          CITY_MIN_USEFUL_LEADS: "4"
+          CITY_MIN_SOURCE_FAMILIES: "4"
+          CITY_MIN_SOCIAL_FAMILIES: "1"
+          CITY_MIN_MEDIA_FAMILIES: "1"
         run: python scripts/city_micro_pass.py
 
       - name: Validate city pass
@@ -55,6 +62,22 @@ jobs:
                   raise SystemExit(f"Unexpected country: {city}")
               if not city.get("city"):
                   raise SystemExit(f"Missing city: {city}")
+          summaries = payload.get("summary", [])
+          if len(summaries) != len(cities):
+              raise SystemExit("Summary/city count mismatch")
+          floors = {"raw_results": 8, "direct_leads": 3, "useful": 4}
+          for summary in summaries:
+              if not summary.get("quality_ok"):
+                  raise SystemExit(f"{summary.get('city')}: quality_ok=false")
+              for field, minimum in floors.items():
+                  if int(summary.get(field, 0) or 0) < minimum:
+                      raise SystemExit(f"{summary.get('city')}: {field} below QA floor")
+              if len(summary.get("source_families", [])) < 4:
+                  raise SystemExit(f"{summary.get('city')}: too few source families")
+              if not summary.get("social_families"):
+                  raise SystemExit(f"{summary.get('city')}: no social/community source")
+              if not summary.get("media_families"):
+                  raise SystemExit(f"{summary.get('city')}: no local-media source")
           print("CITY_PASS_QA_OK", cities)
           PY
 

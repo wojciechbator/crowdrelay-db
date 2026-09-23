@@ -27,6 +27,12 @@ jobs:
       - name: Checkout canonical database
         uses: actions/checkout@v4
 
+      - name: Refresh canonical main before applying research
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+
       - name: Materialize staged canonical workbook
         if: ${{ hashFiles('.staging/FINAL_READY') != '' }}
         run: |

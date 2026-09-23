@@ -15,7 +15,7 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout canonical database
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -26,18 +26,31 @@ jobs:
       - name: Install dependencies
         run: python -m pip install openpyxl
 
-      - name: Apply pending research
+      - name: Apply pending research in-place
         run: python scripts/apply_pending.py
 
-      - name: Validate and commit
+      - name: Validate canonical workbook
         run: |
           python3 - <<'PY'
           from openpyxl import load_workbook
+          required = {
+              "Venues": ["Name","City","Country","Address","Website","Audience_Genre","Capacity","Booking_Contact","Email","Public_Financial_Info","Status","Source_URL","Research_Date","Target_Fit","Contact_Quality","Outreach_Angle","Notes"],
+              "Peer Bands": ["Name","Country","City","Genre","Email","Social","Website","Links","Source_URL","Activity","Research_Date","Status","Confidence","Contact_Type","Contact_Source","Outreach_Readiness","Notes"],
+              "Beacons": ["Name","Kind","City","Email","Destination_URL","Source_URL","Active","Verified","Accepts_Outreach","Do_Not_Contact","Relationship_Score","Relevance_Pct","Confidence_Pct"],
+              "Booking Agents": ["Name","Agency","Email","Roster_URL","Genres","Source_URL","Research_Date","Notes"],
+              "Contacts": ["Email","Name","Organization","City","Kind","Phone","Notes","Last_Seen","Disappeared"],
+          }
           wb = load_workbook("database.xlsx", read_only=True)
-          for sheet in ("Venues","Booking Agents","Peer Bands"):
-              assert sheet in wb.sheetnames, sheet
-              print(sheet, wb[sheet].max_row - 1)
+          for sheet, header in required.items():
+              ws = wb[sheet]
+              got = [ws.cell(1, i + 1).value for i in range(len(header))]
+              if got != header:
+                  raise SystemExit(f"{sheet} header mismatch: {got}")
+              print(sheet, "rows=", ws.max_row - 1)
           PY
+
+      - name: Commit canonical workbook
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add database.xlsx updates/applied

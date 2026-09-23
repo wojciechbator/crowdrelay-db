@@ -126,15 +126,18 @@ def usable_direct_url(url: str) -> bool:
 
 ENTITY_RELEVANCE_RE = re.compile(
     r"\b(metal|metalcore|djent|hardcore|rock|punk|band|music|muzyka|zesp[oó][łl]|"
-    r"koncert|concert|venue|club|klub|radio|media|magazine|magazyn|promoter|booking|"
+    r"koncert|concert|venue|club|klub|pub|bar|radio|media|magazine|magazyn|promoter|booking|"
     r"fotograf|photograph|photo|creator|kultura|culture|mck|artyst|artist|festival|festiwal)\b",
     re.I,
 )
 
 
 def social_name(url: str, title: str) -> str:
-    path = urlparse(url).path.strip("/")
-    slug = path.split("/")[1] if path.startswith("groups/") else path.split("/")[0]
+    parts = [p for p in urlparse(url).path.strip("/").split("/") if p]
+    if parts[:1] in (["groups"], ["people"]) and len(parts) >= 2:
+        slug = parts[1]
+    else:
+        slug = parts[0] if parts else ""
     raw = re.sub(r"[-_]+", " ", slug)
     raw = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", raw)
     raw = re.sub(r"\s+", " ", raw).strip()
@@ -150,17 +153,28 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
     if not usable_direct_url(url):
         return False
     blob = f"{title} {snippet} {url}"
+    title_low = title.casefold().strip()
     if query_kind == "youtube":
-        return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
+        return (
+            urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
+            and title_low not in {"youtube", "youtube.com"}
+            and bool(ENTITY_RELEVANCE_RE.search(blob))
+        )
     if query_kind == "facebook_groups":
-        return "/groups/" in urlparse(url).path.casefold()
-    if query_kind == "facebook_groups":
-        title_low = title.casefold().strip()
-        return "/groups/" in urlparse(url).path.casefold() and title_low not in {
-            "link to facebook.com", "facebook", "log in or sign up"
-        } and (
-            bool(ENTITY_RELEVANCE_RE.search(blob))
-            or ascii_norm(city) in ascii_norm(f"{title} {snippet}")
+        return (
+            "/groups/" in urlparse(url).path.casefold()
+            and title_low not in {"link to facebook.com", "facebook", "log in or sign up"}
+            and bool(ENTITY_RELEVANCE_RE.search(blob))
+        )
+    if query_kind == "venue_seed_fb":
+        return (
+            "facebook.com/" in url
+            and title_low not in {"link to facebook.com", "facebook", "log in or sign up"}
+        )
+    if query_kind == "venue_seed_youtube":
+        return (
+            urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
+            and title_low not in {"youtube", "youtube.com"}
         )
     if query_kind.startswith("facebook"):
         return bool(ENTITY_RELEVANCE_RE.search(blob))
@@ -673,7 +687,8 @@ def confidence(url: str, snippet: str, page_text: str = "") -> int:
     return min(score, 95)
 
 
-def discover(city: str, country: str) -> dict:
+def discover(city: str, country: str, venue_names: list[str] | None = None) -> dict:
+    venue_names = [x for x in (venue_names or []) if x][:2]
     queries = [
         ("bands", f'"{city}" {country} metal metalcore hardcore djent band'),
         ("bands_local", f'"{city}" {country} zespół metal koncert rock'),
@@ -685,6 +700,11 @@ def discover(city: str, country: str) -> dict:
         ("promoters_media", f'"{city}" {country} promoter booking radio music media'),
         ("creators", f'"{city}" {country} music photographer creator local'),
     ]
+    for venue in venue_names:
+        queries.extend([
+            ("venue_seed_fb", f'"{venue}" "{city}" site:facebook.com'),
+            ("venue_seed_youtube", f'"{venue}" "{city}" site:youtube.com'),
+        ])
 
     headers = {
         "User-Agent": (
@@ -768,10 +788,13 @@ def discover(city: str, country: str) -> dict:
             final_candidate = page_url or final_url
             search_title = item.get("title", "").strip()
             search_snippet = item.get("snippet", "").strip()
-            scoped_direct = usable_direct_url(item.get("url", "")) and query_kind in {
-                "facebook", "facebook_groups", "youtube", "culture",
-                "promoters_media", "creators",
-            }
+            scoped_direct = usable_direct_url(item.get("url", "")) and (
+                query_kind in {
+                    "facebook", "facebook_groups", "youtube", "culture",
+                    "promoters_media", "creators",
+                }
+                or query_kind.startswith("venue_seed")
+            )
             page_local = local_signal(
                 city,
                 page_title or search_title,
@@ -821,7 +844,7 @@ def discover(city: str, country: str) -> dict:
         url = item["url"]
         title = item["title"]
         text = item["text"]
-        context = f"{item['search_title']} {item['snippet']} {title} {text}"
+        context = f"{item['search_title']} {item['snippet']} {title} {text} {url}"
         if not item["local"]:
             continue
 
@@ -908,12 +931,32 @@ def discover(city: str, country: str) -> dict:
     for row in contacts:
         unique_contacts.setdefault((norm(row[0]), norm(row[3])), row)
 
+    beacon_priority = {
+        "facebook_community": 100, "facebook_page": 95,
+        "youtube_channel": 90, "instagram_creator": 85,
+        "venue": 90, "independent_radio": 88, "music_media": 88,
+        "booking_agency": 88, "promoter": 88, "cultural_hub": 88,
+        "event_calendar": 82, "local_creator": 80,
+        "local_music_resource": 60,
+    }
+    beacons_sorted = sorted(
+        beacons,
+        key=lambda r: (
+            beacon_priority.get(str(r[1]), 50),
+            confidence(r[4], "", r[0]),
+        ),
+        reverse=True,
+    )[:15]
+    unique_beacons = {}
+    for row in beacons_sorted:
+        unique_beacons.setdefault((norm(row[0]), norm(row[1]), norm(row[2])), row)
+
     return {
         "peers": list(unique_peers.values()),
         "beacons": list(unique_beacons.values()),
         "contacts": list(unique_contacts.values()),
         "raw_results": len(unique_results),
-        "direct_leads": direct_entities,
+        "direct_leads": len(unique_beacons),
     }
 
 def existing_names(wb, sheet: str, header_name: str = "Name") -> set[str]:
@@ -964,8 +1007,30 @@ def main() -> None:
     existing_beacon = existing_names(wb, "Beacons")
     existing_contact = existing_emails(wb)
 
+    def venue_seeds_for(city: str, country: str) -> list[str]:
+        ws = wb["Venues"]
+        headers = [norm(c.value) for c in ws[2]]
+        idx = {h: i + 1 for i, h in enumerate(headers) if h}
+        if not {"name","city","country","status"}.issubset(idx):
+            return []
+        out = []
+        for row in range(3, ws.max_row + 1):
+            name = str(ws.cell(row, idx["name"]).value or "").strip()
+            c = str(ws.cell(row, idx["city"]).value or "").strip()
+            co = str(ws.cell(row, idx["country"]).value or "").strip()
+            status = norm(ws.cell(row, idx["status"]).value)
+            if (
+                name and norm(c) == norm(city) and norm(co) == norm(country)
+                and status in {"active", "open", "operating", "current"}
+                and not re.search(r"\b(festival|event|tour)\b", name, re.I)
+            ):
+                out.append(name)
+        return list(dict.fromkeys(out))[:2]
+
     for city, country in cities:
-        result = discover(city, country)
+        venue_names = venue_seeds_for(city, country)
+        print(f"CITY_VENUE_SEEDS {country}/{city}: {venue_names}")
+        result = discover(city, country, venue_names)
         print(
             f"CITY_RESEARCH {country}/{city}: "
             f"raw_results={result['raw_results']} "

@@ -494,12 +494,17 @@ def load_done() -> set[str]:
             for x in payload.get("summary", []):
                 raw = int(x.get("raw_results", 0) or 0)
                 direct = int(x.get("direct_leads", 0) or 0)
-                useful = (
-                    int(x.get("peer_candidates", 0) or 0)
-                    + int(x.get("beacon_candidates", 0) or 0)
-                    + int(x.get("contact_candidates", 0) or 0)
+                useful = int(
+                    x.get("useful_leads",
+                        (int(x.get("peer_candidates", 0) or 0)
+                         + int(x.get("beacon_candidates", 0) or 0)
+                         + int(x.get("contact_candidates", 0) or 0)))
                 )
-                quality_ok = version >= PASS_FORMAT_VERSION and direct > 0 and useful >= 2
+                quality_ok = bool(
+                    x.get("quality_ok", False)
+                    if version >= PASS_FORMAT_VERSION
+                    else False
+                )
                 legacy_ok = version < PASS_FORMAT_VERSION and payload.get("date") != TODAY
                 if raw > 0 and (quality_ok or legacy_ok):
                     valid.add(city_key(x.get("country", ""), x.get("city", "")))
@@ -888,12 +893,26 @@ def main() -> None:
             f"contacts={len(result['contacts'])}"
         )
         useful = len(result["peers"]) + len(result["beacons"]) + len(result["contacts"])
-        if result["raw_results"] == 0 or result["direct_leads"] == 0 or useful < 2:
-            raise RuntimeError(
-                f"Research produced insufficient useful local leads for {country}/{city}: "
-                f"raw_results={result['raw_results']} direct_leads={result['direct_leads']} useful={useful}; "
-                "city will not be marked complete."
-            )
+        kinds = [str(r[1]) for r in result["beacons"]]
+        social_hits = sum(
+            1 for kind in kinds
+            if kind in {"facebook_community", "facebook_page", "youtube_channel", "instagram_creator"}
+        )
+        quality_ok = (
+            result["raw_results"] > 0
+            and result["direct_leads"] >= 3
+            and useful >= 3
+            and social_hits >= 1
+        )
+        print(
+            f"CITY_QUALITY {country}/{city}: quality_ok={quality_ok} "
+            f"social_hits={social_hits} "
+            f"beacon_kinds={','.join(sorted(set(kinds)))}"
+        )
+        for row in result["beacons"][:8]:
+            print(f"CITY_LEAD {country}/{city}: {row[1]} | {row[0]} | {row[4]}")
+        # Never let one weak city abort the whole four-city batch. It remains unfinished
+        # when load_done() evaluates research_version/quality fields and will be retried.
 
         peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
         beacons = [r for r in result["beacons"] if norm(r[0]) not in existing_beacon]
@@ -912,6 +931,9 @@ def main() -> None:
             "city": city,
             "raw_results": result["raw_results"],
             "direct_leads": result["direct_leads"],
+            "useful_leads": useful,
+            "social_hits": social_hits,
+            "quality_ok": quality_ok,
             "peer_candidates": len(peers),
             "beacon_candidates": len(beacons),
             "contact_candidates": len(contacts),

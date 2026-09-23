@@ -8,6 +8,10 @@ on:
       - ".github/workflows/apply-database-updates.yml"
       - ".staging/FINAL_READY"
 
+concurrency:
+  group: crowdrelay-database-apply
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -126,4 +130,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: apply Virya database updates"
+          git pull --rebase origin main
           git push

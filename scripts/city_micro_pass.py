@@ -357,6 +357,48 @@ def _parse_rss(xml: str) -> list[dict]:
     return out
 
 
+SEARX_INSTANCES = (
+    "https://search.serpensin.com",
+    "https://search.anoni.net",
+    "https://search.lumy.live",
+)
+
+
+def searx_search(query: str, headers: dict) -> list[dict]:
+    for base in SEARX_INSTANCES:
+        try:
+            r = requests.get(
+                base + "/search",
+                params={
+                    "q": query,
+                    "format": "json",
+                    "language": "all",
+                    "safesearch": 0,
+                    "pageno": 1,
+                },
+                timeout=15,
+                headers=headers,
+                allow_redirects=True,
+            )
+            if r.status_code == 429:
+                continue
+            if r.status_code != 200 or not r.text:
+                continue
+            data = r.json()
+            out = []
+            for item in data.get("results", []):
+                url = str(item.get("url") or "").strip()
+                title = BeautifulSoup(str(item.get("title") or ""), "html.parser").get_text(" ", strip=True)
+                snippet = BeautifulSoup(str(item.get("content") or ""), "html.parser").get_text(" ", strip=True)
+                if url.startswith("http") and title:
+                    out.append({"title": title[:250], "url": url, "snippet": snippet[:800]})
+            if out:
+                return out[:30]
+        except (requests.RequestException, ValueError):
+            continue
+    return []
+
+
 def jina_search(query: str, headers: dict) -> list[dict]:
     results = []
     for host in ("http://www.google.com/search?q=", "http://www.bing.com/search?q="):
@@ -612,6 +654,19 @@ def discover(city: str, country: str) -> dict:
     }
 
     all_results: list[tuple[str, dict]] = []
+    # SearXNG gives us structured multi-engine results without brittle HTML parsing.
+    with ThreadPoolExecutor(max_workers=len(queries)) as ex:
+        futures = {
+            ex.submit(searx_search, query, headers): kind
+            for kind, query in queries
+        }
+        for fut in as_completed(futures):
+            kind = futures[fut]
+            try:
+                all_results.extend((kind, x) for x in fut.result())
+            except Exception:
+                pass
+
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {ex.submit(search_engine, q): kind for kind, q in queries}
         for fut in as_completed(futures):

@@ -2,6 +2,10 @@ name: Daily city micro-pass
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "scripts/city_micro_pass.py"
+      - ".github/workflows/daily-city-micro-pass.yml"
   schedule:
     - cron: "30 6 * * *"
 

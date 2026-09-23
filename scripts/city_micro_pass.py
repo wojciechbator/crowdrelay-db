@@ -89,32 +89,42 @@ def domain(url: str) -> str:
         return ""
 
 
-def ddg(session: requests.Session, query: str) -> list[dict]:
-    try:
-        r = session.get(
-            "https://html.duckduckgo.com/html/?q=" + quote_plus(query),
-            timeout=15,
-        )
-    except requests.RequestException:
-        return []
-    if r.status_code != 200:
-        return []
-    soup = BeautifulSoup(r.text, "html.parser")
-    out = []
-    for item in soup.select(".result"):
-        a = item.select_one("a.result__a")
-        if not a:
+def search_engine(session: requests.Session, query: str) -> list[dict]:
+    endpoints = [
+        ("ddg", "https://html.duckduckgo.com/html/?q="),
+        ("bing", "https://www.bing.com/search?q="),
+    ]
+    for engine, base in endpoints:
+        try:
+            r = session.get(
+                base + quote_plus(query),
+                timeout=20,
+                headers={"User-Agent": UA, "Accept-Language": "en-US,en;q=0.8"},
+            )
+        except requests.RequestException:
             continue
-        url = decode_ddg(a.get("href", ""))
-        if not url or domain(url) == "duckduckgo.com":
+        if r.status_code != 200:
             continue
-        sn = item.select_one(".result__snippet")
-        out.append({
-            "title": a.get_text(" ", strip=True),
-            "url": url,
-            "snippet": sn.get_text(" ", strip=True) if sn else "",
-        })
-    return out
+        soup = BeautifulSoup(r.text, "html.parser")
+        out = []
+        selectors = [".result"] if engine == "ddg" else ["li.b_algo"]
+        for item in soup.select(",".join(selectors)):
+            a = item.select_one("a.result__a") if engine == "ddg" else item.select_one("h2 a")
+            if not a:
+                continue
+            raw_url = a.get("href", "")
+            url = decode_ddg(raw_url) if engine == "ddg" else unquote(raw_url)
+            if not url or domain(url) in {"duckduckgo.com", "bing.com"}:
+                continue
+            sn = item.select_one(".result__snippet") if engine == "ddg" else item.select_one(".b_caption p")
+            out.append({
+                "title": a.get_text(" ", strip=True),
+                "url": url,
+                "snippet": sn.get_text(" ", strip=True) if sn else "",
+            })
+        if out:
+            return out
+    return []
 
 
 def emails(text: str) -> list[str]:
@@ -136,8 +146,16 @@ def load_done() -> set[str]:
     for p in PASSES.glob("*.json"):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
+            summary = payload.get("summary", [])
+            valid_cities = {
+                city_key(item.get("country", ""), item.get("city", ""))
+                for item in summary
+                if int(item.get("raw_results", 0) or 0) > 0
+            }
             for item in payload.get("cities", []):
-                done.add(city_key(item["country"], item["city"]))
+                key = city_key(item["country"], item["city"])
+                if key in valid_cities:
+                    done.add(key)
         except Exception:
             continue
     return done
@@ -240,7 +258,7 @@ def discover(city: str, country: str) -> dict:
     all_results: list[tuple[str, dict]] = []
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {
-            ex.submit(ddg, session, q): kind
+            ex.submit(search_engine, session, q): kind
             for kind, q in queries
         }
         for fut in as_completed(futures):
@@ -366,6 +384,8 @@ def main() -> None:
 
     for city, country in cities:
         result = discover(city, country)
+        if result["raw_results"] == 0:
+            raise RuntimeError(f"Research returned zero web results for {country}/{city}; city will not be marked complete.")
 
         peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
         beacons = [

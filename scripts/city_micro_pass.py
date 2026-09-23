@@ -5,6 +5,7 @@ import csv
 import json
 import os
 import re
+import unicodedata
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
@@ -19,7 +20,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-UA = "CrowdRelayDB-CityResearch/1.2"
+UA = "CrowdRelayDB-CityResearch/2.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
@@ -62,9 +63,43 @@ KIND_TERMS = {
     "youtube": "local_creator",
 }
 
+DIRECT_DOMAINS = {
+    "facebook.com", "instagram.com", "youtube.com", "youtu.be",
+    "bandcamp.com", "soundcloud.com", "mixcloud.com",
+    "bandsintown.com", "songkick.com", "metal-archives.com",
+}
+
+NEWSISH_DOMAINS = {
+    "news.google.com", "bing.com", "reuters.com", "bbc.com", "theguardian.com",
+    "timeout.com", "loudersound.com", "blabbermouth.net", "metalinjection.net",
+    "brooklynvegan.com", "residentadvisor.net", "radii.co", "rollingstone.com",
+}
+
+GENERIC_ARTICLE_RE = re.compile(
+    r"\b(tour|returns|return|shares|announces|announcement|new faces|coming|"
+    r"greatest|best|more|and more|spotlight|interview|review|concert|festival|"
+    r"party|show|gig|series|season|soundtrack|could|why|how|the \w+ list)\b",
+    re.I,
+)
+
 
 def norm(v: object) -> str:
     return re.sub(r"\s+", " ", str(v or "").strip()).casefold()
+
+
+def ascii_norm(v: object) -> str:
+    value = unicodedata.normalize("NFKD", str(v or ""))
+    return "".join(ch for ch in value if not unicodedata.combining(ch)).casefold()
+
+
+def is_direct_domain(url: str) -> bool:
+    d = domain(url)
+    return d in DIRECT_DOMAINS or any(d.endswith("." + x) for x in DIRECT_DOMAINS)
+
+
+def is_newsish(url: str) -> bool:
+    d = domain(url)
+    return d in NEWSISH_DOMAINS or d.startswith("news.")
 
 
 def domain(url: str) -> str:
@@ -78,6 +113,89 @@ def decode_ddg(url: str) -> str:
     if "duckduckgo.com" not in urlparse(url).netloc:
         return unquote(url)
     return unquote(parse_qs(urlparse(url).query).get("uddg", [""])[0] or url)
+
+
+def resolve_url(url: str, headers: dict | None = None) -> str:
+    if not url.startswith("http"):
+        return ""
+    host = urlparse(url).netloc.casefold()
+    if not (host == "news.google.com" or host.endswith(".bing.com") or host == "bing.com"):
+        return url
+    try:
+        r = requests.get(
+            url,
+            timeout=10,
+            headers=headers or {"User-Agent": UA},
+            allow_redirects=True,
+            stream=True,
+        )
+        final = r.url or url
+        r.close()
+        return final
+    except requests.RequestException:
+        return url
+
+
+def fetch_page(url: str, headers: dict) -> tuple[str, str, str, list[tuple[str, str]]]:
+    try:
+        r = requests.get(
+            url, timeout=12, headers=headers, allow_redirects=True
+        )
+        if r.status_code != 200 or not r.text:
+            return "", "", "", []
+        soup = BeautifulSoup(r.text, "html.parser")
+        title = soup.title.get_text(" ", strip=True) if soup.title else ""
+        text = soup.get_text(" ", strip=True)
+        links = []
+        for a in soup.select("a[href]"):
+            href = a.get("href", "").strip()
+            label = a.get_text(" ", strip=True)
+            if not href.startswith("http"):
+                continue
+            links.append((href, label))
+        return r.url or url, title, text[:50000], links[:300]
+    except requests.RequestException:
+        return "", "", "", []
+
+
+def local_signal(city: str, title: str, snippet: str, page_text: str, url: str) -> bool:
+    target = ascii_norm(city)
+    blob = ascii_norm(f"{title} {snippet} {page_text}")
+    if target and target in blob:
+        return True
+    city_tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
+    return bool(city_tokens) and all(token in blob for token in city_tokens)
+
+
+def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> list[dict]:
+    out = []
+    for href, label in links:
+        d = domain(href)
+        if not is_direct_domain(href):
+            continue
+        if d == "facebook.com":
+            kind = "facebook_community" if "/groups/" in href else "facebook_page"
+        elif d in {"youtube.com", "youtu.be"}:
+            kind = "youtube_channel"
+        elif d == "instagram.com":
+            kind = "instagram_creator"
+        elif d == "bandcamp.com":
+            kind = "bandcamp_artist"
+        elif d == "soundcloud.com":
+            kind = "soundcloud_artist"
+        elif d == "metal-archives.com":
+            kind = "metal_database"
+        elif d in {"bandsintown.com", "songkick.com"}:
+            kind = "event_calendar"
+        else:
+            kind = "local_music_resource"
+        name = re.sub(r"\s+", " ", label or "").strip()
+        if len(name) < 3:
+            name = re.sub(r"\s*[|–-].*$", "", page_title or "").strip()
+        if len(name) < 3:
+            name = d
+        out.append({"name": name[:180], "kind": kind, "url": href, "city": city})
+    return out
 
 
 def _parse_html(engine: str, html: str) -> list[dict]:
@@ -153,29 +271,26 @@ def search_engine(query: str) -> list[dict]:
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/140.0 Safari/537.36"
         ),
-        "Accept-Language": "en-US,en;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
     }
+    results: list[dict] = []
 
-    # RSS is deliberately first: it is much less brittle than scraping search HTML.
     rss_endpoints = [
         ("google_news_rss", "https://news.google.com/rss/search?q=", "&hl=en-US&gl=US&ceid=US:en"),
         ("bing_news_rss", "https://www.bing.com/news/search?format=rss&q=", ""),
     ]
-    for engine, base, suffix in rss_endpoints:
+    for _, base, suffix in rss_endpoints:
         try:
             r = requests.get(
                 base + quote_plus(query) + suffix,
-                timeout=20,
+                timeout=15,
                 headers=headers,
             )
             if r.status_code == 200:
-                results = _parse_rss(r.text)
-                if results:
-                    return results[:20]
+                results.extend(_parse_rss(r.text))
         except (requests.RequestException, ET.ParseError):
             pass
 
-    # Keep HTML engines as secondary fallbacks.
     endpoints = [
         ("ddg", "https://html.duckduckgo.com/html/?q="),
         ("ddg_lite", "https://lite.duckduckgo.com/lite/?q="),
@@ -183,21 +298,30 @@ def search_engine(query: str) -> list[dict]:
         ("google", "https://www.google.com/search?q="),
     ]
     for engine, base in endpoints:
-        for _ in range(2):
-            try:
-                r = requests.get(
-                    base + quote_plus(query),
-                    timeout=20,
-                    headers=headers,
-                    allow_redirects=True,
-                )
-                if r.status_code == 200:
-                    results = _parse_html(engine, r.text)
-                    if results:
-                        return results[:20]
-            except requests.RequestException:
-                pass
-    return []
+        try:
+            r = requests.get(
+                base + quote_plus(query),
+                timeout=15,
+                headers=headers,
+                allow_redirects=True,
+            )
+            if r.status_code == 200:
+                results.extend(_parse_html(engine, r.text))
+        except requests.RequestException:
+            pass
+
+    seen = set()
+    out = []
+    for item in results:
+        url = item.get("url", "")
+        key = norm(url.rstrip("/"))
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+        if len(out) >= 30:
+            break
+    return out
 
 
 def emails(text: str) -> list[str]:
@@ -262,40 +386,89 @@ def choose_cities(wb, limit: int):
     ][:limit]
 
 
-def classify_beacon(title: str, snippet: str) -> str:
-    blob = norm(f"{title} {snippet}")
-    for term, kind in KIND_TERMS.items():
-        if term in blob:
-            return kind
+def classify_beacon(title: str, snippet: str, url: str = "") -> str:
+    blob = norm(f"{title} {snippet} {url}")
+    if "facebook.com/groups/" in url:
+        return "facebook_community"
+    if "youtube.com" in url or "youtu.be" in url:
+        return "youtube_channel"
+    if "instagram.com" in url:
+        return "instagram_creator"
+    if "radio" in blob:
+        return "independent_radio"
+    if "podcast" in blob:
+        return "podcast"
+    if any(x in blob for x in ("magazine", "music media", "media")):
+        return "music_media"
+    if any(x in blob for x in ("kalendarz", "calendar", "events", "concert calendar")):
+        return "event_calendar"
+    if any(x in blob for x in ("klub", "club", "venue", "concert hall")):
+        return "venue"
+    if any(x in blob for x in ("agency", "agencja", "booking")):
+        return "booking_agency"
+    if "promoter" in blob or "promocj" in blob:
+        return "promoter"
+    if "centrum kultury" in blob or "culture center" in blob or "cultural" in blob:
+        return "cultural_hub"
+    if any(x in blob for x in ("photograph", "fotograf", "creator", "youtube")):
+        return "local_creator"
     return "local_music_resource"
 
 
-def likely_band(title: str, snippet: str) -> bool:
-    return bool(BAND_RE.search(f"{title} {snippet}")) and not bool(NON_BAND_RE.search(title))
+def likely_band_entity(name: str, context: str, url: str) -> bool:
+    if not name or len(name) > 120:
+        return False
+    if is_newsish(url) or GENERIC_ARTICLE_RE.search(name):
+        return False
+    strong_domain = (
+        is_direct_domain(url)
+        and any(x in domain(url) for x in (
+            "facebook.com", "instagram.com", "youtube.com", "bandcamp.com",
+            "soundcloud.com", "metal-archives.com", "bandsintown.com",
+            "songkick.com",
+        ))
+    )
+    genre = bool(BAND_RE.search(context))
+    words = re.findall(r"[A-Za-zÀ-ž0-9&'.-]+", name)
+    looks_sentence = len(words) >= 7 or re.search(r"[.!?]", name)
+    return strong_domain and genre and not looks_sentence
 
 
-def confidence(url: str, snippet: str) -> int:
-    score = 65
+def confidence(url: str, snippet: str, page_text: str = "") -> int:
+    score = 55
+    if is_direct_domain(url):
+        score += 20
     if any(x in domain(url) for x in (
         "facebook.com", "instagram.com", "youtube.com", "bandcamp.com",
         "bandsintown.com", "songkick.com", "metal-archives.com",
     )):
-        score += 15
-    if "2026" in snippet:
+        score += 10
+    if "2026" in f"{snippet} {page_text}":
         score += 10
     return min(score, 95)
 
 
 def discover(city: str, country: str) -> dict:
     queries = [
-        ("bands", f'"{city}" {country} metal rock hardcore band 2026'),
-        ("bands2", f'"{city}" {country} metalcore djent band concert 2026'),
-        ("ecosystem", f'"{city}" {country} music radio media concerts calendar'),
-        ("resources", f'"{city}" {country} music club venue promoter booking 2026'),
-        ("creators", f'"{city}" {country} music photographer youtube local creator'),
+        ("bands", f'"{city}" {country} metal metalcore hardcore djent band'),
+        ("bands_local", f'"{city}" {country} zespół metal koncert rock'),
+        ("facebook", f'"{city}" {country} site:facebook.com music metal concert'),
+        ("facebook_groups", f'"{city}" {country} site:facebook.com/groups muzyka koncert metal'),
+        ("youtube", f'"{city}" {country} site:youtube.com metal concert music'),
+        ("ecosystem", f'"{city}" {country} music club venue concerts calendar'),
+        ("promoters_media", f'"{city}" {country} promoter booking radio music media'),
+        ("creators", f'"{city}" {country} music photographer creator local'),
     ]
 
-    all_results = []
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/140.0 Safari/537.36"
+        ),
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+
+    all_results: list[tuple[str, dict]] = []
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {ex.submit(search_engine, q): kind for kind, q in queries}
         for fut in as_completed(futures):
@@ -305,59 +478,137 @@ def discover(city: str, country: str) -> dict:
             except Exception:
                 pass
 
-    seen_urls, peers, beacons, contacts = set(), [], [], []
+    raw_seen = set()
+    unique_results = []
     for query_kind, item in all_results:
-        url = item["url"]
-        key = url.casefold().rstrip("/")
-        if key in seen_urls:
+        url = item.get("url", "")
+        key = norm(url.rstrip("/"))
+        if not url.startswith("http") or key in raw_seen:
             continue
-        seen_urls.add(key)
-        title, snippet = item["title"].strip(), item["snippet"].strip()
-        found_emails = emails(f"{title} {snippet}")
-        conf = confidence(url, snippet)
+        raw_seen.add(key)
+        unique_results.append((query_kind, item))
+    unique_results = unique_results[:70]
 
-        if query_kind.startswith("bands") and likely_band(title, snippet):
-            name = re.sub(r"\s+[|–-]\s+.*$", "", title).strip()
-            peers.append([
-                name, country, city, "", found_emails[0] if found_emails else "",
-                url if any(x in url for x in ("facebook.com", "instagram.com")) else "",
-                url if not any(x in url for x in ("facebook.com", "instagram.com")) else "",
-                url, "2026/current activity signal from city research", TODAY,
-                "Needs verification", "social" if not found_emails else "public",
-                url, "Research candidate", "City micro-pass",
-                f"Discovered from {query_kind}; verify identity and current activity. Confidence {conf}%.",
-            ])
-        elif query_kind in {"ecosystem", "resources", "creators"} and len(title) >= 4:
-            beacons.append([
-                title[:180], classify_beacon(title, snippet), city,
-                found_emails[0] if found_emails else "", url, url,
-                "t", "t", "t", "f", 60, min(95, conf), conf,
-            ])
+    enriched: list[dict] = []
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        future_map = {
+            ex.submit(resolve_url, item["url"], headers): (query_kind, item)
+            for query_kind, item in unique_results
+        }
+        for fut in as_completed(future_map):
+            query_kind, item = future_map[fut]
+            try:
+                final_url = fut.result() or item["url"]
+            except Exception:
+                final_url = item["url"]
+            page_url, page_title, page_text, links = fetch_page(final_url, headers)
+            enriched.append({
+                "query_kind": query_kind,
+                "url": page_url or final_url,
+                "search_title": item.get("title", "").strip(),
+                "title": page_title or item.get("title", "").strip(),
+                "snippet": item.get("snippet", "").strip(),
+                "text": page_text,
+                "links": links,
+                "local": local_signal(
+                    city,
+                    page_title or item.get("title", ""),
+                    item.get("snippet", ""),
+                    page_text,
+                    page_url or final_url,
+                ),
+            })
 
-        for email in found_emails:
+    peers: list[list[str]] = []
+    beacons: list[list[str]] = []
+    contacts: list[list[str]] = []
+    direct_entities = 0
+
+    def add_beacon(name: str, kind: str, url: str, context: str):
+        nonlocal direct_entities
+        if not url.startswith("http") or not name:
+            return
+        if is_newsish(url) and not is_direct_domain(url):
+            return
+        found_emails = emails(context)
+        conf = confidence(url, "", context)
+        beacons.append([
+            name[:180], kind, city,
+            found_emails[0] if found_emails else "",
+            url, url, "t", "t", "t", "f", 65, conf, conf,
+        ])
+        direct_entities += 1
+
+    for item in enriched:
+        url = item["url"]
+        title = item["title"]
+        text = item["text"]
+        context = f"{item['search_title']} {item['snippet']} {title} {text}"
+        if not item["local"]:
+            continue
+
+        if item["query_kind"].startswith("bands"):
+            if is_direct_domain(url) and likely_band_entity(title, context, url):
+                found_emails = emails(context)
+                conf = confidence(url, item["snippet"], text)
+                peers.append([
+                    title[:180], country, city, "", found_emails[0] if found_emails else "",
+                    url if "facebook.com" in url or "instagram.com" in url else "",
+                    url if "facebook.com" not in url and "instagram.com" not in url else "",
+                    url, "2026/current activity signal from direct entity page", TODAY,
+                    "Needs verification",
+                    "public" if found_emails else "social",
+                    url, "Research candidate", "City micro-pass",
+                    f"Direct local music entity page. Confidence {conf}%.",
+                ])
+
+        if is_direct_domain(url):
+            add_beacon(title[:180], classify_beacon(title, item["snippet"], url), url, context)
+
+        for entity in direct_links(city, title, item["links"]):
+            if not local_signal(city, entity["name"], "", text, entity["url"]):
+                continue
+            add_beacon(entity["name"], entity["kind"], entity["url"], context)
+
+            if item["query_kind"].startswith("bands") and entity["kind"] in {
+                "facebook_page", "instagram_creator", "youtube_channel",
+                "bandcamp_artist", "soundcloud_artist", "metal_database",
+            }:
+                if likely_band_entity(entity["name"], f"{entity['name']} {context}", entity["url"]):
+                    peers.append([
+                        entity["name"], country, city, "", "",
+                        entity["url"] if "facebook.com" in entity["url"] or "instagram.com" in entity["url"] else "",
+                        entity["url"] if "facebook.com" not in entity["url"] and "instagram.com" not in entity["url"] else "",
+                        entity["url"], "2026/current activity signal from direct local source", TODAY,
+                        "Needs verification", "social", entity["url"], "Research candidate",
+                        "City micro-pass",
+                        "Band/artist candidate extracted from a local page; verify current activity.",
+                    ])
+
+        for email in emails(context):
             contacts.append([
                 email, title[:120], title[:160], city,
-                classify_beacon(title, snippet), "",
-                f"Found in city research result: {url}", TODAY, "f",
+                classify_beacon(title, item["snippet"], url), "",
+                f"Found on local source: {url}", TODAY, "f",
             ])
 
     unique_peers = {}
     for row in peers:
-        unique_peers.setdefault(norm(row[0]), row)
+        unique_peers.setdefault((norm(row[0]), norm(row[2])), row)
     unique_beacons = {}
     for row in beacons:
         unique_beacons.setdefault((norm(row[0]), norm(row[1]), norm(row[2])), row)
     unique_contacts = {}
     for row in contacts:
-        unique_contacts.setdefault(norm(row[0]), row)
+        unique_contacts.setdefault((norm(row[0]), norm(row[3])), row)
 
     return {
         "peers": list(unique_peers.values()),
         "beacons": list(unique_beacons.values()),
         "contacts": list(unique_contacts.values()),
-        "raw_results": len(all_results),
+        "raw_results": len(unique_results),
+        "direct_leads": direct_entities,
     }
-
 
 def existing_names(wb, sheet: str, header_name: str = "Name") -> set[str]:
     ws = wb[sheet]
@@ -412,13 +663,16 @@ def main() -> None:
         print(
             f"CITY_RESEARCH {country}/{city}: "
             f"raw_results={result['raw_results']} "
+            f"direct_leads={result['direct_leads']} "
             f"peers={len(result['peers'])} "
             f"beacons={len(result['beacons'])} "
             f"contacts={len(result['contacts'])}"
         )
-        if result["raw_results"] == 0:
+        useful = len(result["peers"]) + len(result["beacons"]) + len(result["contacts"])
+        if result["raw_results"] == 0 or result["direct_leads"] == 0 or useful < 2:
             raise RuntimeError(
-                f"Research returned zero web results for {country}/{city}; "
+                f"Research produced insufficient useful local leads for {country}/{city}: "
+                f"raw_results={result['raw_results']} direct_leads={result['direct_leads']} useful={useful}; "
                 "city will not be marked complete."
             )
 
@@ -438,6 +692,7 @@ def main() -> None:
             "country": country,
             "city": city,
             "raw_results": result["raw_results"],
+            "direct_leads": result["direct_leads"],
             "peer_candidates": len(peers),
             "beacon_candidates": len(beacons),
             "contact_candidates": len(contacts),

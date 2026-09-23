@@ -154,8 +154,16 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
         return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
     if query_kind == "facebook_groups":
         return "/groups/" in urlparse(url).path.casefold()
+    if query_kind == "facebook_groups":
+        title_low = title.casefold().strip()
+        return "/groups/" in urlparse(url).path.casefold() and title_low not in {
+            "link to facebook.com", "facebook", "log in or sign up"
+        } and (
+            bool(ENTITY_RELEVANCE_RE.search(blob))
+            or ascii_norm(city) in ascii_norm(f"{title} {snippet}")
+        )
     if query_kind.startswith("facebook"):
-        return bool(ENTITY_RELEVANCE_RE.search(blob)) or ascii_norm(city) in ascii_norm(blob)
+        return bool(ENTITY_RELEVANCE_RE.search(blob))
     if query_kind == "creators":
         return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
     if query_kind == "culture":
@@ -238,7 +246,7 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
     out = []
     for href, label in links:
         d = domain(href)
-        if not is_direct_domain(href):
+        if not is_direct_domain(href) or not usable_direct_url(href):
             continue
         if d == "facebook.com":
             kind = "facebook_community" if "/groups/" in href else "facebook_page"
@@ -542,6 +550,8 @@ def load_done() -> set[str]:
     for p in PASSES.glob("*.json"):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
+            if payload.get("invalidated"):
+                continue
             version = int(payload.get("research_version", 1) or 1)
             valid = set()
             for x in payload.get("summary", []):
@@ -850,6 +860,14 @@ def discover(city: str, country: str) -> dict:
             name = title[:180]
             if name.casefold() in {"link to facebook.com", "link to instagram.com"}:
                 name = social_name(url, name)
+            # Facebook group IDs without a visible group name are not actionable records.
+            if kind == "facebook_community" and (not name or name.casefold().startswith("link to ")):
+                continue
+            # Avoid storing watch URLs accidentally classified as direct YouTube results.
+            if kind == "youtube_channel" and not urlparse(url).path.casefold().startswith(
+                ("/channel/", "/@", "/c/", "/user/")
+            ):
+                continue
             if name:
                 add_beacon(name, kind, url, context)
 

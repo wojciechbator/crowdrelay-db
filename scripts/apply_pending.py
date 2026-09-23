@@ -134,25 +134,46 @@ def main() -> None:
             applied.append((csv_path, removed, "removed"))
             continue
 
-        # Audit batches update existing Peer Bands rows in-place by Name.
-        if csv_path.name.startswith("Audit_Peer_Bands__"):
+        # Audit / research Peer Bands deltas can use either the legacy 17-column
+        # audit header or the canonical 15-column city-pass header. Map by header names
+        # instead of requiring an exact-width workbook header.
+        if csv_path.name.startswith("Audit_Peer_Bands__") or csv_path.name.startswith("Peer_Bands__"):
             header, data = load_csv(csv_path)
-            expected = [
+            canonical = [
+                "Name","Country","City","Genre","Email","Social","Website","Source_URL",
+                "Activity","Research_Date","Confidence","Contact_Type","Contact_Source",
+                "Outreach_Readiness","Notes"
+            ]
+            legacy = [
                 "Name","Country","City","Genre","Email","Social","Website","Links",
                 "Source_URL","Activity","Research_Date","Status","Confidence",
                 "Contact_Type","Contact_Source","Outreach_Readiness","Notes"
             ]
-            if [norm(x) for x in header] != [norm(x) for x in expected]:
-                raise RuntimeError(f"Invalid audit Peer Bands header in {csv_path}: {header}")
+            header_norm = [norm(x) for x in header]
+            if header_norm not in ([norm(x) for x in canonical], [norm(x) for x in legacy]):
+                raise RuntimeError(f"Invalid Peer Bands delta header in {csv_path}: {header}")
+
             ws = wb["Peer Bands"]
-            header_row = find_header_row(ws, header)
-            name_col = 1
+            header_row = find_existing_header_row(ws)
+            workbook_headers = [
+                norm(ws.cell(header_row, c).value)
+                for c in range(1, ws.max_column + 1)
+            ]
+            col_by_name = {name: i + 1 for i, name in enumerate(workbook_headers) if name}
+            if any(norm(h) not in col_by_name for h in header):
+                missing = [h for h in header if norm(h) not in col_by_name]
+                raise RuntimeError(f"Peer Bands workbook missing columns for {csv_path}: {missing}")
+
+            name_col = col_by_name["name"]
             row_by_name = {}
             for row_no in range(header_row + 1, ws.max_row + 1):
                 key = norm(ws.cell(row_no, name_col).value)
                 if key:
                     if key in row_by_name:
-                        raise RuntimeError(f"Duplicate Peer Band name in canonical DB: {ws.cell(row_no, name_col).value!r}")
+                        raise RuntimeError(
+                            f"Duplicate Peer Band name in canonical DB: "
+                            f"{ws.cell(row_no, name_col).value!r}"
+                        )
                     row_by_name[key] = row_no
 
             updated = 0
@@ -162,16 +183,14 @@ def main() -> None:
                 row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
                 key = norm(row[0])
                 if not key:
-                    raise RuntimeError(f"Audit row has empty Name: {raw}")
+                    raise RuntimeError(f"Peer Bands row has empty Name: {raw}")
                 row_no = row_by_name.get(key)
                 if row_no is None:
-                    ws.append(row)
-                    row_by_name[key] = ws.max_row
-                    updated += 1
-                    changed = True
-                    continue
-                for col_no, value in enumerate(row, start=1):
-                    ws.cell(row_no, col_no).value = value
+                    ws.append([""] * ws.max_column)
+                    row_no = ws.max_row
+                    row_by_name[key] = row_no
+                for csv_col, value in zip(header, row):
+                    ws.cell(row_no, col_by_name[norm(csv_col)]).value = value
                 updated += 1
                 changed = True
 

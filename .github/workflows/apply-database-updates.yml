@@ -145,3 +145,5 @@ jobs:
           fi
           git commit -m "chore: apply Virya database updates"
           git push
+
+# trigger: Gorzow micro research pass 2026-09-23

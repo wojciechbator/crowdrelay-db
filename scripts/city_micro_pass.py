@@ -18,7 +18,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-UA = "CrowdRelayDB-CityResearch/1.0"
+UA = "CrowdRelayDB-CityResearch/1.1"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
@@ -89,41 +89,108 @@ def domain(url: str) -> str:
         return ""
 
 
-def search_engine(session: requests.Session, query: str) -> list[dict]:
-    endpoints = [
-        ("ddg", "https://html.duckduckgo.com/html/?q="),
-        ("bing", "https://www.bing.com/search?q="),
-    ]
-    for engine, base in endpoints:
-        try:
-            r = session.get(
-                base + quote_plus(query),
-                timeout=20,
-                headers={"User-Agent": UA, "Accept-Language": "en-US,en;q=0.8"},
-            )
-        except requests.RequestException:
-            continue
-        if r.status_code != 200:
-            continue
-        soup = BeautifulSoup(r.text, "html.parser")
-        out = []
-        selectors = [".result"] if engine == "ddg" else ["li.b_algo"]
-        for item in soup.select(",".join(selectors)):
-            a = item.select_one("a.result__a") if engine == "ddg" else item.select_one("h2 a")
+def _parse_results(engine: str, html: str) -> list[dict]:
+    soup = BeautifulSoup(html, "html.parser")
+    out = []
+
+    if engine == "ddg":
+        items = soup.select(".result")
+        for item in items:
+            a = item.select_one("a.result__a")
             if not a:
                 continue
-            raw_url = a.get("href", "")
-            url = decode_ddg(raw_url) if engine == "ddg" else unquote(raw_url)
-            if not url or domain(url) in {"duckduckgo.com", "bing.com"}:
+            url = decode_ddg(a.get("href", ""))
+            sn = item.select_one(".result__snippet")
+            title = a.get_text(" ", strip=True)
+            snippet = sn.get_text(" ", strip=True) if sn else ""
+            if url:
+                out.append({"title": title, "url": url, "snippet": snippet})
+
+    elif engine == "ddg_lite":
+        items = soup.select(".result-link")
+        for a in items:
+            url = decode_ddg(a.get("href", ""))
+            title = a.get_text(" ", strip=True)
+            if url and title:
+                out.append({"title": title, "url": url, "snippet": ""})
+
+    elif engine == "bing":
+        items = soup.select("li.b_algo")
+        for item in items:
+            a = item.select_one("h2 a")
+            if not a:
                 continue
-            sn = item.select_one(".result__snippet") if engine == "ddg" else item.select_one(".b_caption p")
+            url = unquote(a.get("href", ""))
+            sn = item.select_one(".b_caption p")
             out.append({
                 "title": a.get_text(" ", strip=True),
                 "url": url,
                 "snippet": sn.get_text(" ", strip=True) if sn else "",
             })
-        if out:
-            return out
+
+    elif engine == "google":
+        # Google markup changes frequently; collect result anchors conservatively.
+        for item in soup.select("div.MjjYud"):
+            a = item.select_one("a[href]")
+            if not a:
+                continue
+            url = a.get("href", "")
+            if not url.startswith("http"):
+                continue
+            h = item.select_one("h3")
+            if not h:
+                continue
+            snippet_node = item.select_one("div.VwiC3b")
+            out.append({
+                "title": h.get_text(" ", strip=True),
+                "url": url,
+                "snippet": snippet_node.get_text(" ", strip=True) if snippet_node else "",
+            })
+
+    return [
+        x for x in out
+        if x["url"] and domain(x["url"]) not in {
+            "duckduckgo.com", "bing.com", "google.com"
+        }
+    ]
+
+
+def search_engine(query: str) -> list[dict]:
+    # Do not share a requests.Session between worker threads.
+    # GitHub-hosted runners can return challenge/empty pages from one provider,
+    # so try several public result pages independently.
+    endpoints = [
+        ("ddg", "https://html.duckduckgo.com/html/?q="),
+        ("ddg_lite", "https://lite.duckduckgo.com/lite/?q="),
+        ("bing", "https://www.bing.com/search?q="),
+        ("google", "https://www.google.com/search?q="),
+    ]
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/140.0 Safari/537.36"
+        ),
+        "Accept-Language": "en-US,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml",
+    }
+
+    for engine, base in endpoints:
+        for attempt in range(2):
+            try:
+                with requests.Session() as session:
+                    r = session.get(
+                        base + quote_plus(query),
+                        timeout=20,
+                        headers=headers,
+                        allow_redirects=True,
+                    )
+                if r.status_code != 200:
+                    continue
+                results = _parse_results(engine, r.text)
+                if results:
+                    return results[:20]
+            except requests.RequestException:
+                continue
     return []
 
 
@@ -161,7 +228,7 @@ def load_done() -> set[str]:
     return done
 
 
-def active_polish_cities(wb) -> list[tuple[str, str]]:
+def all_cities(wb) -> list[tuple[str, str]]:
     ws = wb["Venues"]
     headers = [c.value for c in ws[2]]
     idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
@@ -169,42 +236,24 @@ def active_polish_cities(wb) -> list[tuple[str, str]]:
     if not required.issubset(idx):
         raise RuntimeError(f"Venues sheet missing required columns: {required - set(idx)}")
 
-    counts: dict[str, tuple[str, int]] = {}
-    for row in range(3, ws.max_row + 1):
-        country = str(ws.cell(row, idx["country"]).value or "").strip()
-        city = str(ws.cell(row, idx["city"]).value or "").strip()
-        status = norm(ws.cell(row, idx["status"]).value)
-        if country != "Poland" or not city or status not in ACTIVE_VENUE_STATUSES:
-            continue
-        key = norm(city)
-        display = city
-        counts[key] = (display, counts.get(key, (display, 0))[1] + 1)
-    return sorted((v[0], "Poland") for v in counts.values())
-
-
-def all_cities(wb) -> list[tuple[str, str]]:
-    ws = wb["Venues"]
-    headers = [c.value for c in ws[2]]
-    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
-    found: dict[str, tuple[str, str, int]] = {}
+    found: dict[str, tuple[str, str]] = {}
     for row in range(3, ws.max_row + 1):
         country = str(ws.cell(row, idx["country"]).value or "").strip()
         city = str(ws.cell(row, idx["city"]).value or "").strip()
         status = norm(ws.cell(row, idx["status"]).value)
         if not city or country not in COUNTRIES or status not in ACTIVE_VENUE_STATUSES:
             continue
-        k = city_key(country, city)
-        if k not in found:
-            found[k] = (country, city, 1)
-        else:
-            found[k] = (country, city, found[k][2] + 1)
+        found.setdefault(city_key(country, city), (country, city))
 
     ordered = []
     for country in COUNTRIES:
-        cities = sorted(
-            (v[1], v[0]) for v in found.values() if v[0] == country
+        ordered.extend(
+            sorted(
+                (city, country)
+                for c, city in found.values()
+                if c == country
+            )
         )
-        ordered.extend(cities)
     return ordered
 
 
@@ -244,9 +293,6 @@ def confidence(url: str, snippet: str) -> int:
 
 
 def discover(city: str, country: str) -> dict:
-    session = requests.Session()
-    session.headers.update({"User-Agent": UA, "Accept-Language": "en-US,en;q=0.8"})
-
     queries = [
         ("bands", f'"{city}" {country} metal rock hardcore band 2026'),
         ("bands2", f'"{city}" {country} metalcore djent band concert 2026'),
@@ -258,7 +304,7 @@ def discover(city: str, country: str) -> dict:
     all_results: list[tuple[str, dict]] = []
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {
-            ex.submit(search_engine, session, q): kind
+            ex.submit(search_engine, q): kind
             for kind, q in queries
         }
         for fut in as_completed(futures):
@@ -293,7 +339,7 @@ def discover(city: str, country: str) -> dict:
                 url if "facebook.com" in url or "instagram.com" in url else "",
                 url if not any(x in url for x in ("facebook.com", "instagram.com")) else "",
                 url, "2026/current activity signal from city research", TODAY,
-                "Needs verification", "social" if found_emails == [] else "public",
+                "Needs verification", "social" if not found_emails else "public",
                 url, "Research candidate", "City micro-pass",
                 f"Discovered from {query_kind}; verify identity and current activity. Confidence {conf}%.",
             ])
@@ -309,11 +355,11 @@ def discover(city: str, country: str) -> dict:
         for email in found_emails:
             contacts.append([
                 email, title[:120], title[:160], city,
-                classify_beacon(title, snippet), "", f"Found in city research result: {url}",
+                classify_beacon(title, snippet), "",
+                f"Found in city research result: {url}",
                 TODAY, "f",
             ])
 
-    # Deduplicate normalized names/emails before writing pending files.
     unique_peers = {}
     for row in peers:
         unique_peers.setdefault(norm(row[0]), row)
@@ -384,18 +430,22 @@ def main() -> None:
 
     for city, country in cities:
         result = discover(city, country)
+        print(
+            f"CITY_RESEARCH {country}/{city}: "
+            f"raw_results={result['raw_results']} "
+            f"peers={len(result['peers'])} "
+            f"beacons={len(result['beacons'])} "
+            f"contacts={len(result['contacts'])}"
+        )
         if result["raw_results"] == 0:
-            raise RuntimeError(f"Research returned zero web results for {country}/{city}; city will not be marked complete.")
+            raise RuntimeError(
+                f"Research returned zero web results for {country}/{city}; "
+                "city will not be marked complete."
+            )
 
         peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
-        beacons = [
-            r for r in result["beacons"]
-            if norm(r[0]) not in existing_beacon
-        ]
-        contacts = [
-            r for r in result["contacts"]
-            if norm(r[0]) not in existing_contact
-        ]
+        beacons = [r for r in result["beacons"] if norm(r[0]) not in existing_beacon]
+        contacts = [r for r in result["contacts"] if norm(r[0]) not in existing_contact]
 
         write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city}.csv", PEER_HEADER, peers)
         write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city}.csv", BEACON_HEADER, beacons)
@@ -418,10 +468,7 @@ def main() -> None:
     state = {
         "date": TODAY,
         "pass_id": pass_id,
-        "cities": [
-            {"country": country, "city": city}
-            for city, country in cities
-        ],
+        "cities": [{"country": country, "city": city} for city, country in cities],
         "summary": all_summary,
     }
     (PASSES / f"{stamp}.json").write_text(

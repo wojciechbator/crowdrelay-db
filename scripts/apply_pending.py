@@ -405,7 +405,16 @@ def main() -> None:
             if not day_dir.is_dir():
                 continue
             for csv_path in sorted(day_dir.glob("*__CityPass__*.csv")):
+                match = CITY_PASS_PENDING_RE.match(csv_path.name)
+                if not match:
+                    continue
+                pass_file = ROOT / "city_passes" / f"{match.group(1)}__{match.group(2)}.json"
                 try:
+                    if not pass_file.exists():
+                        continue
+                    pass_payload = json.loads(pass_file.read_text(encoding="utf-8"))
+                    if int(pass_payload.get("research_version", 0) or 0) < 4 or bool(pass_payload.get("invalidated", False)):
+                        continue
                     header, data = load_csv(csv_path)
                 except Exception:
                     continue

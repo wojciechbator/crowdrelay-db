@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
-from urllib.parse import parse_qs, quote_plus, unquote, urlparse
+from urllib.parse import parse_qs, quote, quote_plus, unquote, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -153,20 +153,54 @@ def fetch_page(url: str, headers: dict) -> tuple[str, str, str, list[tuple[str, 
         r = requests.get(
             url, timeout=12, headers=headers, allow_redirects=True
         )
-        if r.status_code != 200 or not r.text:
-            return "", "", "", []
-        soup = BeautifulSoup(r.text, "html.parser")
-        title = soup.title.get_text(" ", strip=True) if soup.title else ""
-        text = soup.get_text(" ", strip=True)
-        links = []
-        for a in soup.select("a[href]"):
-            href = a.get("href", "").strip()
-            label = a.get_text(" ", strip=True)
-            if not href.startswith("http"):
-                continue
-            links.append((href, label))
-        return r.url or url, title, text[:50000], links[:300]
+        if r.status_code == 200 and r.text:
+            soup = BeautifulSoup(r.text, "html.parser")
+            title = soup.title.get_text(" ", strip=True) if soup.title else ""
+            text = soup.get_text(" ", strip=True)
+            links = []
+            for a in soup.select("a[href]"):
+                href = a.get("href", "").strip()
+                label = a.get_text(" ", strip=True)
+                if not href.startswith("http"):
+                    continue
+                links.append((href, label))
+            return r.url or url, title, text[:50000], links[:300]
+
+        markdown = jina_fetch(url, headers, timeout=20)
+        if markdown:
+            title = ""
+            for line in markdown.splitlines():
+                cleaned = line.strip().lstrip("#").strip()
+                if cleaned:
+                    title = cleaned[:300]
+                    break
+            links = []
+            for match in re.finditer(r"\[([^\]]{1,200})\]\((https?://[^)]+)\)", markdown):
+                label = BeautifulSoup(match.group(1), "html.parser").get_text(" ", strip=True)
+                href = match.group(2).rstrip(").,")
+                if href.startswith("http"):
+                    links.append((href, label))
+            return url, title, BeautifulSoup(markdown, "html.parser").get_text(" ", strip=True)[:50000], links[:300]
+        return "", "", "", []
     except requests.RequestException:
+        try:
+            markdown = jina_fetch(url, headers, timeout=20)
+            if markdown:
+                title = ""
+                for line in markdown.splitlines():
+                    cleaned = line.strip().lstrip("#").strip()
+                    if cleaned:
+                        title = cleaned[:300]
+                        break
+                links = []
+                for match in re.finditer(r"\[([^\]]{1,200})\]\((https?://[^)]+)\)", markdown):
+                    label = BeautifulSoup(match.group(1), "html.parser").get_text(" ", strip=True)
+                    href = match.group(2).rstrip(").,")
+                    if href.startswith("http"):
+                        links.append((href, label))
+                return url, title, BeautifulSoup(markdown, "html.parser").get_text(" ", strip=True)[:50000], links[:300]
+        except requests.RequestException:
+            pass
         return "", "", "", []
 
 
@@ -208,6 +242,30 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             name = d
         out.append({"name": name[:180], "kind": kind, "url": href, "city": city})
     return out
+
+
+def _parse_markdown_search(markdown: str) -> list[dict]:
+    out = []
+    lines = [re.sub(r"\s+", " ", line).strip() for line in markdown.splitlines()]
+    for i, line in enumerate(lines):
+        for match in re.finditer(r"\[([^\]]{3,180})\]\((https?://[^)]+)\)", line):
+            title = BeautifulSoup(match.group(1), "html.parser").get_text(" ", strip=True)
+            url = match.group(2).rstrip(").,")
+            if not title or not url.startswith("http"):
+                continue
+            snippet = ""
+            if i + 1 < len(lines):
+                snippet = re.sub(r"^[>|-*\s]+", "", lines[i + 1])[:500]
+            out.append({"title": title, "url": url, "snippet": snippet})
+    return out[:30]
+
+
+def jina_fetch(url: str, headers: dict, timeout: int = 20) -> str:
+    target = "https://r.jina.ai/" + quote(url, safe=":/?=&%#,-_")
+    r = requests.get(target, timeout=timeout, headers=headers, allow_redirects=True)
+    if r.status_code != 200:
+        return ""
+    return r.text or ""
 
 
 def _parse_html(engine: str, html: str) -> list[dict]:
@@ -321,6 +379,24 @@ def search_engine(query: str) -> list[dict]:
                 results.extend(_parse_html(engine, r.text))
         except requests.RequestException:
             pass
+
+    if not results:
+        for base in (
+            "https://r.jina.ai/http://www.google.com/search?q=",
+            "https://r.jina.ai/http://www.bing.com/search?q=",
+            "https://r.jina.ai/https://html.duckduckgo.com/html/?q=",
+        ):
+            try:
+                r = requests.get(
+                    base + quote_plus(query),
+                    timeout=20,
+                    headers=headers,
+                    allow_redirects=True,
+                )
+                if r.status_code == 200 and r.text:
+                    results.extend(_parse_markdown_search(r.text))
+            except requests.RequestException:
+                pass
 
     seen = set()
     out = []
@@ -468,6 +544,7 @@ def discover(city: str, country: str) -> dict:
         ("facebook_groups", f'"{city}" {country} site:facebook.com/groups muzyka koncert metal'),
         ("youtube", f'"{city}" {country} site:youtube.com metal concert music'),
         ("ecosystem", f'"{city}" {country} music club venue concerts calendar'),
+        ("culture", f'"{city}" {country} "music city" OR "miasto muzyki" OR MCK kultura koncerty'),
         ("promoters_media", f'"{city}" {country} promoter booking radio music media'),
         ("creators", f'"{city}" {country} music photographer creator local'),
     ]

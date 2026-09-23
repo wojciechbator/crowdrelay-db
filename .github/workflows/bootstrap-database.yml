@@ -1,6 +1,8 @@
 name: Bootstrap canonical database
 
 on:
+  workflow_dispatch:
+  
   push:
     paths:
       - "snapshot/**"

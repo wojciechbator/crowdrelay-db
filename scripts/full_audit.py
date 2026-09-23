@@ -328,6 +328,85 @@ def inspect(rec: dict) -> dict:
     }
 
 
+def load_prior_audited_names() -> set[str]:
+    audited: set[str] = set()
+    applied_root = Path("updates/applied")
+    if not applied_root.exists():
+        return audited
+
+    for path in applied_root.rglob("Audit_Peer_Bands__*.csv"):
+        try:
+            with path.open("r", encoding="utf-8-sig", newline="") as fh:
+                for row in csv.reader(fh):
+                    if row and row[0].strip() and row[0].strip().casefold() != "name":
+                        audited.add(norm(row[0]))
+        except OSError:
+            continue
+    return audited
+
+
+def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> tuple[int, int, int]:
+    idx = {h: i + 1 for i, h in enumerate(headers)}
+    name_col = idx["Name"]
+
+    rows_by_name: dict[str, int] = {}
+    for row_no in range(3, ws.max_row + 1):
+        key = norm(ws.cell(row_no, name_col).value)
+        if key:
+            rows_by_name[key] = row_no
+
+    kept = removed = reviewed = 0
+    for r in batch_results:
+        key = norm(r["Name"])
+        row_no = rows_by_name.get(key)
+
+        if r["Decision"] == "REMOVE":
+            if row_no is not None:
+                ws.delete_rows(row_no, 1)
+                removed += 1
+                # Rebuild row index after deletion because row numbers shift.
+                rows_by_name = {
+                    norm(ws.cell(n, name_col).value): n
+                    for n in range(3, ws.max_row + 1)
+                    if norm(ws.cell(n, name_col).value)
+                }
+            continue
+
+        if row_no is None:
+            # The source record should normally exist. If another job removed it,
+            # preserve the audited data rather than silently dropping it.
+            ws.append([r[h] if r[h] is not None else "" for h in headers])
+            row_no = ws.max_row
+            rows_by_name[key] = row_no
+
+        values = [r[h] if r[h] is not None else "" for h in headers]
+        values[idx["Country"] - 1] = r["Verified_Country"] or values[idx["Country"] - 1]
+        values[idx["Genre"] - 1] = r["Verified_Genre"] or values[idx["Genre"] - 1]
+        values[idx["Research_Date"] - 1] = TODAY
+        values[idx["Status"] - 1] = r["Verified_Status"] or (
+            "Needs verification" if r["Decision"] == "REVIEW" else "Active"
+        )
+        values[idx["Activity"] - 1] = (
+            "2025/2026 activity verified"
+            if r["Decision"] == "KEEP"
+            else "Needs current activity verification"
+        )
+        values[idx["Confidence"] - 1] = (
+            r["Confidence_New"] if r["Decision"] == "KEEP" else "Low"
+        )
+        values[idx["Contact_Source"] - 1] = r["Verified_Source"]
+
+        for col_no, value in enumerate(values, start=1):
+            ws.cell(row_no, col_no).value = value
+
+        if r["Decision"] == "KEEP":
+            kept += 1
+        else:
+            reviewed += 1
+
+    return kept, removed, reviewed
+
+
 def main() -> None:
     wb = load_workbook(REPO_DB)
     ws = wb["Peer Bands"]
@@ -337,18 +416,32 @@ def main() -> None:
         for row in ws.iter_rows(min_row=3, values_only=True)
         if any(str(v or "").strip() for v in row)
     ]
-    print(f"PEER_AUDIT_START rows={len(records)}")
 
-    results = [None] * len(records)
-    with ThreadPoolExecutor(max_workers=20) as ex:
-        futures = {ex.submit(inspect, rec): i for i, rec in enumerate(records)}
+    prior_audited = load_prior_audited_names()
+    candidates = [r for r in records if norm(r.get("Name")) not in prior_audited]
+    batch_size = int(os.environ.get("AUDIT_BATCH_SIZE", "10"))
+    batch = candidates[:batch_size]
+
+    print(
+        f"PEER_AUDIT_START rows={len(records)} already_audited={len(prior_audited)} "
+        f"remaining={len(candidates)} batch={len(batch)}"
+    )
+
+    if not batch:
+        print("PEER_AUDIT_DONE no remaining candidates")
+        return
+
+    results = [None] * len(batch)
+    with ThreadPoolExecutor(max_workers=min(batch_size, 10)) as ex:
+        futures = {ex.submit(inspect, rec): i for i, rec in enumerate(batch)}
         done = 0
         for fut in as_completed(futures):
+            i = futures[fut]
             try:
-                results[futures[fut]] = fut.result()
+                results[i] = fut.result()
             except Exception as e:
-                rec = records[futures[fut]]
-                results[futures[fut]] = {
+                rec = batch[i]
+                results[i] = {
                     **rec,
                     "Decision": "REVIEW",
                     "Decision_Reason": f"Audit error: {type(e).__name__}: {e}",
@@ -361,15 +454,15 @@ def main() -> None:
                     "Evidence": "audit exception",
                 }
             done += 1
-            if done % 100 == 0:
-                print(f"PEER_AUDIT_PROGRESS {done}/{len(records)}")
+            print(f"PEER_AUDIT_PROGRESS {done}/{len(batch)}")
 
-    AUDIT_DIR.mkdir(exist_ok=True)
-    report = AUDIT_DIR / f"peer_bands_audit__{TODAY}.csv"
+    batch_id = len(prior_audited) + 1
+    report = AUDIT_DIR / f"peer_bands_audit_batch__{batch_id:04d}.csv"
     out_headers = headers + [
         "Decision","Decision_Reason","Verified_Source","Verified_Date",
         "Verified_Country","Verified_Genre","Verified_Status","Confidence_New","Evidence"
     ]
+    AUDIT_DIR.mkdir(exist_ok=True)
     with report.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=out_headers)
         w.writeheader()
@@ -377,7 +470,10 @@ def main() -> None:
 
     summary = {
         "date": TODAY,
+        "batch_id": batch_id,
         "rows": len(results),
+        "already_audited_before_batch": len(prior_audited),
+        "remaining_before_batch": len(candidates),
         "KEEP": sum(r["Decision"] == "KEEP" for r in results),
         "REMOVE": sum(r["Decision"] == "REMOVE" for r in results),
         "REVIEW": sum(r["Decision"] == "REVIEW" for r in results),
@@ -385,49 +481,20 @@ def main() -> None:
         "MEDIUM": sum(r["Confidence_New"] == "Medium" for r in results),
         "LOW": sum(r["Confidence_New"] == "Low" for r in results),
     }
-    (AUDIT_DIR / f"peer_bands_audit_summary__{TODAY}.json").write_text(
+    summary_path = AUDIT_DIR / f"peer_bands_audit_batch_summary__{batch_id:04d}.json"
+    summary_path.write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print("PEER_AUDIT_SUMMARY", json.dumps(summary, ensure_ascii=False))
+
+    if os.environ.get("APPLY_AUDIT") == "1":
+        kept, removed, reviewed = update_batch_in_place(ws, headers, results)
+        wb.save(REPO_DB)
+        print(
+            f"PEER_AUDIT_APPLIED kept={kept} removed={removed} review={reviewed}"
+        )
+
     print("PEER_AUDIT_DONE")
-
-    if os.environ.get("APPLY_AUDIT") != "1":
-        return
-
-    idx = {h: i for i, h in enumerate(headers)}
-    kept = []
-    for r in results:
-        if r["Decision"] == "REMOVE":
-            continue
-        values = [r[h] if r[h] is not None else "" for h in headers]
-        values[idx["Country"]] = r["Verified_Country"] or values[idx["Country"]]
-        values[idx["Genre"]] = r["Verified_Genre"] or values[idx["Genre"]]
-        values[idx["Research_Date"]] = TODAY
-        values[idx["Status"]] = r["Verified_Status"] or (
-            "Needs verification" if r["Decision"] == "REVIEW" else "Active"
-        )
-        values[idx["Activity"]] = (
-            "2025/2026 activity verified"
-            if r["Decision"] == "KEEP"
-            else "Needs current activity verification"
-        )
-        values[idx["Confidence"]] = (
-            r["Confidence_New"]
-            if r["Decision"] == "KEEP"
-            else "Low"
-        )
-        values[idx["Contact_Source"]] = r["Verified_Source"]
-        kept.append(values)
-
-    ws.delete_rows(3, max(0, ws.max_row - 2))
-    for values in kept:
-        ws.append(values)
-    wb.save(REPO_DB)
-    print(
-        f"PEER_AUDIT_APPLIED kept={sum(r['Decision']=='KEEP' for r in results)} "
-        f"removed={sum(r['Decision']=='REMOVE' for r in results)} "
-        f"review={sum(r['Decision']=='REVIEW' for r in results)}"
-    )
 
 
 if __name__ == "__main__":

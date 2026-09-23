@@ -69,5 +69,7 @@
       "beacon_candidates": 24,
       "contact_candidates": 0
     }
-  ]
+  ],
+  "invalidated": true,
+  "invalidation_reason": "CityPass 0004 revoked: direct social results were not sufficiently entity-qualified; rerun required."
 }

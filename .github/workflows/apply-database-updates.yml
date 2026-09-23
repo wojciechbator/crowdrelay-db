@@ -148,7 +148,7 @@ jobs:
           git stash push -u -m "pre-apply-rebase" || true
           git pull --rebase origin main
           git stash pop || true
-          git add database.xlsx updates/applied
+          git add database.xlsx updates/applied updates/pending updates/rejected
           if git diff --cached --quiet; then
             echo "No database changes."
             exit 0

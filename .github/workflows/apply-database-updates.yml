@@ -77,6 +77,72 @@ jobs:
               raise SystemExit(f"Invalid venue records remain: {bad}")
 
           print("INTEGRITY_OK", counts)
+
+          from collections import Counter
+          from datetime import date, datetime
+          from urllib.parse import urlparse
+
+          def data_rows(ws, header_row):
+              return list(ws.iter_rows(min_row=header_row + 1, values_only=True))
+
+          qa = {}
+          for sheet, header in required.items():
+              ws = wb[sheet]
+              header_row = next(row_no for row_no in range(1, 11)
+                                if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
+              rows = data_rows(ws, header_row)
+              qa[sheet] = {}
+
+              # Empty primary-name/key checks.
+              if sheet in ("Venues", "Peer Bands", "Booking Agents"):
+                  empty_names = sum(1 for r in rows if not str(r[0] or "").strip())
+                  qa[sheet]["empty_name"] = empty_names
+                  if empty_names:
+                      raise SystemExit(f"{sheet}: {empty_names} empty names")
+
+              # Exact duplicate rows.
+              sigs = [tuple("" if x is None else str(x).strip().casefold() for x in r) for r in rows]
+              dup_rows = len(sigs) - len(set(sigs))
+              qa[sheet]["exact_duplicate_rows"] = dup_rows
+              if dup_rows:
+                  raise SystemExit(f"{sheet}: {dup_rows} exact duplicate rows")
+
+              # Research-date distribution.
+              date_idx = {
+                  "Venues": 12, "Peer Bands": 10, "Booking Agents": 6
+              }.get(sheet)
+              if date_idx is not None:
+                  dates = [str(r[date_idx] or "").strip() for r in rows if str(r[date_idx] or "").strip()]
+                  qa[sheet]["dated_rows"] = len(dates)
+                  qa[sheet]["oldest_research_date"] = min(dates) if dates else None
+                  qa[sheet]["newest_research_date"] = max(dates) if dates else None
+
+          # Country QA for the research target layers.
+          allowed = {"Poland", "Germany", "Czechia", "Slovakia", ""}
+          for sheet, country_idx in (("Peer Bands", 1), ("Venues", 2)):
+              ws = wb[sheet]
+              header = required[sheet]
+              header_row = next(row_no for row_no in range(1, 11)
+                                if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
+              countries = Counter(str(r[country_idx] or "").strip() for r in data_rows(ws, header_row))
+              unexpected = {k:v for k,v in countries.items() if k not in allowed}
+              qa[sheet]["country_counts"] = dict(countries)
+              qa[sheet]["unexpected_countries"] = unexpected
+
+          # Peer band status/activity QA: surface obviously missing status.
+          ws = wb["Peer Bands"]
+          header = required["Peer Bands"]
+          header_row = next(row_no for row_no in range(1, 11)
+                            if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
+          rows = data_rows(ws, header_row)
+          status_idx = header.index("Status")
+          activity_idx = header.index("Activity")
+          missing_status = sum(1 for r in rows if not str(r[status_idx] or "").strip())
+          missing_activity = sum(1 for r in rows if not str(r[activity_idx] or "").strip())
+          qa["Peer Bands"]["missing_status"] = missing_status
+          qa["Peer Bands"]["missing_activity"] = missing_activity
+
+          print("DATA_QA", qa)
           PY
 
       - name: Commit canonical workbook

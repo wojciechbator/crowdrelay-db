@@ -278,7 +278,9 @@ def main() -> None:
 
     if applied:
         APPLIED.mkdir(parents=True, exist_ok=True)
-        for path, _, _ in applied:
+        for path, _, action in applied:
+            if action == "rejected-legacy-city-pass":
+                continue
             shutil.move(str(path), str(APPLIED / path.name))
 
     print(f"pending_files={len(applied)} changed={changed}")

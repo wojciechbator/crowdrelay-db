@@ -30,7 +30,7 @@ jobs:
 
       - name: Research next two eligible cities
         env:
-          CITY_BATCH_SIZE: "2"
+          CITY_BATCH_SIZE: "4"
         run: python scripts/city_micro_pass.py
 
       - name: Validate city pass

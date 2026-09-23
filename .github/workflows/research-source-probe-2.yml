@@ -1,0 +1,54 @@
+name: Research source probe 2
+
+on:
+  push:
+    paths:
+      - ".github/workflows/research-source-probe-2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe search engines
+        run: |
+          python3 - <<'PY'
+          import requests, urllib.parse, re
+          from bs4 import BeautifulSoup
+          h={"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/138 Safari/537.36"}
+          queries = [
+            '"71TonMan" 2026 band',
+            '"Abrogation" Germany 2026 metal band',
+          ]
+          for q in queries:
+            print("\nQUERY",q)
+            for engine,url in [
+              ("ddg","https://html.duckduckgo.com/html/?q="+urllib.parse.quote_plus(q)),
+              ("yahoo","https://search.yahoo.com/search?p="+urllib.parse.quote_plus(q)),
+              ("bing","https://www.bing.com/search?q="+urllib.parse.quote_plus(q)+"&count=10"),
+            ]:
+              try:
+                r=requests.get(url,headers=h,timeout=20)
+                print("\nENGINE",engine,r.status_code,len(r.content))
+                soup=BeautifulSoup(r.text,"html.parser")
+                links=[]
+                if engine=="ddg":
+                  for a in soup.select("a.result__a")[:5]:
+                    links.append((a.get_text(" ",strip=True),a.get("href","")))
+                elif engine=="yahoo":
+                  for a in soup.select("a")[:100]:
+                    t=a.get_text(" ",strip=True)
+                    u=a.get("href","")
+                    if t and u.startswith("http") and "yahoo.com" not in u and len(t)>8:
+                      links.append((t,u))
+                    if len(links)>=5: break
+                else:
+                  for a in soup.select("li.b_algo h2 a")[:5]:
+                    links.append((a.get_text(" ",strip=True),a.get("href","")))
+                for x in links[:5]: print(x)
+              except Exception as e:
+                print(engine,"ERROR",repr(e))
+          PY

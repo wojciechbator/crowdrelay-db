@@ -134,6 +134,46 @@ def main() -> None:
             applied.append((csv_path, removed, "removed"))
             continue
 
+        # Audit batches update existing Peer Bands rows in-place by Name.
+        if csv_path.name.startswith("Audit_Peer_Bands__"):
+            header, data = load_csv(csv_path)
+            expected = [
+                "Name","Country","City","Genre","Email","Social","Website","Links",
+                "Source_URL","Activity","Research_Date","Status","Confidence",
+                "Contact_Type","Contact_Source","Outreach_Readiness","Notes"
+            ]
+            if [norm(x) for x in header] != [norm(x) for x in expected]:
+                raise RuntimeError(f"Invalid audit Peer Bands header in {csv_path}: {header}")
+            ws = wb["Peer Bands"]
+            header_row = find_header_row(ws, header)
+            name_col = 1
+            row_by_name = {}
+            for row_no in range(header_row + 1, ws.max_row + 1):
+                key = norm(ws.cell(row_no, name_col).value)
+                if key:
+                    if key in row_by_name:
+                        raise RuntimeError(f"Duplicate Peer Band name in canonical DB: {ws.cell(row_no, name_col).value!r}")
+                    row_by_name[key] = row_no
+
+            updated = 0
+            for raw in data:
+                if not raw or not any(norm(x) for x in raw):
+                    continue
+                row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+                key = norm(row[0])
+                if not key:
+                    raise RuntimeError(f"Audit row has empty Name: {raw}")
+                row_no = row_by_name.get(key)
+                if row_no is None:
+                    raise RuntimeError(f"Audit Peer Band not found in canonical DB: {row[0]!r}")
+                for col_no, value in enumerate(row, start=1):
+                    ws.cell(row_no, col_no).value = value
+                updated += 1
+                changed = True
+
+            applied.append((csv_path, updated, "updated"))
+            continue
+
         prefix = csv_path.name.split("__", 1)[0]
         sheet = SHEET_MAP.get(prefix)
         if not sheet:

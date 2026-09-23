@@ -182,6 +182,21 @@ def inspect(rec: dict) -> dict:
     source = str(rec.get("Source_URL") or "").strip()
     inferred_country = str(rec.get("Country") or "").strip() or infer_country(source)
     genre = str(rec.get("Genre") or "").strip()
+    activity = str(rec.get("Activity") or "").strip()
+
+    if not name:
+        return {
+            **rec,
+            "Decision": "REVIEW",
+            "Decision_Reason": "Empty name",
+            "Verified_Source": source,
+            "Verified_Date": TODAY,
+            "Verified_Country": inferred_country,
+            "Verified_Genre": genre,
+            "Verified_Status": "",
+            "Confidence_New": "Low",
+            "Evidence": "empty name",
+        }
 
     if NON_BAND_TERMS.search(name):
         return {
@@ -197,45 +212,43 @@ def inspect(rec: dict) -> dict:
             "Evidence": "entity-type rule",
         }
 
-    # First establish the entity on a music-specific directory.
-    ma_queries = [
-        f'"{name}" site:metal-archives.com/bands',
-        f'"{name}" site:metal-archives.com/bands "Status" "Active"',
-        f'"{name}" site:metal-archives.com/bands "Years active" "present"',
-    ]
-    ma_good = []
-    for q in ma_queries:
-        for x in ddg(session, q):
-            ok, score = relevant(name, x, "ma")
-            if ok:
-                ma_good.append((score, x))
-    ma_good = list({x["url"]: (score, x) for score, x in ma_good}.values())
-    ma_good.sort(reverse=True, key=lambda z: z[0])
+    src_lower = source.casefold()
 
-    # Then look specifically for current live/release activity on music/social sources.
-    current_queries = [
+    # Concrete current source already attached to the row.
+    source_current = (
+        "metalunderground.com" not in src_lower
+        and bool(re.search(r"20(25|26)", source + " " + activity, re.I))
+    )
+    if source_current:
+        return {
+            **rec,
+            "Decision": "KEEP",
+            "Decision_Reason": "Existing row already has a concrete 2025/2026 source or activity marker",
+            "Verified_Source": source,
+            "Verified_Date": TODAY,
+            "Verified_Country": inferred_country,
+            "Verified_Genre": genre,
+            "Verified_Status": "Active",
+            "Confidence_New": "Medium",
+            "Evidence": "existing current source/activity",
+        }
+
+    # One broad current query; this often returns Metal Archives, Bandsintown,
+    # Bandcamp, Facebook, Instagram, YouTube and current event pages together.
+    current_results = ddg(
+        session,
         f'"{name}" 2026 band {inferred_country}'.strip(),
-        f'"{name}" 2026 concert tour {inferred_country}'.strip(),
-    ]
+    )
     current_good = []
-    for q in current_queries:
-        for x in ddg(session, q):
-            ok, score = relevant(name, x, "current")
-            if ok:
-                current_good.append((score, x))
-    current_good = list({x["url"]: (score, x) for score, x in current_good}.values())
+    for x in current_results:
+        ok, score = relevant(name, x, "current")
+        if ok:
+            current_good.append((score, x))
     current_good.sort(reverse=True, key=lambda z: z[0])
 
-    ma_blob = " ".join(f"{x['title']} {x['snippet']}" for _, x in ma_good[:10])
     cur_blob = " ".join(f"{x['title']} {x['snippet']}" for _, x in current_good[:10])
-
-    explicit_inactive = bool(INACTIVE_TERMS.search(ma_blob))
-    ma_active = bool(
-        re.search(r"\bstatus\s*[:|-]\s*active\b", ma_blob, re.I)
-        or re.search(r"\byears active\b[^.\n]{0,160}\bpresent\b", ma_blob, re.I)
-    )
     current_signal = bool(
-        re.search(r"\b2026\b|\b2025\b", cur_blob, re.I)
+        re.search(r"\b2026\b", cur_blob, re.I)
         and re.search(
             r"\b(concert|tour|show|festival|album|single|release|live|gig|band|metal|hardcore|metalcore)\b",
             cur_blob,
@@ -243,42 +256,51 @@ def inspect(rec: dict) -> dict:
         )
     )
 
-    best = ma_good[0][1] if ma_good else (current_good[0][1] if current_good else None)
-    verified_source = best["url"] if best else source
-
-    src_lower = source.casefold()
-    source_current = (
-        "metalunderground.com" not in src_lower
-        and bool(re.search(r"20(25|26)", source + " " + str(rec.get("Activity") or ""), re.I))
+    ma_result = next(
+        (
+            x for _, x in current_good
+            if result_domain(x["url"]) == "metal-archives.com"
+            or result_domain(x["url"]).endswith(".metal-archives.com")
+        ),
+        None,
+    )
+    ma_title_active = bool(
+        ma_result
+        and re.search(r"\b(Active|active)\b", ma_result["snippet"] + " " + ma_result["title"])
     )
 
-    # Only an explicit inactive status gets an automatic removal.
-    if explicit_inactive and not ma_active and not current_signal and not source_current:
-        return {
-            **rec,
-            "Decision": "REMOVE",
-            "Decision_Reason": "Reliable source has explicit inactive/disbanded status",
-            "Verified_Source": verified_source,
-            "Verified_Date": TODAY,
-            "Verified_Country": inferred_country,
-            "Verified_Genre": genre,
-            "Verified_Status": "Inactive",
-            "Confidence_New": "High",
-            "Evidence": "explicit inactive status",
-        }
+    # Only ask the status-focused query if the first search found no decisive current activity.
+    if not current_signal and not ma_title_active:
+        status_results = ddg(
+            session,
+            f'"{name}" site:metal-archives.com/bands "Status" "Active"',
+        )
+        status_good = []
+        for x in status_results:
+            ok, score = relevant(name, x, "ma")
+            if ok:
+                status_good.append((score, x))
+        status_good.sort(reverse=True, key=lambda z: z[0])
+        if status_good:
+            top = status_good[0][1]
+            snippet = top["snippet"] + " " + top["title"]
+            if re.search(r"\b(active|present)\b", snippet, re.I):
+                ma_result = top
+                ma_title_active = True
 
-    if ma_active and current_signal:
+    if current_signal and ma_title_active:
         confidence = "High"
-    elif ma_active or current_signal or source_current:
+    elif current_signal or ma_title_active:
         confidence = "Medium"
     else:
         confidence = "Low"
 
-    if ma_active or current_signal or source_current:
+    if current_signal or ma_title_active:
+        verified_source = ma_result["url"] if ma_result else current_good[0][1]["url"]
         return {
             **rec,
             "Decision": "KEEP",
-            "Decision_Reason": "Band identity verified and there is current/active evidence",
+            "Decision_Reason": "Band identity and current/active evidence found",
             "Verified_Source": verified_source,
             "Verified_Date": TODAY,
             "Verified_Country": inferred_country,
@@ -286,17 +308,17 @@ def inspect(rec: dict) -> dict:
             "Verified_Status": "Active",
             "Confidence_New": confidence,
             "Evidence": (
-                ("Metal Archives active; " if ma_active else "")
-                + ("2025/2026 activity; " if current_signal else "")
-                + ("existing current source; " if source_current else "")
+                ("Metal Archives active; " if ma_title_active else "")
+                + ("2026 current activity; " if current_signal else "")
             ).strip("; "),
         }
 
+    # Never auto-delete a real-looking band based on absence of evidence.
     return {
         **rec,
         "Decision": "REVIEW",
         "Decision_Reason": "No sufficiently reliable current activity signal after exact-name/source filtering",
-        "Verified_Source": verified_source,
+        "Verified_Source": source,
         "Verified_Date": TODAY,
         "Verified_Country": inferred_country,
         "Verified_Genre": genre,

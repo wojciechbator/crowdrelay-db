@@ -11,7 +11,7 @@ permissions:
 jobs:
   bootstrap:
     if: >
-      github.event.issue.number == 1 &&
+      github.event.issue.number == 2 &&
       contains(github.event.comment.body, 'CRDB-BOOTSTRAP')
     runs-on: ubuntu-latest
     steps:
@@ -23,8 +23,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import base64, gzip, json, os, re, subprocess, urllib.request
-          issue = 1
+          import base64, gzip, json, os, re, urllib.request
+          issue = 2
           repo = os.environ["GITHUB_REPOSITORY"]
           req = urllib.request.Request(
               f"https://api.github.com/repos/{repo}/issues/{issue}/comments?per_page=100",
@@ -41,9 +41,11 @@ jobs:
           complete = False
           for c in comments:
               body = c.get("body", "")
-              m = re.search(r"CRDB-BOOTSTRAP PART (\d+)/(\d+)\n([A-Za-z0-9+/=\n]+)$", body)
+              m = re.search(r"CRDB-BOOTSTRAP PART (d+)/(d+)
+([A-Za-z0-9+/=
+]+)$", body)
               if m:
-                  parts[int(m.group(1))] = (int(m.group(2)), re.sub(r"\s+", "", m.group(3)))
+                  parts[int(m.group(1))] = (int(m.group(2)), re.sub(r"s+", "", m.group(3)))
               if "CRDB-BOOTSTRAP COMPLETE" in body:
                   complete = True
 
@@ -51,14 +53,13 @@ jobs:
               raise SystemExit("Bootstrap not marked complete yet.")
 
           total = next(iter(parts.values()))[0]
-          if len(parts) != total:
-              raise SystemExit(f"Missing payload parts: got {len(parts)} expected {total}")
+          if len(parts) != total or sorted(parts) != list(range(total)):
+              raise SystemExit(f"Missing payload parts: got {sorted(parts)} expected 0..{total-1}")
 
           payload = "".join(parts[i][1] for i in range(total))
           raw = gzip.decompress(base64.b64decode(payload))
           with open("database.xlsx", "wb") as f:
               f.write(raw)
-
           print(f"Rebuilt database.xlsx: {len(raw)} bytes")
           PY
 
@@ -70,7 +71,8 @@ jobs:
           print("sheets:", wb.sheetnames)
           for s in wb.sheetnames:
               print(s, wb[s].max_row, wb[s].max_column)
-          if "Venues" not in wb.sheetnames or "Booking Agents" not in wb.sheetnames or "Peer Bands" not in wb.sheetnames:
+          required = {"Venues", "Booking Agents", "Peer Bands"}
+          if not required.issubset(set(wb.sheetnames)):
               raise SystemExit("Required sheets missing")
           PY
 
@@ -85,4 +87,4 @@ jobs:
       - name: Close bootstrap issue
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close 1 --repo "$GITHUB_REPOSITORY" --comment "Bootstrap complete: canonical database.xlsx reconstructed, validated and committed to main."
+        run: gh issue close 2 --repo "$GITHUB_REPOSITORY" --comment "Bootstrap complete: canonical database.xlsx reconstructed, validated and committed to main."

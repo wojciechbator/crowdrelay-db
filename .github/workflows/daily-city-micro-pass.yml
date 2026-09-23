@@ -91,4 +91,12 @@ jobs:
             exit 0
           fi
           git commit -m "research: daily city micro-pass"
-          git push
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push race detected; rebasing onto latest main (attempt ${attempt})."
+            git pull --rebase origin main
+          done
+          echo "Failed to push city research after 3 attempts."
+          exit 1

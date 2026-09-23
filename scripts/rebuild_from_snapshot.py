@@ -67,15 +67,13 @@ def read_snapshot(path: Path, expected: list[str]) -> tuple[list[str], list[list
         raise RuntimeError(f"Expected header not found in {path}")
 
     out: list[list[str]] = []
-    seen = set()
     for row in rows[header_idx + 1:]:
         cleaned = clean_row(row, len(expected))
         if not any(norm(x) for x in cleaned):
             continue
-        sig = tuple(norm(x) for x in cleaned)
-        if sig in seen:
-            continue
-        seen.add(sig)
+        # Preserve the canonical snapshot exactly as supplied.
+        # Deduplication belongs to the pending-delta application step,
+        # not to baseline reconstruction.
         out.append(cleaned)
     return expected, out
 

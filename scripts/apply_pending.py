@@ -20,6 +20,7 @@ SHEET_MAP = {
     "Booking_Agents": "Booking Agents",
     "Peer_Bands": "Peer Bands",
     "Beacons": "Beacons",
+    "Contacts": "Contacts",
 }
 
 REMOVAL_HEADER = ["Sheet", "Key_Type", "Key", "Reason", "Source_URL", "Verified_Date"]

@@ -81,22 +81,13 @@ def infer_country(source: str) -> str:
     return ""
 
 
-def decode_bing_url(url: str) -> str:
+def decode_ddg_url(url: str) -> str:
     if not url:
         return ""
     p = urlparse(url)
-    if p.netloc and "bing.com" not in p.netloc:
+    if "duckduckgo.com" not in p.netloc:
         return unquote(url)
-    qs = parse_qs(p.query)
-    target = qs.get("u", [""])[0]
-    if target.startswith("a1"):
-        target = target[2:]
-        try:
-            import base64
-            pad = "=" * (-len(target) % 4)
-            target = base64.urlsafe_b64decode(target + pad).decode("utf-8", "ignore")
-        except Exception:
-            pass
+    target = parse_qs(p.query).get("uddg", [""])[0]
     return unquote(target or url)
 
 
@@ -109,15 +100,13 @@ def result_domain(url: str) -> str:
 
 
 def relevant(name: str, item: dict, query_kind: str) -> tuple[bool, int]:
-    title = norm(item["title"])
-    snippet = norm(item["snippet"])
-    url = item["url"]
+    title = norm(item.get("title"))
+    snippet = norm(item.get("snippet"))
+    url = item.get("url") or ""
     domain = result_domain(url)
     n = norm(name)
 
-    # Exact entity-name match only; substring matches are too noisy for short names.
-    exact_name = (n == title) or (n in title and len(n) >= 5) or (n in snippet and len(n) >= 6)
-    if not exact_name:
+    if not (n == title or n in title or (len(n) >= 6 and n in snippet)):
         return False, 0
 
     if domain in BAD_DOMAINS or any(domain.endswith("." + d) for d in BAD_DOMAINS):
@@ -142,11 +131,10 @@ def relevant(name: str, item: dict, query_kind: str) -> tuple[bool, int]:
         score += 6
     else:
         score += 3
-
     if known_music_domain:
         score += 5
     if domain == "metal-archives.com" or domain.endswith(".metal-archives.com"):
-        score += 6
+        score += 8
     if "2026" in title or "2026" in snippet:
         score += 4
     if "2025" in title or "2025" in snippet:
@@ -157,29 +145,29 @@ def relevant(name: str, item: dict, query_kind: str) -> tuple[bool, int]:
     return score >= 10, score
 
 
-def bing(session: requests.Session, query: str) -> list[dict]:
-    url = "https://www.bing.com/search?q=" + __import__("urllib.parse").parse.quote_plus(query) + "&count=10&setlang=en-US"
+def ddg(session: requests.Session, query: str) -> list[dict]:
+    url = "https://html.duckduckgo.com/html/?q=" + quote_plus(query)
     try:
         r = session.get(url, timeout=15)
     except requests.RequestException:
         return []
     if r.status_code != 200:
         return []
+
     soup = BeautifulSoup(r.text, "html.parser")
     out = []
-    for item in soup.select("li.b_algo"):
-        a = item.select_one("h2 a")
+    for item in soup.select(".result"):
+        a = item.select_one("a.result__a")
         if not a:
             continue
-        p = item.select_one(".b_caption p") or item.select_one("p")
-        raw_url = a.get("href", "")
-        real_url = decode_bing_url(raw_url)
-        if result_domain(real_url) == "bing.com":
+        snippet_el = item.select_one(".result__snippet")
+        real_url = decode_ddg_url(a.get("href", ""))
+        if result_domain(real_url) in {"duckduckgo.com", ""}:
             continue
         out.append({
             "title": a.get_text(" ", strip=True),
             "url": real_url,
-            "snippet": p.get_text(" ", strip=True) if p else "",
+            "snippet": snippet_el.get_text(" ", strip=True) if snippet_el else "",
         })
     return out
 
@@ -217,7 +205,7 @@ def inspect(rec: dict) -> dict:
     ]
     ma_good = []
     for q in ma_queries:
-        for x in bing(session, q):
+        for x in ddg(session, q):
             ok, score = relevant(name, x, "ma")
             if ok:
                 ma_good.append((score, x))
@@ -226,13 +214,12 @@ def inspect(rec: dict) -> dict:
 
     # Then look specifically for current live/release activity on music/social sources.
     current_queries = [
-        f'"{name}" 2026 concert metal {inferred_country}'.strip(),
-        f'"{name}" 2026 tour band {inferred_country}'.strip(),
-        f'"{name}" 2026 site:bandsintown.com OR site:songkick.com OR site:bandcamp.com'.strip(),
+        f'"{name}" 2026 band {inferred_country}'.strip(),
+        f'"{name}" 2026 concert tour {inferred_country}'.strip(),
     ]
     current_good = []
     for q in current_queries:
-        for x in bing(session, q):
+        for x in ddg(session, q):
             ok, score = relevant(name, x, "current")
             if ok:
                 current_good.append((score, x))

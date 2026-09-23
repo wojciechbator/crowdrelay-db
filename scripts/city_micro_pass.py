@@ -24,9 +24,9 @@ COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
 
 PEER_HEADER = [
-    "Name","Country","City","Genre","Email","Social","Website","Links",
-    "Source_URL","Activity","Research_Date","Status","Confidence",
-    "Contact_Type","Contact_Source","Outreach_Readiness","Notes"
+    "Name","Country","City","Genre","Email","Social","Website","Source_URL",
+    "Activity","Research_Date","Confidence","Contact_Type","Contact_Source",
+    "Outreach_Readiness","Notes"
 ]
 BEACON_HEADER = [
     "Name","Kind","City","Email","Destination_URL","Source_URL","Active",
@@ -348,7 +348,7 @@ def write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
 
 
 def main() -> None:
-    limit = int(os.environ.get("CITY_BATCH_SIZE", "2"))
+    limit = int(os.environ.get("CITY_BATCH_SIZE", "4"))
     wb = load_workbook(DB)
     cities = choose_cities(wb, limit)
 

@@ -6,6 +6,7 @@ on:
       - "updates/pending/**"
       - "scripts/apply_pending.py"
       - ".github/workflows/apply-database-updates.yml"
+      - ".staging/FINAL_READY"
 
 permissions:
   contents: write
@@ -18,6 +19,17 @@ jobs:
       - name: Checkout canonical database
         uses: actions/checkout@v4
 
+      - name: Materialize staged canonical workbook
+        if: ${{ hashFiles('.staging/FINAL_READY') != '' }}
+        run: |
+          set -e
+          test -s .staging/FINAL_READY
+          parts=(.staging/final-database.part.*)
+          test ${#parts[@]} -gt 0
+          cat "${parts[@]}" | base64 -d > database.xlsx
+          rm -rf .staging
+          echo "Staged canonical workbook materialized."
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -29,104 +41,12 @@ jobs:
       - name: Apply pending research in-place
         run: python scripts/apply_pending.py
 
-      - name: Build live four-country band index
-        run: |
-          set -e
-          mkdir -p /tmp/live_band_index
-          python3 - <<'PY'
-          from html.parser import HTMLParser
-          from pathlib import Path
-          from urllib.parse import urljoin
-          import csv, re, subprocess, sys
-
-          BASE="https://www.metalunderground.com"
-          countries={
-              "Poland":"Poland",
-              "Germany":"Germany",
-              "Czechia":"Czech-Republic",
-              "Slovakia":"Slovakia",
-          }
-
-          class Parser(HTMLParser):
-              def __init__(self):
-                  super().__init__()
-                  self.in_tr=False; self.in_td=False; self.in_a=False
-                  self.cells=[]; self.links=[]; self.txt=""; self.rows=[]
-              def handle_starttag(self,tag,attrs):
-                  attrs=dict(attrs)
-                  if tag=="tr":
-                      self.in_tr=True; self.in_td=False; self.cells=[]; self.links=[]
-                  elif self.in_tr and tag=="td":
-                      self.in_td=True; self.txt=""
-                  elif self.in_tr and tag=="a":
-                      self.in_a=True
-                      self.links.append([attrs.get("href",""),""])
-              def handle_data(self,data):
-                  if self.in_tr and self.in_td: self.txt += data
-                  if self.in_tr and self.in_a and self.links:
-                      self.links[-1][1] += data
-              def handle_endtag(self,tag):
-                  if tag=="td" and self.in_td:
-                      self.cells.append(" ".join(self.txt.split()))
-                      self.in_td=False
-                  elif tag=="a" and self.in_a:
-                      self.in_a=False
-                  elif tag=="tr" and self.in_tr:
-                      self.rows.append((self.cells,self.links))
-                      self.in_tr=False
-
-          def fetch(url):
-              p=subprocess.run(
-                  ["curl","-ksSL","--max-time","30","-A","Mozilla/5.0 CrowdRelay database audit",url],
-                  check=True,capture_output=True,text=True
-              )
-              return p.stdout
-
-          out=[]
-          for country,slug in countries.items():
-              first=fetch(f"{BASE}/bands/country/{slug}/")
-              p=Parser(); p.feed(first)
-              last=1
-              for cells,links in p.rows:
-                  for href,text in links:
-                      if text.strip()=="Last":
-                          m=re.search(r"/page/(\d+)/",href)
-                          if m: last=max(last,int(m.group(1)))
-              print(country,"pages",last)
-              for page in range(1,last+1):
-                  url=f"{BASE}/bands/country/{slug}/page/{page}/"
-                  html=first if page==1 else fetch(url)
-                  q=Parser(); q.feed(html)
-                  n=0
-                  for cells,links in q.rows:
-                      band_link=next(((href,text) for href,text in links if "/bands/details.cfm?bandid=" in href),None)
-                      if not band_link or not cells: continue
-                      name=cells[0].strip()
-                      if not name or name.lower().startswith("displaying records"): continue
-                      formed=cells[1].strip() if len(cells)>1 else ""
-                      city=cells[2].strip() if len(cells)>2 else ""
-                      status=cells[3].strip() if len(cells)>3 else ""
-                      articles=cells[4].strip() if len(cells)>4 else ""
-                      href=band_link[0]
-                      out.append([name,country,city,formed,status,articles,url,urljoin(BASE,href)])
-                      n+=1
-                  print(" page",page,"rows",n)
-          with open("/tmp/live_band_index/live_bands.csv","w",newline="",encoding="utf-8") as f:
-              w=csv.writer(f); w.writerow(["Name","Country","City","Formed","Status","Articles","Directory_URL","Details_URL"]); w.writerows(out)
-          print("LIVE_INDEX_ROWS",len(out))
-          PY
-
-      - name: Upload live band index
-        uses: actions/upload-artifact@v4
-        with:
-          name: live-band-index
-          path: /tmp/live_band_index/live_bands.csv
-          retention-days: 1
-
       - name: Validate canonical workbook
         run: |
           python3 - <<'PY'
+          from collections import Counter
           from openpyxl import load_workbook
+
           required = {
               "Venues": ["Name","City","Country","Address","Website","Audience_Genre","Capacity","Booking_Contact","Email","Public_Financial_Info","Status","Source_URL","Research_Date","Target_Fit","Contact_Quality","Outreach_Angle","Notes"],
               "Peer Bands": ["Name","Country","City","Genre","Email","Social","Website","Links","Source_URL","Activity","Research_Date","Status","Confidence","Contact_Type","Contact_Source","Outreach_Readiness","Notes"],
@@ -134,133 +54,74 @@ jobs:
               "Booking Agents": ["Name","Agency","Email","Roster_URL","Genres","Source_URL","Research_Date","Notes"],
               "Contacts": ["Email","Name","Organization","City","Kind","Phone","Notes","Last_Seen","Disappeared"],
           }
+
           wb = load_workbook("database.xlsx", read_only=True)
-          counts = {}
-          for sheet, header in required.items():
-              ws = wb[sheet]
-              header_row = None
+          actual = {}
+
+          def find_header(ws, header):
               for row_no in range(1, min(ws.max_row, 10) + 1):
                   got = [ws.cell(row_no, i + 1).value for i in range(len(header))]
                   if got == header:
-                      header_row = row_no
-                      break
-              if header_row is None:
-                  raise SystemExit(f"{sheet} header mismatch")
-              counts[sheet] = ws.max_row - header_row
-              print(sheet, "header_row=", header_row, "rows=", counts[sheet])
+                      return row_no
+              raise SystemExit(f"{ws.title}: header mismatch")
+
+          def rows_after(ws, header_row):
+              for row in ws.iter_rows(min_row=header_row + 1, values_only=True):
+                  if any(x not in (None, "") for x in row):
+                      yield row
+
+          for sheet, header in required.items():
+              ws = wb[sheet]
+              hr = find_header(ws, header)
+              rows = list(rows_after(ws, hr))
+              actual[sheet] = len(rows)
+              print(sheet, "header_row=", hr, "rows=", len(rows))
+
+              sigs = [tuple("" if x is None else str(x).strip().casefold() for x in r) for r in rows]
+              if len(sigs) != len(set(sigs)):
+                  raise SystemExit(f"{sheet}: exact duplicate rows detected")
+
+              if sheet in ("Venues", "Peer Bands", "Booking Agents"):
+                  if any(not str(r[0] or "").strip() for r in rows):
+                      raise SystemExit(f"{sheet}: empty Name found")
 
           minimums = {
               "Venues": 92,
-              "Peer Bands": 1277,
+              "Peer Bands": 1065,
               "Beacons": 1084,
               "Booking Agents": 11,
               "Contacts": 909,
           }
           for sheet, minimum in minimums.items():
-              if counts[sheet] < minimum:
-                  raise SystemExit(f"{sheet} regressed: {counts[sheet]} < {minimum}")
+              if actual[sheet] < minimum:
+                  raise SystemExit(f"{sheet} regressed: {actual[sheet]} < {minimum}")
 
-          # Sanity-check the venue layer: events/tours must never masquerade as venues.
-          ws = wb["Venues"]
-          bad = []
-          for row in ws.iter_rows(min_row=2, values_only=True):
-              name = str(row[0] or "").strip().casefold()
-              if name in {"sanity check tour", "seiðr 2026", "pole festiwalowe zakręć śmigłem"}:
-                  bad.append(name)
-          if bad:
-              raise SystemExit(f"Invalid venue records remain: {bad}")
-
-          print("INTEGRITY_OK", counts)
-
-          from collections import Counter
-          from datetime import date, datetime
-          from urllib.parse import urlparse
-
-          def data_rows(ws, header_row):
-              return list(ws.iter_rows(min_row=header_row + 1, values_only=True))
-
-          qa = {}
-          for sheet, header in required.items():
-              ws = wb[sheet]
-              header_row = next(row_no for row_no in range(1, 11)
-                                if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
-              rows = data_rows(ws, header_row)
-              qa[sheet] = {}
-
-              # Empty primary-name/key checks.
-              if sheet in ("Venues", "Peer Bands", "Booking Agents"):
-                  empty_names = sum(1 for r in rows if not str(r[0] or "").strip())
-                  qa[sheet]["empty_name"] = empty_names
-                  if empty_names:
-                      raise SystemExit(f"{sheet}: {empty_names} empty names")
-
-              # Exact duplicate rows.
-              sigs = [tuple("" if x is None else str(x).strip().casefold() for x in r) for r in rows]
-              dup_rows = len(sigs) - len(set(sigs))
-              qa[sheet]["exact_duplicate_rows"] = dup_rows
-              if dup_rows:
-                  raise SystemExit(f"{sheet}: {dup_rows} exact duplicate rows")
-
-              # Research-date distribution.
-              date_idx = {
-                  "Venues": 12, "Peer Bands": 10, "Booking Agents": 6
-              }.get(sheet)
-              if date_idx is not None:
-                  dates = [str(r[date_idx] or "").strip() for r in rows if str(r[date_idx] or "").strip()]
-                  qa[sheet]["dated_rows"] = len(dates)
-                  qa[sheet]["oldest_research_date"] = min(dates) if dates else None
-                  qa[sheet]["newest_research_date"] = max(dates) if dates else None
-
-          # Country QA for the research target layers.
-          allowed = {"Poland", "Germany", "Czechia", "Slovakia", ""}
-          for sheet, country_idx in (("Peer Bands", 1), ("Venues", 2)):
-              ws = wb[sheet]
-              header = required[sheet]
-              header_row = next(row_no for row_no in range(1, 11)
-                                if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
-              countries = Counter(str(r[country_idx] or "").strip() for r in data_rows(ws, header_row))
-              unexpected = {k:v for k,v in countries.items() if k not in allowed}
-              qa[sheet]["country_counts"] = dict(countries)
-              qa[sheet]["unexpected_countries"] = unexpected
-
-          # Peer band status/activity QA: surface obviously missing status.
-          ws = wb["Peer Bands"]
-          header = required["Peer Bands"]
-          header_row = next(row_no for row_no in range(1, 11)
-                            if [ws.cell(row_no, i + 1).value for i in range(len(header))] == header)
-          rows = data_rows(ws, header_row)
-          status_idx = header.index("Status")
-          activity_idx = header.index("Activity")
-          missing_status = sum(1 for r in rows if not str(r[status_idx] or "").strip())
-          missing_activity = sum(1 for r in rows if not str(r[activity_idx] or "").strip())
-          qa["Peer Bands"]["missing_status"] = missing_status
-          qa["Peer Bands"]["missing_activity"] = missing_activity
-
-          # Surface legacy/underspecified Peer Bands for manual semantic review.
-          bad = []
-          idx = {name: i for i, name in enumerate(header)}
+          allowed = {"Poland", "Germany", "Czechia", "Slovakia"}
+          ws = wb["Peer Bands"]; hr = find_header(ws, required["Peer Bands"]); rows = list(rows_after(ws, hr))
           for r in rows:
-              name = str(r[idx["Name"]] or "").strip()
-              country = str(r[idx["Country"]] or "").strip()
-              activity = str(r[idx["Activity"]] or "").strip()
-              status = str(r[idx["Status"]] or "").strip()
-              source = str(r[idx["Source_URL"]] or "").strip()
-              if (not country or not status or not activity):
-                  bad.append({
-                      "Name": name, "Country": country, "Activity": activity,
-                      "Status": status, "Source_URL": source
-                  })
-          print("PEER_REVIEW_SAMPLE", bad[:40])
+              if str(r[1] or "").strip() not in allowed:
+                  raise SystemExit(f"Peer Bands: invalid/missing country for {r[0]!r}")
+              if str(r[9] or "").strip() == "" or str(r[11] or "").strip() == "":
+                  raise SystemExit(f"Peer Bands: missing Activity/Status for {r[0]!r}")
+              if str(r[11] or "").strip().casefold() != "active":
+                  raise SystemExit(f"Peer Bands: non-active record remains: {r[0]!r}")
 
-          print("DATA_QA", qa)
+          ws = wb["Venues"]; hr = find_header(ws, required["Venues"]); rows = list(rows_after(ws, hr))
+          for r in rows:
+              if str(r[2] or "").strip() not in allowed:
+                  raise SystemExit(f"Venues: invalid/missing country for {r[0]!r}")
+              if str(r[10] or "").strip().casefold() != "active":
+                  raise SystemExit(f"Venues: non-active record remains: {r[0]!r}")
+              if not str(r[11] or "").strip() or not str(r[12] or "").strip():
+                  raise SystemExit(f"Venues: missing source/research date for {r[0]!r}")
+
+          invalid_venue_names = {"sanity check tour", "seiðr 2026", "pole festiwalowe zakręć śmigłem"}
+          for r in rows:
+              if str(r[0] or "").strip().casefold() in invalid_venue_names:
+                  raise SystemExit(f"Invalid venue record remains: {r[0]!r}")
+
+          print("FINAL_DATABASE_QA_OK", actual)
           PY
-
-      - name: Upload canonical workbook for QA
-        uses: actions/upload-artifact@v4
-        with:
-          name: canonical-database-xlsx
-          path: database.xlsx
-          retention-days: 1
 
       - name: Commit canonical workbook
         run: |

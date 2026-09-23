@@ -27,6 +27,36 @@ REMOVAL_HEADER = ["Sheet", "Key_Type", "Key", "Reason", "Source_URL", "Verified_
 CITY_PASS_PENDING_RE = re.compile(r"^.+__CityPass__(\d{4}-\d{2}-\d{2})__(\d{4})__.+\.csv$")
 REJECTED_ROOT = ROOT / "updates" / "rejected"
 
+NON_ACTIONABLE_DOMAINS = {
+    "wikipedia.org", "pinterest.com", "tripadvisor.com", "randomcity.net",
+    "time.global", "fresha.com", "skyscanner.com", "anywayanyday.com",
+    "rome2rio.com", "numbeo.com", "airbnb.com", "weather.com", "weathervio.com",
+    "aqicn.org", "play.google.com", "google.com", "news.google.com",
+    "msn.com", "yahoo.com", "bing.com",
+}
+
+NON_ACTIONABLE_TITLE_RE = re.compile(
+    r"\b(wikipedia|random city generator|tripadvisor|cost of living|cheap flights|flights|"
+    r"taxi|sunbed|solarium|weather|air quality|google news|msn|yahoo|youtube terms of service|"
+    r"privacy policy|terms of service|cookies?|login|sign in)\b",
+    re.I,
+)
+
+OUTREACH_SIGNAL_RE = re.compile(
+    r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|"
+    r"music|muzyka|musik|hudba|koncert|concert|konzert|festival|festiwal|club|klub|venue|"
+    r"radio|podcast|magazine|magazyn|gazeta|zeitung|culture|kultura|kultur|artist|artyst|"
+    r"photograph|fotograf|creator|promoter|promotor|organizer|organizator|booking|"
+    r"vinyl|winyl|record|płyt|sklep|music store)\b",
+    re.I,
+)
+
+GENERIC_SOCIAL_NAMES = {
+    "facebook", "facebook page", "facebook group", "instagram", "instagram creator",
+    "youtube", "youtube channel", "tiktok", "tiktok creator",
+    "link to facebook.com", "link to instagram.com", "link to youtube.com",
+}
+
 
 def city_pass_pending_allowed(csv_path: Path) -> bool:
     match = CITY_PASS_PENDING_RE.match(csv_path.name)
@@ -51,6 +81,88 @@ def norm(v: object) -> str:
 
 def row_sig(row: list[object]) -> tuple[str, ...]:
     return tuple(norm(v) for v in row)
+
+
+def url_domain(url: str) -> str:
+    from urllib.parse import urlparse
+    try:
+        return urlparse(str(url or "")).netloc.casefold().removeprefix("www.")
+    except Exception:
+        return ""
+
+
+def beacon_row_allowed(row: list[str]) -> bool:
+    if len(row) < 13:
+        return False
+    name, kind, city, url = row[0].strip(), row[1].strip(), row[2].strip(), row[4].strip()
+    blob = norm(" ".join(row))
+    if not name or not city or not url.startswith("http"):
+        return False
+    d = url_domain(url)
+    from urllib.parse import urlparse
+    path = urlparse(url).path.casefold().rstrip("/")
+    if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
+        return False
+    if NON_ACTIONABLE_TITLE_RE.search(blob):
+        return False
+    if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+        if kind == "facebook_community":
+            ok = d == "facebook.com" and path.startswith("/groups/")
+        elif kind == "facebook_page":
+            ok = d == "facebook.com" and len(path.strip("/")) >= 2 and not path.startswith(("/search", "/watch", "/events", "/reel", "/biz/", "/sharer.php"))
+        elif kind == "instagram_creator":
+            ok = d == "instagram.com" and len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
+        elif kind == "tiktok_creator":
+            ok = d == "tiktok.com" and len(path.strip("/")) >= 2 and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
+        else:
+            ok = d == "youtube.com" and path.startswith(("/channel/", "/@", "/c/", "/user/"))
+        return ok and norm(name) not in GENERIC_SOCIAL_NAMES and bool(OUTREACH_SIGNAL_RE.search(blob))
+
+    terms = {
+        "independent_radio": r"radio|rádio|radiostacja|musik|music|muzyka|koncert|concert",
+        "podcast": r"podcast|music|muzyka|musik|hudba|band|koncert|concert|metal",
+        "local_media": r"music|muzyka|musik|hudba|band|koncert|concert|metal|culture|kultura|festival|festiwal",
+        "event_calendar": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|festival|festiwal|music",
+        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event",
+        "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
+        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst",
+        "local_music_resource": r"record store|sklep|muzycz|music store|musikladen|vinyl|winyl|płyt|bandcamp|soundcloud",
+    }
+    if not re.search(terms.get(kind, r"music|muzyka|musik|hudba|koncert|concert|metal|band|artist"), blob, re.I):
+        return False
+    return not (kind == "event_calendar" and re.search(r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b", blob, re.I))
+
+
+def peer_row_allowed(row: list[str]) -> bool:
+    if len(row) < 15:
+        return False
+    name, city, source = row[0].strip(), row[2].strip(), row[7].strip()
+    blob = norm(" ".join(row))
+    if not name or not city or NON_ACTIONABLE_TITLE_RE.search(blob):
+        return False
+    if norm(name) in GENERIC_SOCIAL_NAMES or norm(name) in {
+        "wiadomości", "wiadomosci", "facebook", "instagram", "youtube", "tiktok",
+        "facebook page", "youtube channel", "katalog zespołów", "katalog zespolow", "client challenge",
+    }:
+        return False
+    if re.search(r"\b(festival|festiwal|radio|podcast|magazine|media|venue|club|klub|agency|agencja|booking|promoter|calendar|kalendarz|culture|centrum kultury|event|wydarzen)\b", norm(name), re.I):
+        return False
+    return bool(re.search(r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|music|muzyka|musik|hudba)\b", blob, re.I))
+
+
+def contact_row_allowed(row: list[str]) -> bool:
+    if len(row) < 9:
+        return False
+    email, name, org, kind, notes = row[0].strip(), row[1].strip(), row[2].strip(), row[4].strip(), row[6].strip()
+    blob = norm(f"{name} {org} {kind} {notes}")
+    if not email or not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return False
+    source_match = re.search(r"https?://\S+", notes)
+    if source_match:
+        d = url_domain(source_match.group(0).rstrip(".,)"))
+        if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
+            return False
+    return not NON_ACTIONABLE_TITLE_RE.search(blob) and bool(OUTREACH_SIGNAL_RE.search(blob))
 
 
 def find_header_row(ws, expected: list[str]) -> int:
@@ -224,6 +336,9 @@ def main() -> None:
                 if not raw or not any(norm(x) for x in raw):
                     continue
                 row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+                if CITY_PASS_PENDING_RE.match(csv_path.name) and not peer_row_allowed(row):
+                    print(f"CITY_PASS_DROP Peer Bands {csv_path.name}: {row[0]!r}")
+                    continue
                 key = norm(row[0])
                 if not key:
                     raise RuntimeError(f"Peer Bands row has empty Name: {raw}")
@@ -264,6 +379,13 @@ def main() -> None:
         added = 0
         for raw in data:
             row = raw[: len(header)] + [""] * max(0, len(header) - len(raw))
+            if CITY_PASS_PENDING_RE.match(csv_path.name):
+                if sheet == "Beacons" and not beacon_row_allowed(row):
+                    print(f"CITY_PASS_DROP Beacons {csv_path.name}: {row[0]!r}")
+                    continue
+                if sheet == "Contacts" and not contact_row_allowed(row):
+                    print(f"CITY_PASS_DROP Contacts {csv_path.name}: {row[0]!r}")
+                    continue
             sig = row_sig(row)
             if sig in existing:
                 continue
@@ -273,6 +395,74 @@ def main() -> None:
             changed = True
 
         applied.append((csv_path, added, "added"))
+
+    # Idempotent CityPass safety pass. Re-check archived CityPass rows so bad records
+    # from an older run are removed from the canonical workbook on the next apply.
+    cleanup_counts = {"Beacons": 0, "Peer Bands": 0, "Contacts": 0}
+    applied_root = ROOT / "updates" / "applied"
+    if applied_root.exists():
+        for day_dir in sorted(applied_root.iterdir()):
+            if not day_dir.is_dir():
+                continue
+            for csv_path in sorted(day_dir.glob("*__CityPass__*.csv")):
+                try:
+                    header, data = load_csv(csv_path)
+                except Exception:
+                    continue
+                if csv_path.name.startswith("Beacons__"):
+                    ws = wb["Beacons"]
+                    headers = [norm(ws.cell(2, c).value) for c in range(1, ws.max_column + 1)]
+                    idx = {h: i + 1 for i, h in enumerate(headers) if h}
+                    for raw in data:
+                        row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+                        if beacon_row_allowed(row):
+                            continue
+                        key = (norm(row[0]), norm(row[1]), norm(row[2]), norm(row[4]))
+                        for row_no in range(ws.max_row, 2, -1):
+                            if (
+                                norm(ws.cell(row_no, idx["name"]).value),
+                                norm(ws.cell(row_no, idx["kind"]).value),
+                                norm(ws.cell(row_no, idx["city"]).value),
+                                norm(ws.cell(row_no, idx["destination_url"]).value),
+                            ) == key:
+                                ws.delete_rows(row_no, 1)
+                                cleanup_counts["Beacons"] += 1
+                                changed = True
+                elif csv_path.name.startswith("Peer_Bands__"):
+                    ws = wb["Peer Bands"]
+                    for raw in data:
+                        row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+                        if peer_row_allowed(row):
+                            continue
+                        key = (norm(row[0]), norm(row[2]))
+                        source = norm(row[7])
+                        for row_no in range(ws.max_row, 2, -1):
+                            if norm(ws.cell(row_no, 1).value) != key[0] or norm(ws.cell(row_no, 3).value) != key[1]:
+                                continue
+                            if source and norm(ws.cell(row_no, 9).value) == source:
+                                ws.delete_rows(row_no, 1)
+                                cleanup_counts["Peer Bands"] += 1
+                                changed = True
+                            elif norm(ws.cell(row_no, 17).value) == "city micro-pass" and norm(ws.cell(row_no, 10).value) == norm(row[9]):
+                                ws.delete_rows(row_no, 1)
+                                cleanup_counts["Peer Bands"] += 1
+                                changed = True
+                elif csv_path.name.startswith("Contacts__"):
+                    ws = wb["Contacts"]
+                    for raw in data:
+                        row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+                        if contact_row_allowed(row):
+                            continue
+                        key = (norm(row[0]), norm(row[3]))
+                        for row_no in range(ws.max_row, 2, -1):
+                            if norm(ws.cell(row_no, 1).value) == key[0] and norm(ws.cell(row_no, 4).value) == key[1]:
+                                ws.delete_rows(row_no, 1)
+                                cleanup_counts["Contacts"] += 1
+                                changed = True
+
+    dropped = {k: v for k, v in cleanup_counts.items() if v}
+    if dropped:
+        print(f"CITY_PASS_CLEANUP removed={dropped}")
 
     if changed:
         wb.save(DB)

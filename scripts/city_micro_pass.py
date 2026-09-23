@@ -5,6 +5,7 @@ import csv
 import json
 import os
 import re
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
@@ -133,26 +134,16 @@ def _parse_html(engine: str, html: str) -> list[dict]:
 
 
 def _parse_rss(xml: str) -> list[dict]:
-    soup = BeautifulSoup(xml, "xml")
+    root = ET.fromstring(xml)
     out = []
-    for item in soup.find_all("item"):
-        title = item.find("title")
-        link = item.find("link")
-        description = item.find("description")
-        if not title or not link:
+    for item in root.findall(".//item"):
+        title = item.findtext("title", default="").strip()
+        url = item.findtext("link", default="").strip()
+        description = item.findtext("description", default="").strip()
+        if not title or not url.startswith("http"):
             continue
-        url = link.get_text(strip=True)
-        if not url.startswith("http"):
-            continue
-        snippet = BeautifulSoup(
-            description.get_text(" ", strip=True) if description else "",
-            "html.parser",
-        ).get_text(" ", strip=True)
-        out.append({
-            "title": title.get_text(" ", strip=True),
-            "url": url,
-            "snippet": snippet,
-        })
+        snippet = BeautifulSoup(description, "html.parser").get_text(" ", strip=True)
+        out.append({"title": title, "url": url, "snippet": snippet})
     return out
 
 
@@ -181,7 +172,7 @@ def search_engine(query: str) -> list[dict]:
                 results = _parse_rss(r.text)
                 if results:
                     return results[:20]
-        except requests.RequestException:
+        except (requests.RequestException, ET.ParseError):
             pass
 
     # Keep HTML engines as secondary fallbacks.

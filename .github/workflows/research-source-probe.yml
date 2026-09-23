@@ -1,6 +1,9 @@
 name: Research source probe
 
 on:
+  push:
+    paths:
+      - ".github/workflows/research-source-probe.yml"
   workflow_dispatch:
 
 permissions:

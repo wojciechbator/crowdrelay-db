@@ -2,12 +2,6 @@ name: Full peer band audit
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "audit/**"
-      - "database.xlsx"
-      - "scripts/full_audit.py"
-      - ".github/workflows/full-peer-band-audit.yml"
 
 concurrency:
   group: peer-band-full-audit

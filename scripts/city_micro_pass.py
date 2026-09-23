@@ -152,56 +152,23 @@ def resolve_url(url: str, headers: dict | None = None) -> str:
 def fetch_page(url: str, headers: dict) -> tuple[str, str, str, list[tuple[str, str]]]:
     try:
         r = requests.get(
-            url, timeout=12, headers=headers, allow_redirects=True
+            url, timeout=8, headers=headers, allow_redirects=True
         )
-        if r.status_code == 200 and r.text:
-            soup = BeautifulSoup(r.text, "html.parser")
-            title = soup.title.get_text(" ", strip=True) if soup.title else ""
-            text = soup.get_text(" ", strip=True)
-            links = []
-            for a in soup.select("a[href]"):
-                href = a.get("href", "").strip()
-                label = a.get_text(" ", strip=True)
-                if not href.startswith("http"):
-                    continue
+        if r.status_code != 200 or not r.text:
+            return "", "", "", []
+        soup = BeautifulSoup(r.text, "html.parser")
+        title = soup.title.get_text(" ", strip=True) if soup.title else ""
+        text = soup.get_text(" ", strip=True)
+        links = []
+        for a in soup.select("a[href]"):
+            href = a.get("href", "").strip()
+            label = a.get_text(" ", strip=True)
+            if href.startswith("http"):
                 links.append((href, label))
-            return r.url or url, title, text[:50000], links[:300]
-
-        markdown = jina_fetch(url, headers, timeout=20)
-        if markdown:
-            title = ""
-            for line in markdown.splitlines():
-                cleaned = line.strip().lstrip("#").strip()
-                if cleaned:
-                    title = cleaned[:300]
-                    break
-            links = []
-            for match in re.finditer(r"\[([^\]]{1,200})\]\((https?://[^)]+)\)", markdown):
-                label = BeautifulSoup(match.group(1), "html.parser").get_text(" ", strip=True)
-                href = match.group(2).rstrip(").,")
-                if href.startswith("http"):
-                    links.append((href, label))
-            return url, title, BeautifulSoup(markdown, "html.parser").get_text(" ", strip=True)[:50000], links[:300]
-        return "", "", "", []
+            if len(links) >= 150:
+                break
+        return r.url or url, title, text[:30000], links
     except requests.RequestException:
-        try:
-            markdown = jina_fetch(url, headers, timeout=20)
-            if markdown:
-                title = ""
-                for line in markdown.splitlines():
-                    cleaned = line.strip().lstrip("#").strip()
-                    if cleaned:
-                        title = cleaned[:300]
-                        break
-                links = []
-                for match in re.finditer(r"\[([^\]]{1,200})\]\((https?://[^)]+)\)", markdown):
-                    label = BeautifulSoup(match.group(1), "html.parser").get_text(" ", strip=True)
-                    href = match.group(2).rstrip(").,")
-                    if href.startswith("http"):
-                        links.append((href, label))
-                return url, title, BeautifulSoup(markdown, "html.parser").get_text(" ", strip=True)[:50000], links[:300]
-        except requests.RequestException:
-            pass
         return "", "", "", []
 
 
@@ -456,13 +423,9 @@ def search_engine(query: str) -> list[dict]:
             pass
 
     endpoints = [
-        ("ddg", "https://html.duckduckgo.com/html/?q="),
-        ("ddg_lite", "https://lite.duckduckgo.com/lite/?q="),
         ("bing", "https://www.bing.com/search?q="),
-        ("google", "https://www.google.com/search?q="),
         ("google", "https://www.google.com/search?gbv=1&q="),
-        ("brave", "https://search.brave.com/search?q="),
-        ("mojeek", "https://www.mojeek.com/search?q="),
+        ("ddg", "https://html.duckduckgo.com/html/?q="),
     ]
     for engine, base in endpoints:
         try:
@@ -664,7 +627,9 @@ def discover(city: str, country: str) -> dict:
     }
 
     all_results: list[tuple[str, dict]] = []
-    # SearXNG gives us structured multi-engine results without brittle HTML parsing.
+    searx_results_by_kind: dict[str, list[dict]] = {}
+
+    # Primary source: structured metasearch. One request per query, with ordered failover.
     with ThreadPoolExecutor(max_workers=len(queries)) as ex:
         futures = {
             ex.submit(searx_search, query, headers): kind
@@ -673,34 +638,22 @@ def discover(city: str, country: str) -> dict:
         for fut in as_completed(futures):
             kind = futures[fut]
             try:
-                all_results.extend((kind, x) for x in fut.result())
+                found = fut.result()
             except Exception:
-                pass
+                found = []
+            searx_results_by_kind[kind] = found
+            all_results.extend((kind, x) for x in found)
 
-    with ThreadPoolExecutor(max_workers=len(queries)) as ex:
-        futures = {ex.submit(search_engine, q): kind for kind, q in queries}
-        for fut in as_completed(futures):
-            kind = futures[fut]
-            try:
-                all_results.extend((kind, x) for x in fut.result())
-            except Exception:
-                pass
-
-    # The hosted runner can receive noisy/irrelevant HTML search results.
-    # Add a second, text-based search path specifically for direct local entities.
-    direct_query_kinds = {
-        "facebook", "facebook_groups", "youtube", "culture",
-        "promoters_media", "creators",
-    }
-    jina_jobs = [
+    # Only queries that returned nothing get the slower scraper fallback.
+    fallback_jobs = [
         (kind, query)
         for kind, query in queries
-        if kind in direct_query_kinds
+        if not searx_results_by_kind.get(kind)
     ]
-    with ThreadPoolExecutor(max_workers=6) as ex:
+    with ThreadPoolExecutor(max_workers=4) as ex:
         futures = {
-            ex.submit(jina_search, query, headers): kind
-            for kind, query in jina_jobs
+            ex.submit(search_engine, query): kind
+            for kind, query in fallback_jobs
         }
         for fut in as_completed(futures):
             kind = futures[fut]
@@ -718,7 +671,14 @@ def discover(city: str, country: str) -> dict:
             continue
         raw_seen.add(key)
         unique_results.append((query_kind, item))
-    unique_results = unique_results[:70]
+    # Prioritize direct entity results; only fetch non-direct pages to mine outbound links.
+    unique_results.sort(
+        key=lambda x: (
+            0 if usable_direct_url(x[1].get("url", "")) else 1,
+            0 if x[0] in {"facebook", "facebook_groups", "youtube", "creators", "culture"} else 1,
+        )
+    )
+    unique_results = unique_results[:35]
 
     enriched: list[dict] = []
     with ThreadPoolExecutor(max_workers=8) as ex:
@@ -732,7 +692,11 @@ def discover(city: str, country: str) -> dict:
                 final_url = fut.result() or item["url"]
             except Exception:
                 final_url = item["url"]
-            page_url, page_title, page_text, links = fetch_page(final_url, headers)
+
+            if usable_direct_url(item["url"]):
+                page_url, page_title, page_text, links = item["url"], "", "", []
+            else:
+                page_url, page_title, page_text, links = fetch_page(final_url, headers)
             final_candidate = page_url or final_url
             search_title = item.get("title", "").strip()
             search_snippet = item.get("snippet", "").strip()

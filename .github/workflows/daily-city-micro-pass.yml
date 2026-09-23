@@ -1,0 +1,67 @@
+name: Daily city micro-pass
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * *"
+
+concurrency:
+  group: crowdrelay-city-micro-pass
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  city-pass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout canonical database
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install openpyxl requests beautifulsoup4
+
+      - name: Research next four eligible cities
+        env:
+          CITY_BATCH_SIZE: "4"
+        run: python scripts/city_micro_pass.py
+
+      - name: Validate city pass
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          files = sorted(Path("city_passes").glob("*.json"))
+          if not files:
+              print("No eligible cities left.")
+              raise SystemExit(0)
+          payload = json.loads(files[-1].read_text(encoding="utf-8"))
+          cities = payload.get("cities", [])
+          if len(cities) > 4:
+              raise SystemExit(f"City batch too large: {len(cities)} > 4")
+          for city in cities:
+              if city.get("country") not in {"Poland", "Germany", "Czechia", "Slovakia"}:
+                  raise SystemExit(f"Unexpected country: {city}")
+              if not city.get("city"):
+                  raise SystemExit(f"Missing city: {city}")
+          print("CITY_PASS_QA_OK", cities)
+          PY
+
+      - name: Commit city research queue and pending updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add city_passes updates/pending
+          if git diff --cached --quiet; then
+            echo "No city research changes."
+            exit 0
+          fi
+          git commit -m "research: daily city micro-pass"
+          git push

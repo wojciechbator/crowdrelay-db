@@ -32,7 +32,7 @@ jobs:
       - name: Probe public band sources
         run: |
           python - <<'PY'
-          import requests
+          from urllib.request import Request, urlopen
           from urllib.parse import quote
           headers={"User-Agent":"Mozilla/5.0 CrowdRelay database audit"}
           urls=[
@@ -43,8 +43,10 @@ jobs:
             "https://www.metal-archives.com/search/ajax-band-search/?field=name&query="+quote("Lunacy"),
           ]
           for u in urls:
-              r=requests.get(u,headers=headers,timeout=20)
-              print("PROBE",r.status_code,len(r.content),r.url,r.text[:180].replace("\n"," "))
+              req=Request(u,headers=headers)
+              with urlopen(req,timeout=20) as r:
+                  content=r.read()
+                  print("PROBE",r.status,len(content),r.geturl(),content[:180].decode("utf-8","replace").replace("\n"," "))
           PY
 
       - name: Validate canonical workbook

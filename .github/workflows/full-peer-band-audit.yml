@@ -37,8 +37,8 @@ jobs:
         with:
           name: peer-band-audit
           path: |
-            audit/peer_bands_audit__*.csv
-            audit/peer_bands_audit_summary__*.json
+            audit/peer_bands_audit_batch__*.csv
+            audit/peer_bands_audit_batch_summary__*.json
 
       - name: Validate 10-row batch
         run: |

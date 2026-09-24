@@ -18,9 +18,10 @@ import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 
-DB = Path("database.xlsx")
-PENDING = Path("updates/pending")
-PASSES = Path("city_passes")
+ROOT = Path(__file__).resolve().parents[1]
+DB = ROOT / "database.xlsx"
+PENDING = ROOT / "updates" / "pending"
+PASSES = ROOT / "city_passes"
 TODAY = date.today().isoformat()
 PASS_FORMAT_VERSION = 16
 FORCED_CITY_MIN_VERSION = {
@@ -30,6 +31,7 @@ FORCED_CITY_MIN_VERSION = {
     "germany::berlin": 16,
 }
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
+MAX_NOISE_RATE = float(os.environ.get("CITY_MAX_NOISE_RATE", "1.0"))
 
 
 # Search providers throttle bursts from a single runner IP. Without pacing the
@@ -397,7 +399,6 @@ def beacon_candidate_ok(
     url: str,
     context: str,
     allow_non_direct: bool = False,
-    scoped_social: bool = False,
     country: str = "",
     city: str = "",
 ) -> bool:
@@ -926,10 +927,19 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
     return (useful or final)[:30]
 
 
+EMAIL_ASSET_TLD = re.compile(
+    r"\.(png|jpe?g|gif|svg|webp|avif|ico|css|js|woff2?|ttf|otf|map)$", re.I
+)
+
+
 def emails(text: str) -> list[str]:
-    return sorted(set(re.findall(
-        r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", text or "", re.I
-    )))
+    # icon@2x.png parses as an address — asset TLDs are never mail domains.
+    return sorted({
+        e for e in re.findall(
+            r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", text or "", re.I
+        )
+        if not EMAIL_ASSET_TLD.search(e)
+    })
 
 
 def email_domain(email: str) -> str:
@@ -948,9 +958,15 @@ def pick_email(found: list[str], url: str) -> str:
     d = site_domain(url)
     for e in found:
         ed = email_domain(e)
-        if d and (ed == d or ed.endswith("." + d) or d.endswith("." + ed)):
+        # Subdomains of the page's domain belong to it; the page's PARENT
+        # domain does not — on x.bandcamp.com, press@bandcamp.com is the
+        # platform's mailbox, not the artist's.
+        if d and (ed == d or ed.endswith("." + d)):
             return e
-    return found[0] if found else ""
+    # No own-domain address: nothing on this page is attributable to the
+    # entity. The old found[0] fallback attributed the alphabetically-first
+    # foreign mailbox (nav/footer noise) as the entity's contact.
+    return ""
 
 
 def own_domain_emails(found: list[str], url: str, cap: int = 2) -> list[str]:
@@ -1574,13 +1590,11 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         url: str,
         context: str,
         allow_non_direct: bool = False,
-        scoped_social: bool = False,
         source_url: str = "",
     ) -> bool:
         if not beacon_candidate_ok(
             name, kind, url, context,
             allow_non_direct=allow_non_direct,
-            scoped_social=scoped_social,
             country=country,
             city=city,
         ):
@@ -1647,7 +1661,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             name = social_name(url, title)
             if name:
                 accepted_here = add_beacon(
-                    name, kind, url, context, scoped_social=True
+                    name, kind, url, context
                 ) or accepted_here
 
         if kinds & media_kinds:
@@ -1673,16 +1687,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):
                 continue
-            entity_scoped_social = bool(kinds & social_kinds)
             if beacon_candidate_ok(
                 entity["name"], entity["kind"], entity["url"], context,
-                scoped_social=entity_scoped_social,
                 country=country,
                 city=city,
             ):
                 accepted_here = add_beacon(
                     entity["name"], entity["kind"], entity["url"], context,
-                    scoped_social=entity_scoped_social,
                 ) or accepted_here
             if entity["kind"] in {
                 "facebook_community","facebook_page","instagram_creator",
@@ -1796,13 +1807,20 @@ def source_categories(result: dict) -> list[str]:
 
 
 def result_quality_ok(result: dict) -> bool:
+    raw = int(result.get("raw_results", 0) or 0)
+    useful = int(result.get("useful", 0) or 0)
+    # Noise rate: a city whose harvest is mostly unusable fails even when the
+    # absolute counts clear the floors — a pass built on noise imports junk.
+    noise_ok = raw <= 0 or (1.0 - useful / raw) <= MAX_NOISE_RATE
     return (
-        int(result.get("raw_results", 0) or 0) >= MIN_RAW_RESULTS
+        raw >= MIN_RAW_RESULTS
         and int(result.get("direct_leads", 0) or 0) >= MIN_DIRECT_LEADS
-        and int(result.get("useful", 0) or 0) >= MIN_USEFUL_LEADS
+        and useful >= MIN_USEFUL_LEADS
         and len(result.get("source_families", []) or []) >= MIN_SOURCE_FAMILIES
         and len(result.get("social_families", []) or []) >= MIN_SOCIAL_FAMILIES
+        and len(result.get("media_families", []) or []) >= MIN_MEDIA_FAMILIES
         and len(source_categories(result)) >= MIN_SOURCE_CATEGORIES
+        and noise_ok
     )
 
 
@@ -1871,7 +1889,7 @@ def canon_url_key(url: object) -> str:
         raw = str(url or "").strip()
         p = urlparse(raw if "//" in raw else "//" + raw)
         host = p.netloc.casefold().removeprefix("www.")
-        path = p.path.rstrip("/")
+        path = p.path.rstrip("/").casefold()
         return host + path if host else norm(url)
     except Exception:
         return norm(url)
@@ -1957,9 +1975,12 @@ def write_json_atomic(path: Path, payload: dict) -> None:
 
 
 def safe_filename(value: str) -> str:
+    # NFKD drops letters with no decomposition (Ł/ł → nothing, so Łódź became
+    # "odz" and could collide with another city). Decompose what decomposes,
+    # keep every remaining unicode letter — the filesystem handles UTF-8.
     value = unicodedata.normalize("NFKD", value)
     value = "".join(ch for ch in value if not unicodedata.combining(ch))
-    value = re.sub(r"[^A-Za-z0-9._-]+", "_", value).strip("_")
+    value = re.sub(r"[^\w.-]+", "_", value, flags=re.UNICODE).strip("_")
     return value or "city"
 
 
@@ -2014,7 +2035,12 @@ def main() -> None:
                 f"primary raw={result['raw_results']} direct={result['direct_leads']} useful={result['useful']} "
                 f"families={len(result['source_families'])} social={result['social_families']} media={result['media_families']}"
             )
-            result = merge_discovery(result, discover(city, country, recovery=True))
+            try:
+                result = merge_discovery(result, discover(city, country, recovery=True))
+            except Exception as exc:
+                # Recovery failure must not kill the batch or orphan the
+                # CSVs already written — the primary result still stands.
+                print(f"CITY_RESEARCH_RECOVERY_ERROR {country}/{city}: {exc}")
 
         quality_ok = result_quality_ok(result)
         print(

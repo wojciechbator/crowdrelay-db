@@ -160,7 +160,14 @@ jobs:
             # recorded the CSVs as landed.
             git stash pop
           fi
-          git add database.xlsx updates/applied updates/pending updates/rejected
+          # .staging/ is rm -rf'd by the materialize step but the deletion is
+          # untracked here — `git add -A` on it stages the removal so a
+          # tracked snapshot cannot keep resurrecting over database.xlsx.
+          # updates/pending is empty whenever nothing is mid-flight — plain
+          # `git add` on a missing pathspec fails the whole run. -A over the
+          # parent covers all three subdirs whether they exist or not.
+          git add -A database.xlsx updates/
+          git add -A -- .staging || true
           if git diff --cached --quiet; then
             echo "No database changes."
             exit 0

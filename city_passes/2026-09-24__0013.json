@@ -1,0 +1,59 @@
+{
+  "date": "2026-09-24",
+  "research_version": 14,
+  "pass_id": 13,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 1,
+  "cities": [
+    {
+      "country": "Czechia",
+      "city": "Ostrava"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Czechia",
+      "city": "Ostrava",
+      "raw_results": 40,
+      "direct_leads": 8,
+      "useful": 5,
+      "useful_leads": 5,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 7,
+      "contact_candidates": 1,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 7,
+      "new_contact_candidates": 1,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "instagram_creator",
+        "podcast",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "podcast"
+      ],
+      "evidence_urls": [
+        "https://music.youtube.com/playlist?list=PLMoG7B9oJEe1OH-6inLgU5ZsBUonNVcCA",
+        "https://www.spark-rockmagazine.cz/pevnost-vsech-odnozi-tvrdeho-metalu-to-je-ostravsky-festival-metal-2026",
+        "https://tickets.nfctron.cz/login",
+        "https://www.kudyznudy.cz/akce/yoga-a-dance-spring-festival-ostrava-1",
+        "https://www.karaoketexty.cz/koncerty/ostrava",
+        "https://www.festiky.cz/colours-of-ostrava-2026/",
+        "https://english.radio.cz/spending-summer-czechia-festival-season-has-already-started-8819221"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": []
+}

@@ -1,0 +1,9 @@
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+Pakiet NFL Sunday Ticket,local_music_resource,Berlin,,https://tv.youtube.com/learn/nflsundayticket,https://tv.youtube.com/learn/nflsundayticket,t,t,t,f,65,95,95
+SoundCloud,soundcloud_artist,Berlin,,https://soundcloud.com/resident-advisor,https://soundcloud.com/resident-advisor,t,t,t,f,65,85,85
+Berliner Zeitung | LinkedIn,local_media,Berlin,,https://www.linkedin.com/,https://www.linkedin.com/company/berlinerzeitung,t,t,t,f,65,65,65
+Berliner Zeitung,local_media,Berlin,,https://www.berliner-zeitung.de/,https://www.berliner-zeitung.de/,t,t,t,f,65,65,65
+Berliner Zeitung,facebook_page,Berlin,,https://www.facebook.com/berlinerzeitung,https://www.facebook.com/berlinerzeitung,t,t,t,f,65,95,95
+Berliner Zeitung,instagram_creator,Berlin,,https://www.instagram.com/berliner_zeitung/,https://www.instagram.com/berliner_zeitung/,t,t,t,f,65,95,95
+Berliner Zeitung,youtube_channel,Berlin,,https://www.youtube.com/channel/UCOK_An4e3Um5pkziO3e1Qyw,https://www.youtube.com/channel/UCOK_An4e3Um5pkziO3e1Qyw,t,t,t,f,65,95,95
+"Est. on Instagram: Mode, Stil und Genuss aus über 60 Ländern",instagram_creator,Berlin,,https://www.instagram.com/estmagazin/,https://www.instagram.com/estmagazin/,t,t,t,f,65,95,95

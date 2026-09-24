@@ -360,12 +360,8 @@ def beacon_candidate_ok(
     if is_newsish(url):
         return False
 
-    if kind not in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-        if country and not country_domain_matches(country, url):
-            return False
-
-    if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-        if not usable_direct_url(url):
+    if kind in SOCIAL_KINDS:
+        if is_generic_social_destination(url) or not usable_direct_url(url):
             return False
         if kind == "facebook_community" and not path.startswith("/groups/"):
             return False
@@ -374,41 +370,41 @@ def beacon_candidate_ok(
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
+        if SOCIAL_NEGATIVE_RE.search(f"{name} {url}"):
+            return False
 
-        # Search scope is not entity evidence. Require the entity/URL itself to
-        # carry an outreach signal; an article cannot donate relevance.
-        semantic_blob = f"{name} {url}"
-        if scoped_social:
-            semantic_blob = f"{name} {url}"
-            if city and not entity_city_signal(city, name, url):
-                return False
+        # The search query is evidence only when the returned entity also
+        # carries a local/outreach signal. This keeps city-scoped discovery
+        # from accepting unrelated global accounts or search chrome.
+        semantic_blob = f"{name} {url} {context}"
+        if city and not entity_city_signal(city, name, url, context):
+            return False
         return bool(OUTREACH_SIGNAL_RE.search(semantic_blob))
 
-    # Search-result boilerplate is useful for rejecting article noise, but it
-    # must not poison a direct social destination with terms/privacy/login text.
-    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+    if kind in MEDIA_KINDS and looks_like_article_page(url, name):
         return False
 
-    if kind in {"podcast", "local_media", "independent_radio"} and looks_like_article_page(url, name):
+    if kind == "podcast" and not re.search(r"\bpodcast\b", f"{name} {url} {context}", re.I):
         return False
-    if kind == "podcast" and not re.search(r"podcast", f"{name} {url}", re.I):
-        return False
-    if kind == "independent_radio" and not re.search(r"(radio|rádio|radiostacja)", f"{name} {url}", re.I):
+    if kind == "independent_radio" and not re.search(
+        r"\b(radio|rádio|radiostacja|broadcast)\b", f"{name} {url} {context}", re.I
+    ):
         return False
     if kind == "local_media" and not re.search(
-        r"(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny)",
-        f"{name} {url}",
+        r"\b(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music press)\b",
+        f"{name} {url} {context}",
         re.I,
     ):
         return False
+
     if kind == "event_calendar":
         if domain(url) in EVENT_LISTING_DOMAINS:
             return False
-        event_index_blob = f"{name} {url}"
+        if looks_like_article_page(url, name):
+            return False
         if not re.search(
-            r"(calendar|kalendarz|events|eventos|wydarzenia|wydarzen|koncerty|"
-            r"concerts|veranstaltungen|podujatia|akce)",
-            event_index_blob,
+            r"\b(calendar|kalendarz|events|eventos|wydarzenia|wydarzen|koncerty|concerts|veranstaltungen|podujatia|akce)\b",
+            f"{name} {url} {context}",
             re.I,
         ):
             return False
@@ -416,21 +412,30 @@ def beacon_candidate_ok(
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
 
+    if city and not entity_city_signal(city, name, url, context):
+        return False
+
     kind_terms = {
-        "independent_radio": r"radio|rádio|radio station|radiostacja|musik|music|muzyka|koncert|concert",
+        "independent_radio": r"radio|rádio|radiostacja|broadcast|musik|music|muzyka|koncert|concert",
         "podcast": r"podcast|music|muzyka|musik|hudba|band|koncert|concert|metal",
-        "local_media": r"music|muzyka|musik|hudba|band|koncert|concert|metal|culture|kultura|festival|festiwal",
+        "local_media": r"media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music|muzyka|musik|hudba|koncert|concert|metal|culture|kultura|kultur|festival|festiwal",
         "event_calendar": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|festival|festiwal|music",
-        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event",
+        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event|dom kultury",
         "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
-        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst",
+        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst|photo|video",
         "local_music_resource": r"record store|sklep muzyczny|music store|musikladen|vinyl|winyle|music|muzyka|musik|bandcamp|soundcloud",
     }
     pattern = kind_terms.get(kind, r"music|muzyka|musik|hudba|koncert|concert|metal|band|artist")
-    if not re.search(pattern, title_blob, re.I):
+    semantic_blob = f"{name} {url} {context}"
+    if not re.search(pattern, semantic_blob, re.I):
         return False
-
-    if kind == "event_calendar" and re.search(r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b", title_blob, re.I):
+    if kind == "event_calendar" and re.search(
+        r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b",
+        semantic_blob,
+        re.I,
+    ):
+        return False
+    if SOCIAL_NEGATIVE_RE.search(name):
         return False
     return True
 

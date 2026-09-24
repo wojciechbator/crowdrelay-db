@@ -57,6 +57,42 @@ GENERIC_SOCIAL_NAMES = {
     "link to facebook.com", "link to instagram.com", "link to youtube.com",
 }
 
+NEWSISH_DOMAINS = {
+    "news.google.com", "reuters.com", "bbc.com", "theguardian.com", "rollingstone.com",
+    "rollingstone.de", "timeout.com", "loudersound.com", "blabbermouth.net",
+    "metalinjection.net", "brooklynvegan.com", "residentadvisor.net",
+}
+
+SOCIAL_NEGATIVE_RE = re.compile(
+    r"\b(tapicer|czyszczen|sprz[aą]tan|cleaning|upholster|skup aut|samochod|"
+    r"auto(handel|serwis)?|car dealer|motoryz|friseur|fris[oö]r|hair|barber|"
+    r"beauty|kosmetik|archers|football|soccer|basketball|volleyball|handball|"
+    r"sportverein|pkp|intercity|koleo|bahn|bus|taxi|hotel|hostel|"
+    r"real estate|immobilien|restaurant|pizzeria|dentist|arzt|clinic|"
+    r"tourism|tourist|travel|flight|airport|ticketshop|ticketmaster|"
+    r"biletyna|allevents|shazam|setlist|goout|rolling ?stone|innpoland|"
+    r"mapy\.com|google|news\.google)\b",
+    re.I,
+)
+
+SOCIAL_POSITIVE_RE = re.compile(
+    r"\b(music\w*|muzy\w*|musik\w*|hudba\w*|metal\w*|metalcore|hardcore|"
+    r"rock\w*|punk\w*|djent\w*|band\w*|zesp[oó]ł\w*|kapela\w*|"
+    r"concert\w*|koncert\w*|konzer\w*|festival\w*|festiwal\w*|venue\w*|"
+    r"club\w*|klub\w*|radio\w*|podcast\w*|culture\w*|kultur\w*|"
+    r"promoter\w*|promotor\w*|organizer\w*|organizator\w*|booking\w*|"
+    r"artist\w*|artyst\w*|photograph\w*|fotograf\w*|creator\w*|"
+    r"media\w*|magazine\w*|gazeta\w*|commission\w*|orchestra\w*|"
+    r"orkiestr\w*|wytw[oó]rnia\w*|arena\w*)\b",
+    re.I,
+)
+
+SOCIAL_AGGREGATOR_DOMAINS = {
+    "biletyna.pl", "goingapp.pl", "goout.net", "allevents.in", "shazam.com",
+    "setlist.fm", "ticketmaster.com", "ticketshop.lv", "mapy.com", "innpoland.pl",
+    "rollingstone.de", "rollingstone.com", "news.google.com",
+}
+
 
 def city_pass_pending_allowed(csv_path: Path) -> bool:
     match = CITY_PASS_PENDING_RE.match(csv_path.name)
@@ -95,17 +131,25 @@ def beacon_row_allowed(row: list[str]) -> bool:
     if len(row) < 13:
         return False
     name, kind, city, url = row[0].strip(), row[1].strip(), row[2].strip(), row[4].strip()
-    blob = norm(" ".join(row))
+    blob = " ".join(row)
     if not name or not city or not url.startswith("http"):
         return False
     d = url_domain(url)
     from urllib.parse import urlparse
     path = urlparse(url).path.casefold().rstrip("/")
+    low = norm(blob)
+
     if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
         return False
-    if NON_ACTIONABLE_TITLE_RE.search(blob):
+    if NON_ACTIONABLE_TITLE_RE.search(low):
         return False
-    if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+
+    social_kinds = {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}
+    if kind in social_kinds:
+        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
+            return False
+        if SOCIAL_NEGATIVE_RE.search(blob):
+            return False
         if kind == "facebook_community":
             ok = d == "facebook.com" and path.startswith("/groups/")
         elif kind == "facebook_page":
@@ -113,24 +157,42 @@ def beacon_row_allowed(row: list[str]) -> bool:
         elif kind == "instagram_creator":
             ok = d == "instagram.com" and len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
         elif kind == "tiktok_creator":
-            ok = d == "tiktok.com" and len(path.strip("/")) >= 2 and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
+            ok = d == "tiktok.com" and path.startswith("/@") and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
         else:
             ok = d == "youtube.com" and path.startswith(("/channel/", "/@", "/c/", "/user/"))
-        return ok and norm(name) not in GENERIC_SOCIAL_NAMES and bool(OUTREACH_SIGNAL_RE.search(blob))
+        if not ok or norm(name) in GENERIC_SOCIAL_NAMES:
+            return False
+        positive = bool(SOCIAL_POSITIVE_RE.search(blob))
+        city_tokens = [x for x in re.findall(r"[a-z0-9]+", norm(city)) if len(x) >= 4]
+        city_blob = norm(f"{name} {url} {blob}")
+        local = bool(city_tokens) and all(token in city_blob for token in city_tokens)
+        return local and positive
+
+    if kind == "event_calendar":
+        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
+            return False
+        if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
+            return False
+        if re.search(r"\b(kritik|review|interview|news|nachrichten|article|blog|recenzja)\b", norm(name), re.I):
+            return False
+        if re.search(r"/(news|article|blog|story|review|interview)/", path):
+            return False
+        return bool(re.search(r"\b(calendar|kalendarz|events|event|koncert|koncerty|concert|veranstaltung|podujatia)\b", low, re.I))
+
+    if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
+        return False
 
     terms = {
-        "independent_radio": r"radio|rádio|radiostacja|musik|music|muzyka|koncert|concert",
-        "podcast": r"podcast|music|muzyka|musik|hudba|band|koncert|concert|metal",
-        "local_media": r"music|muzyka|musik|hudba|band|koncert|concert|metal|culture|kultura|festival|festiwal",
-        "event_calendar": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|festival|festiwal|music",
-        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event",
+        "independent_radio": r"radio|rádio|radiostacja|musik|music|muzy|koncert|concert",
+        "podcast": r"podcast|music|muzy|musik|hudba|band|koncert|concert|metal",
+        "local_media": r"music|muzy|musik|hudba|band|koncert|concert|metal|culture|kultur|festival|festiwal|gazeta|portal",
+        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzy|koncert|concert|event",
         "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
-        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst",
-        "local_music_resource": r"record store|sklep|muzycz|music store|musikladen|vinyl|winyl|płyt|bandcamp|soundcloud",
+        "local_creator": r"photograph|fotograf|creator|music|muzy|musik|koncert|concert|artist|artyst",
+        "local_music_resource": r"record store|sklep|muzycz|music store|musikladen|vinyl|winyl|płyt|bandcamp|soundcloud|music",
     }
-    if not re.search(terms.get(kind, r"music|muzyka|musik|hudba|koncert|concert|metal|band|artist"), blob, re.I):
-        return False
-    return not (kind == "event_calendar" and re.search(r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b", blob, re.I))
+    return bool(re.search(terms.get(kind, r"music|muzy|musik|hudba|koncert|concert|metal|band|artist"), blob, re.I))
+
 
 
 def peer_row_allowed(row: list[str]) -> bool:
@@ -145,7 +207,7 @@ def peer_row_allowed(row: list[str]) -> bool:
         "facebook page", "youtube channel", "katalog zespołów", "katalog zespolow", "client challenge",
     }:
         return False
-    if re.search(r"\b(festival|festiwal|radio|podcast|magazine|media|venue|club|klub|agency|agencja|booking|promoter|calendar|kalendarz|culture|centrum kultury|event|wydarzen)\b", norm(name), re.I):
+    if re.search(r"\b(festival|festiwal|radio|podcast|magazine|media|venue|club|klub|agency|agencja|booking|promoter|calendar|kalendarz|culture|centrum kultury|event|wydarzen|collection|playlist|ticket|tickets|bilety|shop|store|sklep|tour dates|setlist)\b", norm(name), re.I):
         return False
     return bool(re.search(r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|music|muzyka|musik|hudba)\b", blob, re.I))
 
@@ -162,7 +224,12 @@ def contact_row_allowed(row: list[str]) -> bool:
         d = url_domain(source_match.group(0).rstrip(".,)"))
         if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
             return False
-    return not NON_ACTIONABLE_TITLE_RE.search(blob) and bool(OUTREACH_SIGNAL_RE.search(blob))
+    if NON_ACTIONABLE_TITLE_RE.search(blob) or SOCIAL_NEGATIVE_RE.search(blob):
+        return False
+    source_domain = url_domain(source_match.group(0).rstrip(".,)")) if source_match else ""
+    if source_domain in SOCIAL_AGGREGATOR_DOMAINS or any(source_domain.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
+        return False
+    return bool(OUTREACH_SIGNAL_RE.search(blob) or SOCIAL_POSITIVE_RE.search(blob))
 
 
 def find_header_row(ws, expected: list[str]) -> int:

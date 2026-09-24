@@ -241,8 +241,6 @@ def beacon_row_allowed(row: list[str]) -> bool:
     if kind in {"podcast", "local_media", "independent_radio", "event_calendar", "cultural_hub", "promoter", "local_creator", "local_music_resource"}:
         if city and not city_entity_signal(city, name, url):
             return False
-        if country and not country_domain_matches(country, url):
-            return False
         if looks_like_article_page(url, name):
             return False
 

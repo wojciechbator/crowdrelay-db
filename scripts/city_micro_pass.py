@@ -20,7 +20,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 7
+PASS_FORMAT_VERSION = 8
 FORCED_CITY_MIN_VERSION = {
     "poland/bydgoszcz": 5,
     "poland/warsaw": 5,
@@ -634,7 +634,6 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
     endpoints = [
         ("bing", "https://www.bing.com/search?q="),
         ("google", "https://www.google.com/search?gbv=1&q="),
-        ("ddg", "https://html.duckduckgo.com/html/?q="),
     ]
     for engine, base in endpoints:
         try:
@@ -665,20 +664,37 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Use a cheap primary search with deterministic fallbacks.
-    SearXNG may be unavailable from CI; direct engines are the hard fallback.
+    """Combine SearXNG with two direct search engines.
+    A healthy-but-weak SearX response must not suppress direct search results.
     """
-    results = searx_search(query, headers)
-    if results:
-        return results[:25]
+    results: list[dict] = []
 
-    media_kind = query_kind in {"local_news", "local_press", "radio"}
-    results = search_engine(query, include_rss=media_kind)
-    if results:
-        return results[:25]
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        futures = [
+            ex.submit(searx_search, query, headers),
+            ex.submit(search_engine, query, query_kind in {"local_news", "local_press", "radio"}),
+        ]
+        for fut in as_completed(futures):
+            try:
+                results.extend(fut.result())
+            except Exception:
+                pass
 
-    # Last resort for transient engine blocking. This is intentionally only
-    # reached when both primary layers returned nothing.
+    seen = set()
+    out = []
+    for item in results:
+        url = item.get("url", "")
+        key = norm(url.rstrip("/"))
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+        if len(out) >= 30:
+            break
+
+    # Only use Jina when both regular layers genuinely produced nothing.
+    if out:
+        return out
     try:
         return jina_search(query, headers)[:20]
     except Exception:
@@ -888,24 +904,30 @@ def language_query_terms(country: str) -> str:
 
 
 def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[str, str]]:
+    # Keep queries intentionally short. Search engines are much better at
+    # simple city + connector + site constraints than long OR expressions.
     if recovery:
         return [
-            ("facebook_groups", f'"{city}" site:facebook.com/groups (music OR muzyka OR metal OR koncert OR band)'),
-            ("facebook_pages", f'"{city}" site:facebook.com/ (concert OR koncert OR metal OR music OR klub OR venue)'),
-            ("instagram", f'"{city}" site:instagram.com/ (concert OR koncert OR metal OR band OR music)'),
-            ("local_press", f'"{city}" {country} (local news OR lokalny portal OR gazeta OR zeitung OR noviny) (concert OR koncert OR music)'),
-            ("radio", f'"{city}" {country} (radio OR rádio OR radiostacja) (music OR muzyka OR musik OR hudba)'),
-            ("events", f'"{city}" {country} (events OR event calendar OR koncerty OR Veranstaltungen OR podujatia) 2026'),
+            ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka koncert'),
+            ("facebook_pages", f'site:facebook.com "{city}" koncert muzyka'),
+            ("instagram", f'site:instagram.com "{city}" koncert'),
+            ("local_press", f'"{city}" {country} lokalny portal koncert'),
+            ("radio", f'"{city}" {country} radio muzyka'),
+            ("events", f'"{city}" {country} koncerty 2026'),
+            ("culture", f'"{city}" {country} centrum kultury koncert'),
+            ("promoters", f'"{city}" {country} organizator koncertów'),
         ]
     return [
-        ("bands", f'"{city}" {country} (band OR zespół OR kapela) (metal OR rock OR hardcore OR djent)'),
-        ("facebook_groups", f'"{city}" site:facebook.com/groups (music OR muzyka OR metal OR koncert OR band)'),
-        ("facebook_pages", f'"{city}" site:facebook.com/ (concert OR koncert OR metal OR music OR klub OR venue)'),
-        ("instagram", f'"{city}" site:instagram.com/ (concert OR koncert OR metal OR band OR music)'),
-        ("youtube", f'"{city}" site:youtube.com/ (band OR concert OR koncert OR metal OR music)'),
-        ("local_news", f'"{city}" {country} (local news OR lokalny portal OR gazeta OR zeitung OR noviny) (concert OR koncert OR music)'),
-        ("events", f'"{city}" {country} (events OR event calendar OR koncerty OR Veranstaltungen OR podujatia) 2026'),
-        ("radio", f'"{city}" {country} (radio OR rádio OR radiostacja) (music OR muzyka OR musik OR hudba)'),
+        ("bands", f'"{city}" {country} metal band koncert'),
+        ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka'),
+        ("facebook_pages", f'site:facebook.com "{city}" koncert'),
+        ("instagram", f'site:instagram.com "{city}" koncert'),
+        ("youtube", f'site:youtube.com "{city}" metal band'),
+        ("local_press", f'"{city}" {country} lokalny portal koncert'),
+        ("events", f'"{city}" {country} koncerty 2026'),
+        ("radio", f'"{city}" {country} radio muzyka'),
+        ("culture", f'"{city}" {country} centrum kultury koncert'),
+        ("promoters", f'"{city}" {country} organizator koncertów'),
     ]
 
 

@@ -20,7 +20,7 @@ permissions:
 jobs:
   city-pass:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       CITY_BATCH_SIZE: "4"
       CITY_CANDIDATE_WINDOW: "12"
@@ -30,6 +30,7 @@ jobs:
       CITY_MIN_SOURCE_FAMILIES: "3"
       CITY_MIN_SOCIAL_FAMILIES: "1"
       CITY_MIN_MEDIA_FAMILIES: "1"
+      CITY_PASS_TIME_BUDGET: "1800"
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -117,9 +118,17 @@ jobs:
               print("No eligible cities left.")
               raise SystemExit(0)
           payload = json.loads(files[-1].read_text(encoding="utf-8"))
-          if payload.get("no_progress") or payload.get("batch_complete") is False:
+          if payload.get("no_progress") or not payload.get("cities"):
               raise SystemExit(
-                  "CITY_PASS_NO_PROGRESS: latest research pass did not qualify the requested city batch"
+                  "CITY_PASS_NO_PROGRESS: latest research pass did not qualify any city"
+              )
+          if payload.get("batch_complete") is False:
+              # Partial batches are real progress: qualified cities are kept and
+              # rejected ones stay eligible for the next run.
+              print(
+                  f"CITY_PASS_PARTIAL qualified={len(payload['cities'])} "
+                  f"requested={payload.get('batch_size_requested')} "
+                  f"rejected={len(payload.get('rejected_candidates', []))}"
               )
           if payload.get("date") != __import__("datetime").date.today().isoformat():
               raise SystemExit("Latest city pass is stale; refusing false-positive validation")

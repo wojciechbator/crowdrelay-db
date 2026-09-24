@@ -20,7 +20,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 11
+PASS_FORMAT_VERSION = 13
 FORCED_CITY_MIN_VERSION = {
     "poland/bydgoszcz": 5,
     "poland/warsaw": 5,
@@ -33,7 +33,7 @@ MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
 MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
 MIN_SOCIAL_FAMILIES = int(os.environ.get("CITY_MIN_SOCIAL_FAMILIES", "1"))
 MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "1"))
-UA = "CrowdRelayDB-CityResearch/9.0"
+UA = "CrowdRelayDB-CityResearch/5.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
 ACTIVE_VENUE_STATUSES = {"active", "open", "operating", "current"}
@@ -61,8 +61,7 @@ BAND_RE = re.compile(
 NON_BAND_RE = re.compile(
     r"\b(festival|festiwal|radio|podcast|magazine|media|venue|club|klub|"
     r"agency|agencja|booking|promoter|promoc|calendar|kalendarz|"
-    r"centrum kultury|culture|mck|event|wydarzen|collection|playlist|"
-    r"ticket|tickets|bilety|shop|store|sklep|tour dates|setlist)\b",
+    r"centrum kultury|culture|mck|event|wydarzen)\b",
     re.I,
 )
 KIND_TERMS = {
@@ -258,78 +257,6 @@ def is_newsish(url: str) -> bool:
     return d in NEWSISH_DOMAINS or d.startswith("news.")
 
 
-SOCIAL_NEGATIVE_RE = re.compile(
-    r"\b("
-    r"tapicer|czyszczen|sprz[aą]tan|cleaning|upholster|"
-    r"skup aut|samochod|auto(handel|serwis)?|car dealer|motoryz|"
-    r"friseur|fris[oö]r|hair|barber|beauty|kosmetik|"
-    r"archers|football|soccer|basketball|volleyball|handball|sportverein|"
-    r"pkp|intercity|koleo|bahn|bus|taxi|hotel|hostel|real estate|immobilien|"
-    r"restaurant|pizzeria|dentist|arzt|clinic|school|university|"
-    r"tourism|tourist|travel|flight|airport|"
-    r"ticketshop|ticketmaster|biletyna|allevents|shazam|setlist|goout|"
-    r"rolling ?stone|innpoland|mapy\.com|google|news\.google"
-    r")\b",
-    re.I,
-)
-
-SOCIAL_POSITIVE_RE = re.compile(
-    r"\b("
-    r"music\w*|muzy\w*|musik\w*|hudba\w*|metal\w*|metalcore|hardcore|rock\w*|punk\w*|djent\w*|"
-    r"band\w*|zesp[oó]ł\w*|kapela\w*|concert\w*|koncert\w*|konzer\w*|festival\w*|festiwal\w*|"
-    r"venue|club|klub|radio|podcast|culture|kultura|kultur|"
-    r"promoter|promotor|organizer|organizator|booking|artist|artyst|"
-    r"photograph|fotograf|creator|media|magazine|gazeta|commission|"
-    r"orchestra|orkiestra|wytw[oó]rnia|arena"
-    r")\b",
-    re.I,
-)
-
-SOCIAL_AGGREGATOR_DOMAINS = {
-    "biletyna.pl", "goingapp.pl", "goout.net", "allevents.in", "shazam.com",
-    "setlist.fm", "ticketmaster.com", "ticketshop.lv", "mapy.com", "innpoland.pl",
-    "rollingstone.de", "rollingstone.com", "news.google.com",
-}
-
-def social_entity_relevant(city: str, name: str, title: str, snippet: str, url: str) -> bool:
-    blob = f"{name} {title} {snippet} {url}"
-    if SOCIAL_NEGATIVE_RE.search(blob):
-        return False
-
-    d = domain(url)
-    if d in SOCIAL_AGGREGATOR_DOMAINS or any(
-        d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS
-    ):
-        return False
-
-    local = local_signal(city, f"{name} {title}", snippet, "", url)
-    positive = bool(SOCIAL_POSITIVE_RE.search(blob))
-    slug = urlparse(url).path.casefold().replace("-", " ").replace("_", " ")
-    slug_positive = bool(SOCIAL_POSITIVE_RE.search(slug))
-
-    # The query is already city-scoped + social-scoped. Locality alone is
-    # sufficient for a direct social destination after the hard negative checks;
-    # keyword relevance is a bonus rather than an additional hard gate.
-    return local or positive or slug_positive
-
-
-def event_calendar_relevant(title: str, url: str, snippet: str) -> bool:
-    blob = f"{title} {snippet} {url}"
-    d = domain(url)
-    if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
-        return False
-    if is_newsish(url) or NON_ACTIONABLE_TITLE_RE.search(norm(blob)):
-        return False
-    if re.search(r"\b(kritik|review|interview|news|nachrichten|article|blog|recenzja)\b", norm(title), re.I):
-        return False
-    path = urlparse(url).path.casefold()
-    if re.search(r"/(news|article|blog|story|review|interview)/", path):
-        return False
-    return bool(re.search(
-        r"\b(calendar|kalendarz|events|event|koncert|koncerty|concert|veranstaltung|podujatia)\b",
-        blob, re.I
-    ))
-
 def beacon_candidate_ok(
     name: str,
     kind: str,
@@ -337,7 +264,6 @@ def beacon_candidate_ok(
     context: str,
     allow_non_direct: bool = False,
     scoped_social: bool = False,
-    city: str = "",
 ) -> bool:
     if not url.startswith("http") or not name:
         return False
@@ -361,7 +287,13 @@ def beacon_candidate_ok(
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
-        return social_entity_relevant(city, name, name, context, url)
+
+        # The query is explicitly city-scoped and connector-scoped. For direct
+        # account/group URLs, the URL itself is the actionable destination. Do
+        # not require search-engine snippets to repeat the music keyword.
+        if scoped_social:
+            return True
+        return bool(OUTREACH_SIGNAL_RE.search(title_blob))
 
     # Search-result boilerplate is useful for rejecting article noise, but it
     # must not poison a direct social destination with terms/privacy/login text.
@@ -370,9 +302,6 @@ def beacon_candidate_ok(
 
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
-
-    if kind == "event_calendar":
-        return event_calendar_relevant(name, url, context)
 
     kind_terms = {
         "independent_radio": r"radio|rádio|radio station|radiostacja|musik|music|muzyka|koncert|concert",
@@ -735,24 +664,16 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Run cheap search providers together; Jina is a parallel rescue for social queries."""
+    """Combine SearXNG with two direct search engines.
+    A healthy-but-weak SearX response must not suppress direct search results.
+    """
     results: list[dict] = []
-    social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
-    recovery_kinds = {
-        "local_news", "local_press", "radio", "events", "culture", "promoters"
-    }
-    jobs = [
-        ("searx", lambda: searx_search(query, headers)),
-        ("engines", lambda: search_engine(
-            query,
-            query_kind in {"local_news", "local_press", "radio"},
-        )),
-    ]
-    if query_kind in social_kinds or query_kind in recovery_kinds:
-        jobs.append(("jina", lambda: jina_search(query, headers)))
 
-    with ThreadPoolExecutor(max_workers=len(jobs)) as ex:
-        futures = [ex.submit(fn) for _, fn in jobs]
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        futures = [
+            ex.submit(searx_search, query, headers),
+            ex.submit(search_engine, query, query_kind in {"local_news", "local_press", "radio"}),
+        ]
         for fut in as_completed(futures):
             try:
                 results.extend(fut.result())
@@ -770,7 +691,14 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         out.append(item)
         if len(out) >= 30:
             break
-    return out
+
+    # Only use Jina when both regular layers genuinely produced nothing.
+    if out:
+        return out
+    try:
+        return jina_search(query, headers)[:20]
+    except Exception:
+        return []
 
 
 def emails(text: str) -> list[str]:
@@ -976,80 +904,30 @@ def language_query_terms(country: str) -> str:
 
 
 def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[str, str]]:
-    terms = {
-        "Poland": {
-            "music": "muzyka koncert metal rock zespół",
-            "social": "muzyka koncert metal",
-            "media": "lokalny portal gazeta koncert muzyka",
-            "events": "koncerty wydarzenia 2026",
-            "radio": "radio muzyka koncert",
-            "culture": "centrum kultury koncert muzyka",
-            "promoter": "organizator koncertów promotor",
-        },
-        "Germany": {
-            "music": "Musik Konzert Metal Rock Band",
-            "social": "Musik Konzert Metal",
-            "media": "Lokalportal Lokalzeitung Konzert Musik Stadtmagazin",
-            "events": "Konzerte Veranstaltungen 2026",
-            "radio": "Radio Musik Konzert Lokalradio Campusradio",
-            "culture": "Kulturzentrum Kulturhaus Konzert Musik",
-            "promoter": "Veranstalter Konzert Promoter Booking",
-        },
-        "Czechia": {
-            "music": "hudba koncert metal rock kapela",
-            "social": "hudba koncert metal",
-            "media": "místní portál noviny koncert hudba",
-            "events": "koncerty akce 2026",
-            "radio": "rádio hudba koncert místní rádio",
-            "culture": "kulturní centrum kulturní dům koncert hudba",
-            "promoter": "pořadatel koncertů promotor booking",
-        },
-        "Slovakia": {
-            "music": "hudba koncert metal rock kapela",
-            "social": "hudba koncert metal",
-            "media": "miestny portál noviny koncert hudba",
-            "events": "koncerty podujatia 2026",
-            "radio": "rádio hudba koncert miestne rádio",
-            "culture": "kultúrne centrum kultúrny dom koncert hudba",
-            "promoter": "organizátor koncertov promótor booking",
-        },
-    }.get(country, {
-        "music": "music concert metal rock band",
-        "social": "music concert metal",
-        "media": "local news concert music",
-        "events": "concerts events 2026",
-        "radio": "radio music concert local radio",
-        "culture": "culture center concert music",
-        "promoter": "concert promoter organizer booking",
-    })
-
+    # Keep queries intentionally short. Search engines are much better at
+    # simple city + connector + site constraints than long OR expressions.
     if recovery:
         return [
-            ("facebook_groups", f'site:facebook.com/groups "{city}" {terms["social"]}'),
-            ("facebook_groups", f'site:facebook.com/groups "{city}" (metal OR hardcore OR rock OR concert)'),
-            ("facebook_pages", f'site:facebook.com "{city}" {terms["social"]}'),
-            ("facebook_pages", f'site:facebook.com "{city}" (concert OR club OR venue OR band)'),
-            ("instagram", f'site:instagram.com "{city}" {terms["social"]}'),
-            ("youtube", f'site:youtube.com "{city}" {terms["social"]}'),
-            ("local_press", f'"{city}" {country} {terms["media"]}'),
-            ("local_press", f'"{city}" {country} ("music scene" OR "Musikszene" OR "scena hudobna" OR "scena muzyczna")'),
-            ("events", f'"{city}" {country} {terms["events"]}'),
-            ("radio", f'"{city}" {country} {terms["radio"]}'),
-            ("culture", f'"{city}" {country} {terms["culture"]}'),
-            ("promoters", f'"{city}" {country} {terms["promoter"]}'),
+            ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka koncert'),
+            ("facebook_pages", f'site:facebook.com "{city}" koncert muzyka'),
+            ("instagram", f'site:instagram.com "{city}" koncert'),
+            ("local_press", f'"{city}" {country} lokalny portal koncert'),
+            ("radio", f'"{city}" {country} radio muzyka'),
+            ("events", f'"{city}" {country} koncerty 2026'),
+            ("culture", f'"{city}" {country} centrum kultury koncert'),
+            ("promoters", f'"{city}" {country} organizator koncertów'),
         ]
-
     return [
-        ("bands", f'"{city}" {country} {terms["music"]}'),
-        ("facebook_groups", f'site:facebook.com/groups "{city}" {terms["social"]}'),
-        ("facebook_pages", f'site:facebook.com "{city}" {terms["social"]}'),
-        ("instagram", f'site:instagram.com "{city}" {terms["social"]}'),
-        ("youtube", f'site:youtube.com "{city}" {terms["music"]}'),
-        ("local_press", f'"{city}" {country} {terms["media"]}'),
-        ("events", f'"{city}" {country} {terms["events"]}'),
-        ("radio", f'"{city}" {country} {terms["radio"]}'),
-        ("culture", f'"{city}" {country} {terms["culture"]}'),
-        ("promoters", f'"{city}" {country} {terms["promoter"]}'),
+        ("bands", f'"{city}" {country} metal band koncert'),
+        ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka'),
+        ("facebook_pages", f'site:facebook.com "{city}" koncert'),
+        ("instagram", f'site:instagram.com "{city}" koncert'),
+        ("youtube", f'site:youtube.com "{city}" metal band'),
+        ("local_press", f'"{city}" {country} lokalny portal koncert'),
+        ("events", f'"{city}" {country} koncerty 2026'),
+        ("radio", f'"{city}" {country} radio muzyka'),
+        ("culture", f'"{city}" {country} centrum kultury koncert'),
+        ("promoters", f'"{city}" {country} organizator koncertów'),
     ]
 
 
@@ -1216,17 +1094,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 city, page_title or search_title, search_snippet, page_text, final_candidate
             )
             search_local = local_signal(city, search_title, search_snippet, "", item["url"])
-            scoped_direct = (
-                usable_direct_url(final_candidate)
-                and social_query
-                and social_entity_relevant(
-                    city,
-                    search_title,
-                    search_title,
-                    search_snippet,
-                    final_candidate,
-                )
-            )
+            scoped_direct = usable_direct_url(final_candidate) and social_query
 
             enriched.append({
                 "kinds": kinds,
@@ -1270,14 +1138,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         context: str,
         allow_non_direct: bool = False,
         scoped_social: bool = False,
-    ) -> bool:
+    ):
         if not beacon_candidate_ok(
             name, kind, url, context,
             allow_non_direct=allow_non_direct,
             scoped_social=scoped_social,
-            city=city,
         ):
-            return False
+            return
         found_emails = emails(context)
         conf = confidence(url, "", context)
         beacons.append([
@@ -1285,9 +1152,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             found_emails[0] if found_emails else "",
             url, url, "t", "t", "t", "f", 65, conf, conf,
         ])
-        if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-            direct_urls.add(norm(url.rstrip("/")))
-        return True
+        direct_urls.add(norm(url.rstrip("/")))
 
     for item in enriched:
         if not item["local"]:
@@ -1296,10 +1161,12 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         url = item["url"]
         title = item["title"]
         text_body = item["text"]
-        context = f'{item["search_title"]} {item["snippet"]} {title} {text_body}'
+        context = f'{city}\x1f{item["search_title"]} {item["snippet"]} {title} {text_body}'
         kinds = set(item["kinds"])
 
-        accepted_entity = False
+        source_families.update(kinds)
+        social_families.update(kinds & social_kinds)
+        media_families.update(kinds & media_kinds)
         if len(evidence_urls) < 30 and url.startswith("http"):
             evidence_urls.append(url)
 
@@ -1318,9 +1185,6 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 "Research candidate", "City micro-pass",
                 f"Compact city research. Confidence {conf}%.",
             ])
-            accepted_entity = True
-            source_families.add("peer_band")
-
 
         if usable_direct_url(url) and (kinds & social_kinds):
             kind = classify_beacon(title, item["snippet"], url)
@@ -1341,10 +1205,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             }
             name = social_name(url, title) if generic_social_title else title
             if name:
-                if add_beacon(name, kind, url, context, scoped_social=True):
-                    accepted_entity = True
-                    source_families.add(kind)
-                    social_families.add(kind)
+                add_beacon(name, kind, url, context, scoped_social=True)
 
         if kinds & media_kinds:
             media_kind = (
@@ -1352,15 +1213,10 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 else "podcast" if "podcasts" in kinds
                 else "local_media"
             )
-            if add_beacon(title[:180], media_kind, url, context, allow_non_direct=True):
-                accepted_entity = True
-                source_families.add(media_kind)
-                media_families.add(media_kind)
+            add_beacon(title[:180], media_kind, url, context, allow_non_direct=True)
 
         if "events" in kinds:
-            if add_beacon(title[:180], "event_calendar", url, context, allow_non_direct=True):
-                accepted_entity = True
-                source_families.add("event_calendar")
+            add_beacon(title[:180], "event_calendar", url, context, allow_non_direct=True)
 
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):
@@ -1369,78 +1225,43 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             if beacon_candidate_ok(
                 entity["name"], entity["kind"], entity["url"], context,
                 scoped_social=entity_scoped_social,
-                city=city,
             ):
-                if add_beacon(
+                add_beacon(
                     entity["name"], entity["kind"], entity["url"], context,
                     scoped_social=entity_scoped_social,
-                ):
-                    accepted_entity = True
-                    source_families.add(entity["kind"])
-                    if entity["kind"] in {
-                        "facebook_community","facebook_page","instagram_creator",
-                        "tiktok_creator","youtube_channel",
-                    }:
-                        social_families.add(entity["kind"])
-                    if entity["kind"] in {"independent_radio","podcast","local_media"}:
-                        media_families.add(entity["kind"])
+                )
+            source_families.add(entity["kind"])
+            if entity["kind"] in {
+                "facebook_community","facebook_page","instagram_creator",
+                "tiktok_creator","youtube_channel",
+            }:
+                social_families.add(entity["kind"])
 
-
-
-        if accepted_entity:
-            for email in emails(context):
-                contacts.append([
-                    email, title[:120], title[:160], city,
-                    classify_beacon(title, item["snippet"], url), "",
-                    f"Found on local source: {url}", TODAY, "f",
-                ])
+        for email in emails(context):
+            contacts.append([
+                email, title[:120], title[:160], city,
+                classify_beacon(title, item["snippet"], url), "",
+                f"Found on local source: {url}", TODAY, "f",
+            ])
 
         # Hard early stop: once the city already satisfies all QA gates, do not
         # fetch or process additional low-value search results.
-        useful_entity_keys = {
-            ("peer", norm(r[0]), norm(r[2])) for r in peers
-        } | {
-            ("beacon", norm(r[0]), norm(r[2])) for r in beacons
-        } | {
-            ("contact", norm(r[0]), norm(r[3])) for r in contacts
-        }
-        direct_entity_keys = {
-            (norm(r[0]), norm(r[2])) for r in beacons
-            if r[1] in {"facebook_community","facebook_page","instagram_creator","tiktok_creator","youtube_channel"}
-        }
         probe = {
             "raw_results": len(merged),
-            "direct_leads": len(direct_entity_keys),
-            "useful": len(useful_entity_keys),
+            "direct_leads": len(direct_urls),
+            "useful": len({
+                (norm(r[0]), norm(r[2])) for r in peers
+            }) + len({
+                (norm(r[0]), norm(r[1]), norm(r[2])) for r in beacons
+            }) + len({
+                (norm(r[0]), norm(r[3])) for r in contacts
+            }),
             "source_families": sorted(source_families),
             "social_families": sorted(social_families),
             "media_families": sorted(media_families),
         }
         if result_quality_ok(probe):
             break
-
-    beacon_kind_rank = {
-        "facebook_community": 0,
-        "facebook_page": 1,
-        "instagram_creator": 2,
-        "youtube_channel": 3,
-        "tiktok_creator": 4,
-    }
-    beacons.sort(key=lambda r: (
-        norm(r[2]),
-        re.sub(r"[^a-z0-9]+", "", ascii_norm(r[0])),
-        beacon_kind_rank.get(r[1], 9),
-    ))
-    entity_counts: dict[tuple[str, str], int] = {}
-    capped_beacons: list[list[str]] = []
-    for row in beacons:
-        entity_key = (norm(row[2]), re.sub(r"[^a-z0-9]+", "", ascii_norm(row[0])))
-        count = entity_counts.get(entity_key, 0)
-        if row[1] in beacon_kind_rank and count >= 2:
-            continue
-        entity_counts[entity_key] = count + 1
-        capped_beacons.append(row)
-    beacons = capped_beacons
 
     unique_peers = {(norm(r[0]), norm(r[2])): r for r in peers}
     unique_beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in beacons}
@@ -1451,17 +1272,8 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "beacons": list(unique_beacons.values()),
         "contacts": list(unique_contacts.values()),
         "raw_results": len(merged),
-        "direct_leads": len({
-            (norm(r[0]), norm(r[2])) for r in unique_beacons.values()
-            if r[1] in {"facebook_community","facebook_page","instagram_creator","tiktok_creator","youtube_channel"}
-        }),
-        "useful": len({
-            ("peer", norm(r[0]), norm(r[2])) for r in unique_peers.values()
-        } | {
-            ("beacon", norm(r[0]), norm(r[2])) for r in unique_beacons.values()
-        } | {
-            ("contact", norm(r[0]), norm(r[3])) for r in unique_contacts.values()
-        }),
+        "direct_leads": len(direct_urls),
+        "useful": len(unique_peers) + len(unique_beacons) + len(unique_contacts),
         "source_families": sorted(source_families),
         "social_families": sorted(social_families),
         "media_families": sorted(media_families),
@@ -1482,64 +1294,23 @@ def result_quality_ok(result: dict) -> bool:
 
 
 def merge_discovery(primary: dict, recovery: dict) -> dict:
-    """Merge two city discoveries without crashing or double-counting obvious duplicates."""
-    peers = {(norm(r[0]), norm(r[2])): r for r in primary.get("peers", [])}
-    peers.update({(norm(r[0]), norm(r[2])): r for r in recovery.get("peers", [])})
-
-    # Same entity + kind + city is one beacon even if found by multiple providers.
-    beacons = {}
-    for r in primary.get("beacons", []) + recovery.get("beacons", []):
-        key = (norm(r[0]), norm(r[1]), norm(r[2]))
-        beacons.setdefault(key, r)
-
-    contacts = {}
-    for r in primary.get("contacts", []) + recovery.get("contacts", []):
-        key = (norm(r[0]), norm(r[3]))
-        contacts.setdefault(key, r)
-
-    direct_entity_keys = {
-        (norm(r[0]), norm(r[2]))
-        for r in beacons.values()
-        if r[1] in {
-            "facebook_community", "facebook_page", "instagram_creator",
-            "tiktok_creator", "youtube_channel",
-        }
-    }
-    useful_entity_keys = (
-        {("peer", norm(r[0]), norm(r[2])) for r in peers.values()}
-        | {("beacon", norm(r[0]), norm(r[2])) for r in beacons.values()}
-        | {("contact", norm(r[0]), norm(r[3])) for r in contacts.values()}
-    )
-
-    # raw_results is the number of search results considered by the two
-    # discoveries. It is intentionally based on the discovery counters rather
-    # than evidence_urls, because evidence_urls contains only accepted/local
-    # entities and is capped.
-    primary_raw = int(primary.get("raw_results", 0) or 0)
-    recovery_raw = int(recovery.get("raw_results", 0) or 0)
-
+    peers = {(norm(r[0]), norm(r[2])): r for r in primary["peers"]}
+    peers.update({(norm(r[0]), norm(r[2])): r for r in recovery["peers"]})
+    beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in primary["beacons"]}
+    beacons.update({(norm(r[0]), norm(r[1]), norm(r[2])): r for r in recovery["beacons"]})
+    contacts = {(norm(r[0]), norm(r[3])): r for r in primary["contacts"]}
+    contacts.update({(norm(r[0]), norm(r[3])): r for r in recovery["contacts"]})
     return {
         "peers": list(peers.values()),
         "beacons": list(beacons.values()),
         "contacts": list(contacts.values()),
-        "raw_results": primary_raw + recovery_raw,
-        "direct_leads": len(direct_entity_keys),
-        "useful": len(useful_entity_keys),
-        "source_families": sorted(
-            set(primary.get("source_families", []))
-            | set(recovery.get("source_families", []))
-        ),
-        "social_families": sorted(
-            set(primary.get("social_families", []))
-            | set(recovery.get("social_families", []))
-        ),
-        "media_families": sorted(
-            set(primary.get("media_families", []))
-            | set(recovery.get("media_families", []))
-        ),
-        "evidence_urls": list(dict.fromkeys(
-            primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])
-        ))[:40],
+        "raw_results": int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
+        "direct_leads": int(primary.get("direct_leads", 0)) + int(recovery.get("direct_leads", 0)),
+        "useful": len(peers) + len(beacons) + len(contacts),
+        "source_families": sorted(set(primary.get("source_families", [])) | set(recovery.get("source_families", []))),
+        "social_families": sorted(set(primary.get("social_families", [])) | set(recovery.get("social_families", []))),
+        "media_families": sorted(set(primary.get("media_families", [])) | set(recovery.get("media_families", []))),
+        "evidence_urls": list(dict.fromkeys(primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])))[:40],
         "recovery": True,
     }
 
@@ -1660,13 +1431,12 @@ def main() -> None:
             f"candidate window {len(candidates)}; rejected={len(rejected)}"
         )
 
-    # A partial batch is valid progress. Persist successful cities instead of
-    # discarding them merely because one or more difficult cities missed QA.
-    # Those rejected cities remain eligible for the next run.
+    # A partial batch is useful progress. Successful cities are persisted;
+    # rejected cities remain eligible for a future pass.
     if len(accepted) < limit:
         print(
             f"CITY_PASS_PARTIAL success: qualified={len(accepted)} requested={limit} "
-            f"rejected={len(rejected)}; preserving successful cities."
+            f"rejected={len(rejected)}"
         )
 
     summary = []

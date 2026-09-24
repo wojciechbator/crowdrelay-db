@@ -82,8 +82,14 @@ jobs:
           }
           assert module.result_quality_ok(good), good
           queries = module.city_queries("Bydgoszcz", "Poland")
-          assert 6 <= len(queries) <= 10, len(queries)
-          print("CITY_PASS_SMOKE_OK")
+          kinds = [kind for kind, _ in queries]
+          required = {"bands", "facebook_groups", "facebook_pages", "instagram", "youtube", "local_press", "events", "radio", "culture", "promoters"}
+          assert required.issubset(set(kinds)), sorted(set(kinds))
+          assert len(queries) <= 12, len(queries)
+          recovery = module.city_queries("Bydgoszcz", "Poland", recovery=True)
+          recovery_kinds = {kind for kind, _ in recovery}
+          assert {"facebook_groups", "facebook_pages", "instagram", "local_press", "radio", "events", "culture", "promoters"}.issubset(recovery_kinds)
+          print("CITY_PASS_SMOKE_OK", len(queries), len(recovery))
           PY
 
       - name: Research next four eligible cities

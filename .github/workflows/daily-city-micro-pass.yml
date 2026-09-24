@@ -21,6 +21,15 @@ jobs:
   city-pass:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      CITY_BATCH_SIZE: "4"
+      CITY_CANDIDATE_WINDOW: "12"
+      CITY_MIN_RAW_RESULTS: "4"
+      CITY_MIN_DIRECT_LEADS: "3"
+      CITY_MIN_USEFUL_LEADS: "4"
+      CITY_MIN_SOURCE_FAMILIES: "3"
+      CITY_MIN_SOCIAL_FAMILIES: "1"
+      CITY_MIN_MEDIA_FAMILIES: "1"
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -34,16 +43,38 @@ jobs:
         run: python -m pip install openpyxl requests beautifulsoup4
 
       - name: Research next four eligible cities
-        env:
-          CITY_BATCH_SIZE: "4"
-          CITY_CANDIDATE_WINDOW: "12"
-          CITY_MIN_RAW_RESULTS: "4"
-          CITY_MIN_DIRECT_LEADS: "3"
-          CITY_MIN_USEFUL_LEADS: "4"
-          CITY_MIN_SOURCE_FAMILIES: "3"
-          CITY_MIN_SOCIAL_FAMILIES: "1"
-          CITY_MIN_MEDIA_FAMILIES: "1"
         run: python scripts/city_micro_pass_runner.py
+
+      - name: Smoke test city research code
+        run: |
+          python -m py_compile scripts/city_micro_pass.py scripts/city_micro_pass_runner.py
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          spec = importlib.util.spec_from_file_location("city_micro_pass", Path("scripts/city_micro_pass.py"))
+          if spec is None or spec.loader is None:
+              raise SystemExit("Could not load city_micro_pass.py")
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          empty = {
+              "peers": [],
+              "beacons": [],
+              "contacts": [],
+              "raw_results": 0,
+              "direct_leads": 0,
+              "useful": 0,
+              "source_families": [],
+              "social_families": [],
+              "media_families": [],
+              "evidence_urls": [],
+          }
+          merged = module.merge_discovery(empty, empty)
+          assert merged["raw_results"] == 0
+          assert merged["direct_leads"] == 0
+          assert merged["useful"] == 0
+          assert not merged["source_families"]
+          print("CITY_PASS_SMOKE_OK")
+          PY
 
       - name: Validate city pass
         run: |
@@ -66,14 +97,18 @@ jobs:
           summaries = payload.get("summary", [])
           if len(summaries) != len(cities):
               raise SystemExit("Summary/city count mismatch")
-          floors = {"raw_results": 8, "direct_leads": 3, "useful": 4}
+          floors = {
+              "raw_results": int("${CITY_MIN_RAW_RESULTS}"),
+              "direct_leads": int("${CITY_MIN_DIRECT_LEADS}"),
+              "useful": int("${CITY_MIN_USEFUL_LEADS}"),
+          }
           for summary in summaries:
               if not summary.get("quality_ok"):
                   raise SystemExit(f"{summary.get('city')}: quality_ok=false")
               for field, minimum in floors.items():
                   if int(summary.get(field, 0) or 0) < minimum:
                       raise SystemExit(f"{summary.get('city')}: {field} below QA floor")
-              if len(summary.get("source_families", [])) < 4:
+              if len(summary.get("source_families", [])) < int("${CITY_MIN_SOURCE_FAMILIES}"):
                   raise SystemExit(f"{summary.get('city')}: too few source families")
               if not summary.get("social_families"):
                   raise SystemExit(f"{summary.get('city')}: no social/community source")

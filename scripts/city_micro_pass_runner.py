@@ -10,12 +10,12 @@ spec.loader.exec_module(module)
 
 # The canonical city key format is country::city. Keep the high-value city
 # revalidation list on the same key format used by city_key().
-module.PASS_FORMAT_VERSION = 8
+module.PASS_FORMAT_VERSION = 9
 module.FORCED_CITY_MIN_VERSION = {
-    "poland::bydgoszcz": 8,
-    "poland::warsaw": 8,
-    "poland::łódź": 8,
-    "germany::berlin": 8,
+    "poland::bydgoszcz": 9,
+    "poland::warsaw": 9,
+    "poland::łódź": 9,
+    "germany::berlin": 9,
 }
 
 module.main()

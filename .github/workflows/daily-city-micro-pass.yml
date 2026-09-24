@@ -87,10 +87,21 @@ jobs:
           PY
 
       - name: Research next four eligible cities
-        run: python scripts/city_micro_pass_runner.py
+        run: |
+          set -o pipefail
+          python scripts/city_micro_pass_runner.py 2>&1 | tee /tmp/city-pass.log
+          if grep -q '^CITY_PASS_DONE no eligible unprocessed cities' /tmp/city-pass.log; then
+            echo "CITY_PASS_NO_ELIGIBLE=true" >> "$GITHUB_ENV"
+          else
+            echo "CITY_PASS_NO_ELIGIBLE=false" >> "$GITHUB_ENV"
+          fi
 
       - name: Validate city pass
         run: |
+          if [ "$CITY_PASS_NO_ELIGIBLE" = "true" ]; then
+            echo "CITY_PASS_EMPTY_OK no eligible unprocessed cities remain."
+            exit 0
+          fi
           python3 - <<'PY'
           import json
           import os
@@ -100,6 +111,12 @@ jobs:
               print("No eligible cities left.")
               raise SystemExit(0)
           payload = json.loads(files[-1].read_text(encoding="utf-8"))
+          if payload.get("no_progress") or payload.get("batch_complete") is False:
+              raise SystemExit(
+                  "CITY_PASS_NO_PROGRESS: latest research pass did not qualify the requested city batch"
+              )
+          if payload.get("date") != __import__("datetime").date.today().isoformat():
+              raise SystemExit("Latest city pass is stale; refusing false-positive validation")
           cities = payload.get("cities", [])
           if len(cities) > 4:
               raise SystemExit(f"City batch too large: {len(cities)} > 4")

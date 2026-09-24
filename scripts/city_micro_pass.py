@@ -22,12 +22,12 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 15
+PASS_FORMAT_VERSION = 16
 FORCED_CITY_MIN_VERSION = {
-    "poland/bydgoszcz": 5,
-    "poland/warsaw": 5,
-    "poland/łódź": 5,
-    "germany/berlin": 5,
+    "poland::bydgoszcz": 16,
+    "poland::warsaw": 16,
+    "poland::łódź": 16,
+    "germany::berlin": 16,
 }
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
 
@@ -70,7 +70,8 @@ MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
 MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
 MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
 MIN_SOCIAL_FAMILIES = int(os.environ.get("CITY_MIN_SOCIAL_FAMILIES", "1"))
-MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "1"))
+MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "0"))
+MIN_SOURCE_CATEGORIES = int(os.environ.get("CITY_MIN_SOURCE_CATEGORIES", "3"))
 UA = "CrowdRelayDB-CityResearch/5.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
@@ -162,6 +163,25 @@ GENERIC_SOCIAL_NAMES = {
     "facebook", "facebook page", "facebook group", "instagram", "instagram creator",
     "youtube", "youtube channel", "tiktok", "tiktok creator", "link to facebook.com",
     "link to instagram.com", "link to youtube.com", "twitter", "x",
+}
+
+SOCIAL_NEGATIVE_RE = re.compile(
+    r"\b(tapicer|czyszczen|sprz[aą]tan|cleaning|upholster|skup aut|samochod|"
+    r"auto(handel|serwis)?|car dealer|motoryz|friseur|fris[oö]r|hair|barber|"
+    r"beauty|kosmetik|football|soccer|basketball|volleyball|handball|sportverein|"
+    r"taxi|hotel|hostel|real estate|immobilien|restaurant|pizzeria|dentist|arzt|"
+    r"clinic|tourism|tourist|travel|flight|airport|ticketshop|ticketmaster)\b",
+    re.I,
+)
+
+SOCIAL_KINDS = {
+    "facebook_community", "facebook_page", "instagram_creator",
+    "tiktok_creator", "youtube_channel",
+}
+MEDIA_KINDS = {"local_media", "independent_radio", "podcast"}
+ECOSYSTEM_KINDS = {
+    "event_calendar", "cultural_hub", "promoter", "local_creator",
+    "local_music_resource",
 }
 
 
@@ -1244,18 +1264,21 @@ def is_generic_social_destination(url: str) -> bool:
 
 
 def entity_city_signal(city: str, name: str, url: str, context: str = "") -> bool:
-    """Require the entity itself to carry credible city evidence."""
+    """Require credible city evidence from the entity or its source context."""
     target = ascii_norm(city)
     if not target:
         return False
     entity_blob = ascii_norm(f"{name} {url}")
-    context_blob = ascii_norm(context.split("\x1f", 1)[1] if "\x1f" in context else context)
-    if target in entity_blob:
+    context_blob = ascii_norm(context)
+    if target in entity_blob or target in context_blob:
         return True
     city_tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
-    if city_tokens and all(token in entity_blob for token in city_tokens):
-        return True
-    return bool(city_tokens) and all(token in context_blob for token in city_tokens)
+    if not city_tokens:
+        return False
+    return (
+        all(token in entity_blob for token in city_tokens)
+        or all(token in context_blob for token in city_tokens)
+    )
 
 
 def country_domain_matches(country: str, url: str) -> bool:

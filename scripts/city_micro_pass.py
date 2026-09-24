@@ -604,7 +604,7 @@ def jina_search(query: str, headers: dict) -> list[dict]:
     return out
 
 
-def search_engine(query: str) -> list[dict]:
+def search_engine(query: str, include_rss: bool = False) -> list[dict]:
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -614,21 +614,22 @@ def search_engine(query: str) -> list[dict]:
     }
     results: list[dict] = []
 
-    rss_endpoints = [
-        ("google_news_rss", "https://news.google.com/rss/search?q=", "&hl=en-US&gl=US&ceid=US:en"),
-        ("bing_news_rss", "https://www.bing.com/news/search?format=rss&q=", ""),
-    ]
-    for _, base, suffix in rss_endpoints:
-        try:
-            r = requests.get(
-                base + quote_plus(query) + suffix,
-                timeout=15,
-                headers=headers,
-            )
-            if r.status_code == 200:
-                results.extend(_parse_rss(r.text))
-        except (requests.RequestException, ET.ParseError):
-            pass
+    if include_rss:
+        rss_endpoints = [
+            ("google_news_rss", "https://news.google.com/rss/search?q=", "&hl=en-US&gl=US&ceid=US:en"),
+            ("bing_news_rss", "https://www.bing.com/news/search?format=rss&q=", ""),
+        ]
+        for _, base, suffix in rss_endpoints:
+            try:
+                r = requests.get(
+                    base + quote_plus(query) + suffix,
+                    timeout=8,
+                    headers=headers,
+                )
+                if r.status_code == 200:
+                    results.extend(_parse_rss(r.text))
+            except (requests.RequestException, ET.ParseError):
+                pass
 
     endpoints = [
         ("bing", "https://www.bing.com/search?q="),
@@ -660,6 +661,28 @@ def search_engine(query: str) -> list[dict]:
         if len(out) >= 30:
             break
     return out
+
+
+
+def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
+    """Use a cheap primary search with deterministic fallbacks.
+    SearXNG may be unavailable from CI; direct engines are the hard fallback.
+    """
+    results = searx_search(query, headers)
+    if results:
+        return results[:25]
+
+    media_kind = query_kind in {"local_news", "local_press", "radio"}
+    results = search_engine(query, include_rss=media_kind)
+    if results:
+        return results[:25]
+
+    # Last resort for transient engine blocking. This is intentionally only
+    # reached when both primary layers returned nothing.
+    try:
+        return jina_search(query, headers)[:20]
+    except Exception:
+        return []
 
 
 def emails(text: str) -> list[str]:
@@ -984,30 +1007,18 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "Accept-Language": "pl-PL,pl;q=0.9,en-US;q=0.7,en;q=0.5",
     }
 
-    # Small, deterministic search fan-out. SearXNG is the primary layer;
-    # Jina is only used by the caller via the recovery pass when the compact
-    # primary pass cannot satisfy QA.
+    # Small, deterministic search fan-out with a hard fallback chain:
+    # SearXNG -> direct search engines -> Jina only if both returned nothing.
+    # This keeps the pass cheap while avoiding a single external dependency.
     results: list[tuple[str, dict]] = []
     with ThreadPoolExecutor(max_workers=min(8, len(queries))) as ex:
-        futures = {ex.submit(searx_search, q, headers): kind for kind, q in queries}
+        futures = {ex.submit(compact_search, kind, q, headers): kind for kind, q in queries}
         for fut in as_completed(futures):
             kind = futures[fut]
             try:
                 results.extend((kind, x) for x in fut.result())
             except Exception:
                 pass
-
-    if recovery:
-        # Recovery gets one additional lightweight search layer, but only for
-        # the small recovery query set above.
-        with ThreadPoolExecutor(max_workers=min(6, len(queries))) as ex:
-            futures = {ex.submit(jina_search, q, headers): kind for kind, q in queries}
-            for fut in as_completed(futures):
-                kind = futures[fut]
-                try:
-                    results.extend((kind, x) for x in fut.result())
-                except Exception:
-                    pass
 
     merged = select_research_results(results, city, 40)
 

@@ -1,0 +1,90 @@
+{
+  "date": "2026-09-24",
+  "research_version": 14,
+  "pass_id": 12,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 2,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 40,
+      "direct_leads": 6,
+      "useful": 7,
+      "useful_leads": 7,
+      "quality_ok": true,
+      "peer_candidates": 1,
+      "beacon_candidates": 6,
+      "contact_candidates": 0,
+      "new_peer_candidates": 1,
+      "new_beacon_candidates": 6,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bands",
+        "culture",
+        "facebook_groups",
+        "facebook_pages",
+        "local_press"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_pages"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/BaronFilipek/videos/koncert-bydgoszcz/852223211595193/",
+        "https://www.facebook.com/filharmoniapomorska/videos/385150576189849/",
+        "https://www.facebook.com/groups/GLINKI/permalink/3322053707891253/",
+        "https://www.facebook.com/duetsopranoandpiano/",
+        "https://www.facebook.com/czystekbydgoszcz/",
+        "https://www.youtube.com/channel/UCVwDYYmw7zn_TTHgjl4AoBg/about",
+        "https://www.facebook.com/groups/196361441244106/posts/1381544346059137/",
+        "https://www.facebook.com/kazanpl/videos/kazan-x-urodziny-cz%C4%99%C5%9B%C4%87-3-koncert-live-bydgoszcz-estrad/1268587343151886/",
+        "https://www.facebook.com/groups/metalwpolsce/",
+        "https://www.wp.pl/"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Czechia",
+      "city": "Ostrava",
+      "raw_results": 80,
+      "direct_leads": 29,
+      "useful": 27,
+      "source_families": [
+        "bands",
+        "events",
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "local_music_resource",
+        "tiktok_creator",
+        "youtube",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ]
+}

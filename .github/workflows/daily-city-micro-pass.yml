@@ -8,7 +8,9 @@ on:
       - "scripts/city_micro_pass_runner.py"
       - ".github/workflows/daily-city-micro-pass.yml"
   schedule:
-    - cron: "30 6 * * *"
+    # Temporary trigger so the repaired pipeline can be exercised immediately.
+    # Restore the normal daily schedule after the verification run.
+    - cron: "*/5 * * * *"
 
 concurrency:
   group: crowdrelay-city-micro-pass

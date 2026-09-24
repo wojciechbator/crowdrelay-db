@@ -193,7 +193,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add city_passes updates/pending
+          # updates/pending is empty when no city qualified — a missing
+          # pathspec fails `git add` and loses the pass queue entirely.
+          git add -A city_passes updates/
           if git diff --cached --quiet; then
             echo "No city research changes."
             exit 0

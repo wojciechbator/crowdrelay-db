@@ -248,15 +248,28 @@ ENTITY_RELEVANCE_RE = re.compile(
 
 def social_name(url: str, title: str) -> str:
     path = urlparse(url).path.strip("/")
-    slug = path.split("/")[1] if path.startswith("groups/") else path.split("/")[0]
+    parts = [x for x in path.split("/") if x]
+    d = domain(url)
+    if not parts:
+        return ""
+    if d == "facebook.com" and parts[0] == "groups" and len(parts) >= 2:
+        slug = parts[1]
+    elif d == "facebook.com" and parts[0] == "pages" and len(parts) >= 2:
+        slug = parts[1]
+    elif d == "youtube.com" and (parts[0] in {"channel", "c", "user"} or parts[0].startswith("@")):
+        clean = re.sub(r"\s+", " ", title or "").strip()
+        if clean.casefold() not in GENERIC_SOCIAL_NAMES and not ARTICLEISH_TITLE_RE.search(clean):
+            return clean[:180]
+        slug = parts[1] if len(parts) >= 2 else parts[0]
+    elif d == "tiktok.com" and parts[0].startswith("@"):
+        slug = parts[0].removeprefix("@")
+    else:
+        slug = parts[0]
     raw = re.sub(r"[-_]+", " ", slug)
     raw = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", raw)
     raw = re.sub(r"\s+", " ", raw).strip()
     if not raw or raw.isdigit():
-        clean = re.sub(r"\s+", " ", title or "").strip()
-        if clean.casefold() in {"link to facebook.com", "link to instagram.com"}:
-            return ""
-        return clean[:180]
+        return ""
     return raw.title()[:180]
 
 
@@ -346,8 +359,8 @@ def beacon_candidate_ok(
         # carry an outreach signal; an article cannot donate relevance.
         semantic_blob = f"{name} {url}"
         if scoped_social:
-            semantic_blob = f"{name} {url} {context}"
-            if city and not entity_city_signal(city, name, url, context):
+            semantic_blob = f"{name} {url}"
+            if city and not entity_city_signal(city, name, url):
                 return False
         return bool(OUTREACH_SIGNAL_RE.search(semantic_blob))
 
@@ -358,8 +371,27 @@ def beacon_candidate_ok(
 
     if kind in {"podcast", "local_media", "independent_radio"} and looks_like_article_page(url, name):
         return False
-    if kind == "event_calendar" and domain(url) in EVENT_LISTING_DOMAINS:
+    if kind == "podcast" and not re.search(r"podcast", f"{name} {url}", re.I):
         return False
+    if kind == "independent_radio" and not re.search(r"(radio|rádio|radiostacja)", f"{name} {url}", re.I):
+        return False
+    if kind == "local_media" and not re.search(
+        r"(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny)",
+        f"{name} {url}",
+        re.I,
+    ):
+        return False
+    if kind == "event_calendar":
+        if domain(url) in EVENT_LISTING_DOMAINS:
+            return False
+        event_index_blob = f"{name} {url}"
+        if not re.search(
+            r"(calendar|kalendarz|events|eventos|wydarzenia|wydarzen|koncerty|"
+            r"concerts|veranstaltungen|podujatia|akce)",
+            event_index_blob,
+            re.I,
+        ):
+            return False
 
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
@@ -1456,11 +1488,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             elif "youtube" in kinds and "youtube.com/" in url:
                 kind = "youtube_channel"
 
-            generic_social_title = norm(title) in GENERIC_SOCIAL_NAMES or norm(title) in {
-                "link to facebook.com", "link to instagram.com", "link to tiktok.com",
-                "log in or sign up"
-            }
-            name = social_name(url, title) if generic_social_title else title
+            name = social_name(url, title)
             if name:
                 accepted_here = add_beacon(
                     name, kind, url, context, scoped_social=True

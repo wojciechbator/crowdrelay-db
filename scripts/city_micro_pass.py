@@ -634,6 +634,7 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
     endpoints = [
         ("bing", "https://www.bing.com/search?q="),
         ("google", "https://www.google.com/search?gbv=1&q="),
+        ("ddg", "https://html.duckduckgo.com/html/?q="),
     ]
     for engine, base in endpoints:
         try:
@@ -663,16 +664,19 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 
+
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Combine SearXNG with two direct search engines.
-    A healthy-but-weak SearX response must not suppress direct search results.
-    """
+    """Search a query family with provider redundancy and a useful-result gate."""
     results: list[dict] = []
 
-    with ThreadPoolExecutor(max_workers=3) as ex:
+    with ThreadPoolExecutor(max_workers=2) as ex:
         futures = [
             ex.submit(searx_search, query, headers),
-            ex.submit(search_engine, query, query_kind in {"local_news", "local_press", "radio"}),
+            ex.submit(
+                search_engine,
+                query,
+                query_kind in {"local_news", "local_press", "radio"},
+            ),
         ]
         for fut in as_completed(futures):
             try:
@@ -680,53 +684,74 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
             except Exception:
                 pass
 
-    seen = set()
-    out = []
-    for item in results:
-        url = item.get("url", "")
-        key = norm(url.rstrip("/"))
-        if not key or key in seen:
-            continue
-        seen.add(key)
-        out.append(item)
-        if len(out) >= 30:
-            break
-
-    # Social search is especially brittle on public search engines: a healthy
-    # response can contain only Facebook/Instagram boilerplate or article URLs.
-    # When a social query produced no actionable direct destination, use Jina
-    # and one broader city-scoped variant before giving up.
-    social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
-    has_direct = any(usable_direct_url(item.get("url", "")) for item in out)
-    rescue = []
-
-    if query_kind in social_kinds and not has_direct:
-        try:
-            rescue.extend(jina_search(query, headers)[:20])
-        except Exception:
-            pass
-        broad_query = re.sub(r"^site:\\S+\\s+", "", query).strip()
-        if broad_query and broad_query != query:
-            try:
-                rescue.extend(jina_search(broad_query, headers)[:20])
-            except Exception:
-                pass
-    elif not out:
-        try:
-            rescue.extend(jina_search(query, headers)[:20])
-        except Exception:
-            pass
-
-    if rescue:
-        for item in rescue:
+    def dedupe(items: list[dict]) -> list[dict]:
+        seen: set[str] = set()
+        out: list[dict] = []
+        for item in items:
             url = item.get("url", "")
             key = norm(url.rstrip("/"))
             if not key or key in seen:
                 continue
             seen.add(key)
             out.append(item)
-            if len(out) >= 30:
-                break
+        return out
+
+    out = dedupe(results)[:30]
+
+    social_kinds = {
+        "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
+    }
+
+    def expected_result(item: dict) -> bool:
+        url = str(item.get("url") or "")
+        title = str(item.get("title") or "")
+        snippet = str(item.get("snippet") or "")
+        blob = f"{title} {snippet} {url}"
+
+        if query_kind in social_kinds:
+            return usable_direct_url(url)
+
+        terms = {
+            "bands": r"band|zespół|zespo[lł]|kapela|metal|rock|hardcore|djent",
+            "local_press": r"gazeta|portal|wiadomo|wiadom|lokal|zeitung|nachrichten|noviny|miest",
+            "radio": r"radio|rádio|radiostacja",
+            "podcasts": r"podcast|audycja|radio show|musikpodcast",
+            "events": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|podujat",
+            "culture": r"culture|kultura|kultur|centrum|center|zentrum|dom kultury|koncert|concert",
+            "promoters": r"promoter|promotor|veranstalter|organizator|booking|pořadatel",
+        }
+        pattern = terms.get(query_kind, r"music|muzyka|musik|hudba|koncert|concert")
+        return bool(re.search(pattern, blob, re.I)) and not is_newsish(url)
+
+    # A provider returning one unrelated page is not success. Rescue the
+    # specific query family through Jina whenever no useful candidate exists.
+    useful_count = sum(1 for item in out if expected_result(item))
+    rescue_needed = (
+        not out
+        or useful_count == 0
+        or (query_kind in social_kinds and not any(
+            usable_direct_url(item.get("url", "")) for item in out
+        ))
+    )
+
+    if rescue_needed:
+        rescue: list[dict] = []
+        try:
+            rescue.extend(jina_search(query, headers)[:20])
+        except Exception:
+            pass
+
+        # For site-constrained social searches, retry once without the
+        # site: qualifier because search proxies often mangle it.
+        if query_kind in social_kinds:
+            broad_query = re.sub(r"^site:\S+\s+", "", query).strip()
+            if broad_query and broad_query != query:
+                try:
+                    rescue.extend(jina_search(broad_query, headers)[:20])
+                except Exception:
+                    pass
+
+        out = dedupe(out + rescue)[:30]
 
     return out
 
@@ -1116,6 +1141,14 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             except Exception:
                 pass
 
+    query_counts: dict[str, int] = {}
+    for kind, _item in results:
+        query_counts[kind] = query_counts.get(kind, 0) + 1
+    print(
+        f"CITY_SEARCH {country}/{city} recovery={recovery} "
+        + " ".join(f"{k}={query_counts.get(k, 0)}" for k, _ in queries)
+    )
+
     merged = select_research_results(results, city, 40)
 
     enriched: list[dict] = []
@@ -1352,6 +1385,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "social_families": sorted(social_families),
         "media_families": sorted(media_families),
         "evidence_urls": evidence_urls,
+        "query_counts": query_counts,
         "recovery": recovery,
     }
 

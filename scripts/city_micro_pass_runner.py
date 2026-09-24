@@ -8,14 +8,13 @@ if spec is None or spec.loader is None:
 module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
-# The canonical city key format is country::city. Keep the high-value city
-# revalidation list on the same key format used by city_key().
-module.PASS_FORMAT_VERSION = 14
+# Revalidate priority cities whenever the lead-quality rules change.
+module.PASS_FORMAT_VERSION = 15
 module.FORCED_CITY_MIN_VERSION = {
-    "poland::bydgoszcz": 14,
-    "poland::warsaw": 14,
-    "poland::łódź": 14,
-    "germany::berlin": 14,
+    "poland::bydgoszcz": 15,
+    "poland::warsaw": 15,
+    "poland::łódź": 15,
+    "germany::berlin": 15,
 }
 
 module.main()

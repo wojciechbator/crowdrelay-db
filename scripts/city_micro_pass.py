@@ -1476,57 +1476,71 @@ def result_quality_ok(result: dict) -> bool:
         int(result.get("raw_results", 0) or 0) >= MIN_RAW_RESULTS
         and int(result.get("direct_leads", 0) or 0) >= MIN_DIRECT_LEADS
         and int(result.get("useful", 0) or 0) >= MIN_USEFUL_LEADS
-        and len(result.get("source_families", []) or []) >= 3
+        and len(result.get("source_families", []) or []) >= MIN_SOURCE_FAMILIES
         and len(result.get("social_families", []) or []) >= MIN_SOCIAL_FAMILIES
         and len(result.get("media_families", []) or []) >= MIN_MEDIA_FAMILIES
     )
 
 
 def merge_discovery(primary: dict, recovery: dict) -> dict:
-    peers = {(norm(r[0]), norm(r[2])): r for r in primary["peers"]}
-    peers.update({(norm(r[0]), norm(r[2])): r for r in recovery["peers"]})
+    """Merge two city discoveries without crashing or double-counting obvious duplicates."""
+    peers = {(norm(r[0]), norm(r[2])): r for r in primary.get("peers", [])}
+    peers.update({(norm(r[0]), norm(r[2])): r for r in recovery.get("peers", [])})
 
     # Same entity + kind + city is one beacon even if found by multiple providers.
     beacons = {}
-    for r in primary["beacons"] + recovery["beacons"]:
+    for r in primary.get("beacons", []) + recovery.get("beacons", []):
         key = (norm(r[0]), norm(r[1]), norm(r[2]))
         beacons.setdefault(key, r)
 
     contacts = {}
-    for r in primary["contacts"] + recovery["contacts"]:
+    for r in primary.get("contacts", []) + recovery.get("contacts", []):
         key = (norm(r[0]), norm(r[3]))
         contacts.setdefault(key, r)
 
     direct_entity_keys = {
-        (norm(r[0]), norm(r[2])) for r in beacons.values()
-        if r[1] in {"facebook_community","facebook_page","instagram_creator","tiktok_creator","youtube_channel"}
+        (norm(r[0]), norm(r[2]))
+        for r in beacons.values()
+        if r[1] in {
+            "facebook_community", "facebook_page", "instagram_creator",
+            "tiktok_creator", "youtube_channel",
+        }
     }
-    useful_entity_keys = {
-        ("peer", norm(r[0]), norm(r[2])) for r in peers.values()
-    } | {
-        ("beacon", norm(r[0]), norm(r[2])) for r in beacons.values()
-    } | {
-        ("contact", norm(r[0]), norm(r[3])) for r in contacts.values()
-    }
+    useful_entity_keys = (
+        {("peer", norm(r[0]), norm(r[2])) for r in peers.values()}
+        | {("beacon", norm(r[0]), norm(r[2])) for r in beacons.values()}
+        | {("contact", norm(r[0]), norm(r[3])) for r in contacts.values()}
+    )
+
+    # raw_results is the number of search results considered by the two
+    # discoveries. It is intentionally based on the discovery counters rather
+    # than evidence_urls, because evidence_urls contains only accepted/local
+    # entities and is capped.
+    primary_raw = int(primary.get("raw_results", 0) or 0)
+    recovery_raw = int(recovery.get("raw_results", 0) or 0)
 
     return {
         "peers": list(peers.values()),
         "beacons": list(beacons.values()),
         "contacts": list(contacts.values()),
-        "raw_results": len({
-            norm(x.get("url", "").rstrip("/"))
-            for bucket in (primary, recovery)
-            for x in [
-                {"url": u} for u in bucket.get("evidence_urls", [])
-            ]
-            if u
-        }) or int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
+        "raw_results": primary_raw + recovery_raw,
         "direct_leads": len(direct_entity_keys),
         "useful": len(useful_entity_keys),
-        "source_families": sorted(set(primary.get("source_families", [])) | set(recovery.get("source_families", []))),
-        "social_families": sorted(set(primary.get("social_families", [])) | set(recovery.get("social_families", []))),
-        "media_families": sorted(set(primary.get("media_families", [])) | set(recovery.get("media_families", []))),
-        "evidence_urls": list(dict.fromkeys(primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])))[:40],
+        "source_families": sorted(
+            set(primary.get("source_families", []))
+            | set(recovery.get("source_families", []))
+        ),
+        "social_families": sorted(
+            set(primary.get("social_families", []))
+            | set(recovery.get("social_families", []))
+        ),
+        "media_families": sorted(
+            set(primary.get("media_families", []))
+            | set(recovery.get("media_families", []))
+        ),
+        "evidence_urls": list(dict.fromkeys(
+            primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])
+        ))[:40],
         "recovery": True,
     }
 

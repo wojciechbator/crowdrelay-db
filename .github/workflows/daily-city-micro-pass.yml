@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "scripts/city_micro_pass.py"
+      - "scripts/city_micro_pass_runner.py"
       - ".github/workflows/daily-city-micro-pass.yml"
   schedule:
     - cron: "30 6 * * *"
@@ -42,7 +43,7 @@ jobs:
           CITY_MIN_SOURCE_FAMILIES: "4"
           CITY_MIN_SOCIAL_FAMILIES: "1"
           CITY_MIN_MEDIA_FAMILIES: "1"
-        run: python scripts/city_micro_pass.py
+        run: python scripts/city_micro_pass_runner.py
 
       - name: Validate city pass
         run: |

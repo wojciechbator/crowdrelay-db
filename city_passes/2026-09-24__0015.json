@@ -1,0 +1,178 @@
+{
+  "date": "2026-09-24",
+  "research_version": 16,
+  "pass_id": 15,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Łódź"
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 80,
+      "direct_leads": 15,
+      "useful": 9,
+      "useful_leads": 9,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 13,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 13,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/PPMuzyka/",
+        "https://www.facebook.com/wolnamuzyka/",
+        "https://www.radio.net/s/polskieradiolodz",
+        "https://www.radio-polska.pl/antyradio",
+        "https://fm-radio.live/poland/radio/radio-eska-odz",
+        "https://wiadomosci.onet.pl/lodz/lodz-crazy-day-nietypowy-koncert-muzyki-klubowej/eth7dqg",
+        "https://www.tiktok.com/discover/dzordz-polska",
+        "https://www.youtube.com/watch?v=tdG9StkKmz4",
+        "http://kulturaibiznes.pl/",
+        "https://uml.lodz.pl/kultura/strona-602/",
+        "https://www.instagram.com/p/B-WQ-xQDhJ6/",
+        "https://www.youtube.com/watch?v=pZ_n7ILcPTo",
+        "https://www.tiktok.com/discover/%C5%82%C3%B3d%C5%BA-2606",
+        "https://radiolodz.pl/podroze-ze-smakiem-9-edycja-ramen-festival-w-lodzi-podcast,453043/"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 40,
+      "direct_leads": 13,
+      "useful": 11,
+      "useful_leads": 11,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 13,
+      "contact_candidates": 1,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 13,
+      "new_contact_candidates": 1,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/BerlinMusicCommission",
+        "https://www.facebook.com/nybillion.band",
+        "https://www.facebook.com/musikatelier.Berlin/",
+        "https://music.youtube.com/playlist?list=PLDxfmZE7OHdkrfY4RWZ8OdWC_0x6_GMQL",
+        "https://m.soundcloud.com/energynet-podcast",
+        "https://www.facebook.com/soko.musik/",
+        "https://www.tiktok.com/discover/engel-Rammstein-berlin",
+        "https://www.rollingstone.de/metallica-berliner-olympiastadion-konzert-3148307/",
+        "https://de.pinterest.com/rock_metal_girls/elli-berlin/",
+        "https://www.bandsintown.com/de/e/1039682761-hardbone-at-kulturhaus-insel-berlin",
+        "https://onlineradiobox.com/de/Berlin?lang=en&p=6",
+        "https://www.shazam.com/de-de/event/4bc8976e-5e40-47c2-9526-f065aadfbb64",
+        "https://www.buergerhaus-neuenhagen.de/veranstaltungen/2863350/2026/06/19/konzert-bvg-orchester-berlin-e.v.html",
+        "https://www.visitberlin.de/de/veranstaltungskalender-berlin?event_expired=1"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 38,
+      "direct_leads": 9,
+      "useful": 7,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "local_media",
+        "podcast",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_media",
+        "podcast"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 80,
+      "direct_leads": 14,
+      "useful": 8,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ]
+}

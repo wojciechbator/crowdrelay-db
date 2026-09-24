@@ -1,0 +1,14 @@
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+Nybillion.Band,facebook_page,Berlin,,https://www.facebook.com/nybillion.band,https://www.facebook.com/nybillion.band,t,t,t,f,65,85,85
+Musikatelier.Berlin,facebook_page,Berlin,,https://www.facebook.com/musikatelier.Berlin/,https://www.facebook.com/musikatelier.Berlin/,t,t,t,f,65,85,85
+Berlin House Music Podcast,podcast,Berlin,,https://music.youtube.com/,https://music.youtube.com/playlist?list=PLDxfmZE7OHdkrfY4RWZ8OdWC_0x6_GMQL,t,t,t,f,65,85,85
+Rollingstone De,instagram_creator,Berlin,,https://www.instagram.com/rollingstone_de/?hl=de,https://www.instagram.com/rollingstone_de/?hl=de,t,t,t,f,65,95,95
+Rollingstonemagazin,facebook_page,Berlin,,https://www.facebook.com/rollingstonemagazin/?locale=de_DE,https://www.facebook.com/rollingstonemagazin/?locale=de_DE,t,t,t,f,65,95,95
+Rollingstone De,tiktok_creator,Berlin,,https://www.tiktok.com/@rollingstone_de,https://www.tiktok.com/@rollingstone_de,t,t,t,f,65,85,85
+"Berlin, Germany Radio Stations - Page 7",independent_radio,Berlin,,https://onlineradiobox.com/,https://onlineradiobox.com/de/Berlin?lang=en&p=6,t,t,t,f,65,65,65
+Onlineradiobox,facebook_page,Berlin,,https://www.facebook.com/onlineradiobox/,https://www.facebook.com/onlineradiobox/,t,t,t,f,65,95,95
+Online Radio Box,instagram_creator,Berlin,,https://www.instagram.com/_online_radio_box_/,https://www.instagram.com/_online_radio_box_/,t,t,t,f,65,95,95
+Veranstaltungskalender für Berlin | visitBerlin.de,event_calendar,Berlin,hallo@visitBerlin.de,https://www.visitberlin.de/de/veranstaltungskalender-berlin?event_expired=1,https://www.visitberlin.de/de/veranstaltungskalender-berlin?event_expired=1,t,t,t,f,65,65,65
+Visitberlin,facebook_page,Berlin,hallo@visitBerlin.de,https://www.facebook.com/visitberlin,https://www.facebook.com/visitberlin,t,t,t,f,65,95,95
+Visitberlin,instagram_creator,Berlin,hallo@visitBerlin.de,https://www.instagram.com/visitberlin,https://www.instagram.com/visitberlin,t,t,t,f,65,95,95
+Visitberlin,tiktok_creator,Berlin,hallo@visitBerlin.de,https://www.tiktok.com/@visitberlin,https://www.tiktok.com/@visitberlin,t,t,t,f,65,85,85

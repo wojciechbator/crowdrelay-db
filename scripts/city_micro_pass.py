@@ -274,8 +274,6 @@ def beacon_candidate_ok(
 
     if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
         return False
-    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
-        return False
     if is_newsish(url):
         return False
 
@@ -296,6 +294,11 @@ def beacon_candidate_ok(
         if scoped_social:
             return True
         return bool(OUTREACH_SIGNAL_RE.search(title_blob))
+
+    # Search-result boilerplate is useful for rejecting article noise, but it
+    # must not poison a direct social destination with terms/privacy/login text.
+    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+        return False
 
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))

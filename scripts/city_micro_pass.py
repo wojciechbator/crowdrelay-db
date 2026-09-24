@@ -934,30 +934,74 @@ def language_query_terms(country: str) -> str:
 
 
 def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[str, str]]:
-    # Keep queries intentionally short. Search engines are much better at
-    # simple city + connector + site constraints than long OR expressions.
+    # Keep queries short and connector-specific. The wording is deliberately
+    # multilingual so local media/culture sources are discoverable outside Poland.
+    locale = {
+        "Poland": {
+            "music": "muzyka koncert",
+            "press": "lokalny portal gazeta koncert muzyka",
+            "radio": "radio muzyka",
+            "culture": "centrum kultury dom kultury koncert",
+            "promoter": "organizator koncertów promotor booking",
+            "events": "koncerty wydarzenia 2026",
+        },
+        "Germany": {
+            "music": "musik konzert band",
+            "press": "lokalportal zeitung stadtmagazin konzert musik",
+            "radio": "radio musik",
+            "culture": "kulturzentrum kulturhaus konzert",
+            "promoter": "veranstalter promoter booking konzert",
+            "events": "veranstaltungen konzert 2026",
+        },
+        "Czechia": {
+            "music": "hudba koncert kapela",
+            "press": "místní portál noviny koncert hudba",
+            "radio": "rádio hudba",
+            "culture": "kulturní centrum koncert",
+            "promoter": "pořadatel koncertů promotér booking",
+            "events": "koncerty akce 2026",
+        },
+        "Slovakia": {
+            "music": "hudba koncert kapela",
+            "press": "miestny portál noviny koncert hudba",
+            "radio": "rádio hudba",
+            "culture": "kultúrne centrum koncert",
+            "promoter": "organizátor koncertov promotér booking",
+            "events": "koncerty podujatia 2026",
+        },
+    }.get(country, {
+        "music": "music concert band",
+        "press": "local portal newspaper concert music",
+        "radio": "radio music",
+        "culture": "culture center concert",
+        "promoter": "concert promoter booking",
+        "events": "concert events 2026",
+    })
+
     if recovery:
         return [
-            ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka koncert'),
-            ("facebook_pages", f'site:facebook.com "{city}" koncert muzyka'),
-            ("instagram", f'site:instagram.com "{city}" koncert'),
-            ("local_press", f'"{city}" {country} lokalny portal koncert'),
-            ("radio", f'"{city}" {country} radio muzyka'),
-            ("events", f'"{city}" {country} koncerty 2026'),
-            ("culture", f'"{city}" {country} centrum kultury koncert'),
-            ("promoters", f'"{city}" {country} organizator koncertów'),
+            ("facebook_groups", f'site:facebook.com/groups "{city}" {locale["music"]}'),
+            ("facebook_pages", f'site:facebook.com "{city}" {locale["music"]}'),
+            ("instagram", f'site:instagram.com "{city}" {locale["music"]}'),
+            ("local_press", f'"{city}" {country} {locale["press"]}'),
+            ("radio", f'"{city}" {country} {locale["radio"]}'),
+            ("podcasts", f'"{city}" {country} podcast music'),
+            ("events", f'"{city}" {country} {locale["events"]}'),
+            ("culture", f'"{city}" {country} {locale["culture"]}'),
+            ("promoters", f'"{city}" {country} {locale["promoter"]}'),
         ]
     return [
-        ("bands", f'"{city}" {country} metal band koncert'),
-        ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka'),
-        ("facebook_pages", f'site:facebook.com "{city}" koncert'),
-        ("instagram", f'site:instagram.com "{city}" koncert'),
-        ("youtube", f'site:youtube.com "{city}" metal band'),
-        ("local_press", f'"{city}" {country} lokalny portal koncert'),
-        ("events", f'"{city}" {country} koncerty 2026'),
-        ("radio", f'"{city}" {country} radio muzyka'),
-        ("culture", f'"{city}" {country} centrum kultury koncert'),
-        ("promoters", f'"{city}" {country} organizator koncertów'),
+        ("bands", f'"{city}" {country} {locale["music"]} metal rock hardcore'),
+        ("facebook_groups", f'site:facebook.com/groups "{city}" {locale["music"]}'),
+        ("facebook_pages", f'site:facebook.com "{city}" {locale["music"]}'),
+        ("instagram", f'site:instagram.com "{city}" {locale["music"]}'),
+        ("youtube", f'site:youtube.com "{city}" {locale["music"]}'),
+        ("local_press", f'"{city}" {country} {locale["press"]}'),
+        ("events", f'"{city}" {country} {locale["events"]}'),
+        ("radio", f'"{city}" {country} {locale["radio"]}'),
+        ("podcasts", f'"{city}" {country} podcast music'),
+        ("culture", f'"{city}" {country} {locale["culture"]}'),
+        ("promoters", f'"{city}" {country} {locale["promoter"]}'),
     ]
 
 

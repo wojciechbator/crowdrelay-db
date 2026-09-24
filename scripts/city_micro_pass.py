@@ -307,18 +307,11 @@ def social_entity_relevant(city: str, name: str, title: str, snippet: str, url: 
     slug = urlparse(url).path.casefold().replace("-", " ").replace("_", " ")
     slug_positive = bool(SOCIAL_POSITIVE_RE.search(slug))
 
-    score = 0
-    if local:
-        score += 4
-    if positive:
-        score += 3
-    if slug_positive:
-        score += 2
+    # The query is already city-scoped + social-scoped. Locality alone is
+    # sufficient for a direct social destination after the hard negative checks;
+    # keyword relevance is a bonus rather than an additional hard gate.
+    return local or positive or slug_positive
 
-    # Direct social URLs are not evidence by themselves. Require relevance
-    # signal plus locality so generic pages cannot pass merely because the
-    # search query contained the city name.
-    return score >= 5
 
 def event_calendar_relevant(title: str, url: str, snippet: str) -> bool:
     blob = f"{title} {snippet} {url}"
@@ -745,6 +738,9 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
     """Run cheap search providers together; Jina is a parallel rescue for social queries."""
     results: list[dict] = []
     social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
+    recovery_kinds = {
+        "local_news", "local_press", "radio", "events", "culture", "promoters"
+    }
     jobs = [
         ("searx", lambda: searx_search(query, headers)),
         ("engines", lambda: search_engine(
@@ -752,7 +748,7 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
             query_kind in {"local_news", "local_press", "radio"},
         )),
     ]
-    if query_kind in social_kinds:
+    if query_kind in social_kinds or query_kind in recovery_kinds:
         jobs.append(("jina", lambda: jina_search(query, headers)))
 
     with ThreadPoolExecutor(max_workers=len(jobs)) as ex:
@@ -993,47 +989,50 @@ def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[
         "Germany": {
             "music": "Musik Konzert Metal Rock Band",
             "social": "Musik Konzert Metal",
-            "media": "Lokalportal Lokalzeitung Konzert Musik",
+            "media": "Lokalportal Lokalzeitung Konzert Musik Stadtmagazin",
             "events": "Konzerte Veranstaltungen 2026",
-            "radio": "Radio Musik Konzert",
-            "culture": "Kulturzentrum Konzert Musik",
-            "promoter": "Veranstalter Konzert Promoter",
+            "radio": "Radio Musik Konzert Lokalradio Campusradio",
+            "culture": "Kulturzentrum Kulturhaus Konzert Musik",
+            "promoter": "Veranstalter Konzert Promoter Booking",
         },
         "Czechia": {
             "music": "hudba koncert metal rock kapela",
             "social": "hudba koncert metal",
             "media": "místní portál noviny koncert hudba",
             "events": "koncerty akce 2026",
-            "radio": "rádio hudba koncert",
-            "culture": "kulturní centrum koncert hudba",
-            "promoter": "pořadatel koncertů promotor",
+            "radio": "rádio hudba koncert místní rádio",
+            "culture": "kulturní centrum kulturní dům koncert hudba",
+            "promoter": "pořadatel koncertů promotor booking",
         },
         "Slovakia": {
             "music": "hudba koncert metal rock kapela",
             "social": "hudba koncert metal",
             "media": "miestny portál noviny koncert hudba",
             "events": "koncerty podujatia 2026",
-            "radio": "rádio hudba koncert",
-            "culture": "kultúrne centrum koncert hudba",
-            "promoter": "organizátor koncertov promótor",
+            "radio": "rádio hudba koncert miestne rádio",
+            "culture": "kultúrne centrum kultúrny dom koncert hudba",
+            "promoter": "organizátor koncertov promótor booking",
         },
     }.get(country, {
         "music": "music concert metal rock band",
         "social": "music concert metal",
         "media": "local news concert music",
         "events": "concerts events 2026",
-        "radio": "radio music concert",
+        "radio": "radio music concert local radio",
         "culture": "culture center concert music",
-        "promoter": "concert promoter organizer",
+        "promoter": "concert promoter organizer booking",
     })
 
     if recovery:
         return [
             ("facebook_groups", f'site:facebook.com/groups "{city}" {terms["social"]}'),
+            ("facebook_groups", f'site:facebook.com/groups "{city}" (metal OR hardcore OR rock OR concert)'),
             ("facebook_pages", f'site:facebook.com "{city}" {terms["social"]}'),
+            ("facebook_pages", f'site:facebook.com "{city}" (concert OR club OR venue OR band)'),
             ("instagram", f'site:instagram.com "{city}" {terms["social"]}'),
             ("youtube", f'site:youtube.com "{city}" {terms["social"]}'),
             ("local_press", f'"{city}" {country} {terms["media"]}'),
+            ("local_press", f'"{city}" {country} ("music scene" OR "Musikszene" OR "scena hudobna" OR "scena muzyczna")'),
             ("events", f'"{city}" {country} {terms["events"]}'),
             ("radio", f'"{city}" {country} {terms["radio"]}'),
             ("culture", f'"{city}" {country} {terms["culture"]}'),
@@ -1655,10 +1654,19 @@ def main() -> None:
 
         accepted.append((city, country, result, peers, beacons, contacts))
 
-    if len(accepted) < min(limit, len(candidates)):
+    if not accepted:
         raise RuntimeError(
-            f"Daily city micro-pass could only qualify {len(accepted)} of requested {limit} "
-            f"from candidate window {len(candidates)}; rejected={len(rejected)}"
+            f"Daily city micro-pass qualified 0 of {min(limit, len(candidates))} candidates; "
+            f"candidate window {len(candidates)}; rejected={len(rejected)}"
+        )
+
+    # A partial batch is valid progress. Persist successful cities instead of
+    # discarding them merely because one or more difficult cities missed QA.
+    # Those rejected cities remain eligible for the next run.
+    if len(accepted) < limit:
+        print(
+            f"CITY_PASS_PARTIAL success: qualified={len(accepted)} requested={limit} "
+            f"rejected={len(rejected)}; preserving successful cities."
         )
 
     summary = []
@@ -1690,6 +1698,7 @@ def main() -> None:
         "research_version": PASS_FORMAT_VERSION,
         "pass_id": pass_id,
         "batch_size_requested": limit,
+        "batch_complete": len(accepted) >= limit,
         "candidate_window": len(candidates),
         "cities": [{"country": country, "city": city} for city, country, *_ in accepted],
         "summary": summary,

@@ -1312,6 +1312,31 @@ EVENT_LISTING_DOMAINS = {
 }
 
 
+def canonical_media_destination(url: str) -> str:
+    parsed = urlparse(url)
+    host = parsed.netloc
+    if not parsed.scheme or not host:
+        return url
+    path = parsed.path.strip("/")
+    if not path and not parsed.query:
+        return url
+    return f"{parsed.scheme}://{host}/"
+
+
+def media_display_name(title: str, url: str, kind: str) -> str:
+    clean = re.sub(r"\s+", " ", title or "").strip()
+    if clean and len(clean) <= 140 and not looks_like_article_page(url, clean):
+        return clean[:180]
+    host = domain(url)
+    if not host:
+        return clean[:180]
+    parts = host.split(".")
+    label = parts[0] if parts else host
+    if label in {"www", "radio", "english"} and len(parts) > 1:
+        label = parts[1]
+    return re.sub(r"[-_]+", " ", label).strip().title()[:180]
+
+
 def discover(city: str, country: str, recovery: bool = False) -> dict:
     queries = city_queries(city, country, recovery)
     headers = {
@@ -1323,7 +1348,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     # SearXNG -> direct search engines -> Jina only if both returned nothing.
     # This keeps the pass cheap while avoiding a single external dependency.
     results: list[tuple[str, dict]] = []
-    with ThreadPoolExecutor(max_workers=min(4, len(queries))) as ex:
+    with ThreadPoolExecutor(max_workers=min(3, len(queries))) as ex:
         futures = {ex.submit(compact_search, kind, q, headers): kind for kind, q in queries}
         for fut in as_completed(futures):
             kind = futures[fut]
@@ -1436,6 +1461,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         context: str,
         allow_non_direct: bool = False,
         scoped_social: bool = False,
+        source_url: str = "",
     ) -> bool:
         if not beacon_candidate_ok(
             name, kind, url, context,
@@ -1450,7 +1476,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         beacons.append([
             name[:180], kind, city,
             found_emails[0] if found_emails else "",
-            url, url, "t", "t", "t", "f", 65, conf, conf,
+            url, source_url or url, "t", "t", "t", "f", 65, conf, conf,
         ])
         direct_urls.add(norm(url.rstrip("/")))
         source_families.add(kind)
@@ -1467,10 +1493,10 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         url = item["url"]
         title = item["title"]
         text_body = item["text"]
-        context = f'{city}\x1f{item["search_title"]} {item["snippet"]} {title} {text_body}'
+        context = f'{item["search_title"]}\x1f{item["snippet"]}\x1f{title}\x1f{text_body}'
         kinds = set(item["kinds"])
 
-        if len(evidence_urls) < 30 and url.startswith("http"):
+        if len(evidence_urls) < 30 and url.startswith("http") and not is_newsish(url):
             evidence_urls.append(url)
 
         if kinds & {"bands", "bands_events"} and likely_band_entity(title, context, url):
@@ -1516,9 +1542,12 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 else "podcast" if "podcasts" in kinds
                 else "local_media"
             )
+            media_url = canonical_media_destination(url)
+            media_name = media_display_name(title, url, media_kind)
             accepted_here = add_beacon(
-                title[:180], media_kind, url, context,
+                media_name, media_kind, media_url, context,
                 allow_non_direct=True,
+                source_url=url,
             ) or accepted_here
 
         if "events" in kinds:
@@ -1564,12 +1593,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             "source_families": sorted(source_families),
             "social_families": sorted(social_families),
             "media_families": sorted(media_families),
+            "source_categories": source_categories_from_parts(peers, beacons, contacts),
         }
         if result_quality_ok(probe):
             break
 
     unique_peers = {(norm(r[0]), norm(r[2])): r for r in peers}
-    unique_beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in beacons}
+    unique_beacons = {(norm(r[1]), norm(r[2]), norm(r[4])): r for r in beacons}
     unique_contacts = {(norm(r[0]), norm(r[3])): r for r in contacts}
 
     return {
@@ -1586,6 +1616,9 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "source_families": sorted(source_families),
         "social_families": sorted(social_families),
         "media_families": sorted(media_families),
+        "source_categories": source_categories_from_parts(
+            list(unique_peers.values()), list(unique_beacons.values()), list(unique_contacts.values())
+        ),
         "evidence_urls": evidence_urls,
         "query_counts": query_counts,
         "recovery": recovery,
@@ -1618,6 +1651,36 @@ def unique_useful_entity_count(
         if key:
             identities.add(("contact", key))
     return len(identities)
+
+
+
+def source_categories_from_parts(
+    peers: list[list[str]],
+    beacons: list[list[str]],
+    contacts: list[list[str]],
+) -> list[str]:
+    categories: set[str] = set()
+    if peers:
+        categories.add("peers")
+    beacon_kinds = {str(row[1]).strip() for row in beacons if len(row) > 1}
+    if beacon_kinds & SOCIAL_KINDS:
+        categories.add("social")
+    if beacon_kinds & MEDIA_KINDS:
+        categories.add("media")
+    if beacon_kinds & ECOSYSTEM_KINDS:
+        categories.add("ecosystem")
+    if contacts:
+        categories.add("contacts")
+    return sorted(categories)
+
+
+def source_categories(result: dict) -> list[str]:
+    existing = result.get("source_categories")
+    if existing:
+        return sorted(set(existing))
+    return source_categories_from_parts(
+        result.get("peers", []), result.get("beacons", []), result.get("contacts", [])
+    )
 
 
 def result_quality_ok(result: dict) -> bool:
@@ -1675,6 +1738,77 @@ def existing_emails(wb) -> set[str]:
     }
 
 
+def existing_name_city(wb, sheet: str) -> set[tuple[str, str]]:
+    ws = wb[sheet]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (norm(ws.cell(row, idx["name"]).value), norm(ws.cell(row, idx["city"]).value))
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["name"]).value
+    }
+
+
+def existing_beacon_keys(wb) -> set[tuple[str, str, str]]:
+    ws = wb["Beacons"]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (
+            norm(ws.cell(row, idx["kind"]).value),
+            norm(ws.cell(row, idx["city"]).value),
+            norm(ws.cell(row, idx["destination_url"]).value),
+        )
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["destination_url"]).value
+    }
+
+
+def existing_contact_keys(wb) -> set[tuple[str, str]]:
+    ws = wb["Contacts"]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (norm(ws.cell(row, idx["email"]).value), norm(ws.cell(row, idx["city"]).value))
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["email"]).value
+    }
+
+
+def dedupe_pending_peers(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[0]), norm(row[2]))
+        if not key[0] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def dedupe_pending_beacons(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[1]), norm(row[2]), norm(row[4]))
+        if not key[2] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def dedupe_pending_contacts(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[0]), norm(row[3]))
+        if not key[0] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+
 def write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
     if not rows:
         return
@@ -1708,9 +1842,9 @@ def main() -> None:
 
     accepted = []
     rejected = []
-    existing_peer = existing_names(wb, "Peer Bands")
-    existing_beacon = existing_names(wb, "Beacons")
-    existing_contact = existing_emails(wb)
+    existing_peer = existing_name_city(wb, "Peer Bands")
+    existing_beacon = existing_beacon_keys(wb)
+    existing_contact = existing_contact_keys(wb)
 
     # Pacing makes each city slower; stop starting new cities before the
     # workflow timeout so whatever qualified is still written and committed.
@@ -1756,18 +1890,18 @@ def main() -> None:
             })
             continue
 
-        peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
-        beacons = [r for r in result["beacons"] if norm(r[0]) not in existing_beacon]
-        contacts = [r for r in result["contacts"] if norm(r[0]) not in existing_contact]
+        peers = dedupe_pending_peers(result["peers"], existing_peer)
+        beacons = dedupe_pending_beacons(result["beacons"], existing_beacon)
+        contacts = dedupe_pending_contacts(result["contacts"], existing_contact)
 
         city_file = safe_filename(city)
         write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city_file}.csv", PEER_HEADER, peers)
         write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city_file}.csv", BEACON_HEADER, beacons)
         write_csv(PENDING / f"Contacts__CityPass__{stamp}__{city_file}.csv", CONTACT_HEADER, contacts)
 
-        existing_peer.update(norm(r[0]) for r in peers)
-        existing_beacon.update(norm(r[0]) for r in beacons)
-        existing_contact.update(norm(r[0]) for r in contacts)
+        existing_peer.update((norm(r[0]), norm(r[2])) for r in peers)
+        existing_beacon.update((norm(r[1]), norm(r[2]), norm(r[4])) for r in beacons)
+        existing_contact.update((norm(r[0]), norm(r[3])) for r in contacts)
 
         accepted.append((city, country, result, peers, beacons, contacts))
 
@@ -1826,6 +1960,7 @@ def main() -> None:
             "source_families": result["source_families"],
             "social_families": result["social_families"],
             "media_families": result["media_families"],
+            "source_categories": source_categories(result),
             "evidence_urls": result["evidence_urls"],
             "recovery_used": bool(result.get("recovery")),
         })

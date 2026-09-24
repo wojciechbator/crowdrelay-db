@@ -22,12 +22,12 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 15
+PASS_FORMAT_VERSION = 16
 FORCED_CITY_MIN_VERSION = {
-    "poland/bydgoszcz": 5,
-    "poland/warsaw": 5,
-    "poland/łódź": 5,
-    "germany/berlin": 5,
+    "poland::bydgoszcz": 16,
+    "poland::warsaw": 16,
+    "poland::łódź": 16,
+    "germany::berlin": 16,
 }
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
 
@@ -70,7 +70,8 @@ MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
 MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
 MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
 MIN_SOCIAL_FAMILIES = int(os.environ.get("CITY_MIN_SOCIAL_FAMILIES", "1"))
-MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "1"))
+MIN_MEDIA_FAMILIES = int(os.environ.get("CITY_MIN_MEDIA_FAMILIES", "0"))
+MIN_SOURCE_CATEGORIES = int(os.environ.get("CITY_MIN_SOURCE_CATEGORIES", "3"))
 UA = "CrowdRelayDB-CityResearch/5.0"
 
 COUNTRIES = ["Poland", "Germany", "Czechia", "Slovakia"]
@@ -162,6 +163,25 @@ GENERIC_SOCIAL_NAMES = {
     "facebook", "facebook page", "facebook group", "instagram", "instagram creator",
     "youtube", "youtube channel", "tiktok", "tiktok creator", "link to facebook.com",
     "link to instagram.com", "link to youtube.com", "twitter", "x",
+}
+
+SOCIAL_NEGATIVE_RE = re.compile(
+    r"\b(tapicer|czyszczen|sprz[aą]tan|cleaning|upholster|skup aut|samochod|"
+    r"auto(handel|serwis)?|car dealer|motoryz|friseur|fris[oö]r|hair|barber|"
+    r"beauty|kosmetik|football|soccer|basketball|volleyball|handball|sportverein|"
+    r"taxi|hotel|hostel|real estate|immobilien|restaurant|pizzeria|dentist|arzt|"
+    r"clinic|tourism|tourist|travel|flight|airport|ticketshop|ticketmaster)\b",
+    re.I,
+)
+
+SOCIAL_KINDS = {
+    "facebook_community", "facebook_page", "instagram_creator",
+    "tiktok_creator", "youtube_channel",
+}
+MEDIA_KINDS = {"local_media", "independent_radio", "podcast"}
+ECOSYSTEM_KINDS = {
+    "event_calendar", "cultural_hub", "promoter", "local_creator",
+    "local_music_resource",
 }
 
 
@@ -340,12 +360,8 @@ def beacon_candidate_ok(
     if is_newsish(url):
         return False
 
-    if kind not in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-        if country and not country_domain_matches(country, url):
-            return False
-
-    if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-        if not usable_direct_url(url):
+    if kind in SOCIAL_KINDS:
+        if is_generic_social_destination(url) or not usable_direct_url(url):
             return False
         if kind == "facebook_community" and not path.startswith("/groups/"):
             return False
@@ -354,41 +370,41 @@ def beacon_candidate_ok(
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
+        if SOCIAL_NEGATIVE_RE.search(f"{name} {url}"):
+            return False
 
-        # Search scope is not entity evidence. Require the entity/URL itself to
-        # carry an outreach signal; an article cannot donate relevance.
-        semantic_blob = f"{name} {url}"
-        if scoped_social:
-            semantic_blob = f"{name} {url}"
-            if city and not entity_city_signal(city, name, url):
-                return False
+        # The search query is evidence only when the returned entity also
+        # carries a local/outreach signal. This keeps city-scoped discovery
+        # from accepting unrelated global accounts or search chrome.
+        semantic_blob = f"{name} {url} {context}"
+        if city and not entity_city_signal(city, name, url, context):
+            return False
         return bool(OUTREACH_SIGNAL_RE.search(semantic_blob))
 
-    # Search-result boilerplate is useful for rejecting article noise, but it
-    # must not poison a direct social destination with terms/privacy/login text.
-    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+    if kind in MEDIA_KINDS and looks_like_article_page(url, name):
         return False
 
-    if kind in {"podcast", "local_media", "independent_radio"} and looks_like_article_page(url, name):
+    if kind == "podcast" and not re.search(r"\bpodcast\b", f"{name} {url} {context}", re.I):
         return False
-    if kind == "podcast" and not re.search(r"podcast", f"{name} {url}", re.I):
-        return False
-    if kind == "independent_radio" and not re.search(r"(radio|rádio|radiostacja)", f"{name} {url}", re.I):
+    if kind == "independent_radio" and not re.search(
+        r"\b(radio|rádio|radiostacja|broadcast)\b", f"{name} {url} {context}", re.I
+    ):
         return False
     if kind == "local_media" and not re.search(
-        r"(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny)",
-        f"{name} {url}",
+        r"\b(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music press)\b",
+        f"{name} {url} {context}",
         re.I,
     ):
         return False
+
     if kind == "event_calendar":
         if domain(url) in EVENT_LISTING_DOMAINS:
             return False
-        event_index_blob = f"{name} {url}"
+        if looks_like_article_page(url, name):
+            return False
         if not re.search(
-            r"(calendar|kalendarz|events|eventos|wydarzenia|wydarzen|koncerty|"
-            r"concerts|veranstaltungen|podujatia|akce)",
-            event_index_blob,
+            r"\b(calendar|kalendarz|events|eventos|wydarzenia|wydarzen|koncerty|concerts|veranstaltungen|podujatia|akce)\b",
+            f"{name} {url} {context}",
             re.I,
         ):
             return False
@@ -396,21 +412,30 @@ def beacon_candidate_ok(
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
 
+    if city and not entity_city_signal(city, name, url, context):
+        return False
+
     kind_terms = {
-        "independent_radio": r"radio|rádio|radio station|radiostacja|musik|music|muzyka|koncert|concert",
+        "independent_radio": r"radio|rádio|radiostacja|broadcast|musik|music|muzyka|koncert|concert",
         "podcast": r"podcast|music|muzyka|musik|hudba|band|koncert|concert|metal",
-        "local_media": r"music|muzyka|musik|hudba|band|koncert|concert|metal|culture|kultura|festival|festiwal",
+        "local_media": r"media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music|muzyka|musik|hudba|koncert|concert|metal|culture|kultura|kultur|festival|festiwal",
         "event_calendar": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|festival|festiwal|music",
-        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event",
+        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert|event|dom kultury",
         "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
-        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst",
+        "local_creator": r"photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst|photo|video",
         "local_music_resource": r"record store|sklep muzyczny|music store|musikladen|vinyl|winyle|music|muzyka|musik|bandcamp|soundcloud",
     }
     pattern = kind_terms.get(kind, r"music|muzyka|musik|hudba|koncert|concert|metal|band|artist")
-    if not re.search(pattern, title_blob, re.I):
+    semantic_blob = f"{name} {url} {context}"
+    if not re.search(pattern, semantic_blob, re.I):
         return False
-
-    if kind == "event_calendar" and re.search(r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b", title_blob, re.I):
+    if kind == "event_calendar" and re.search(
+        r"\b(wta|football|soccer|taxi|flight|hotel|weather|museum only)\b",
+        semantic_blob,
+        re.I,
+    ):
+        return False
+    if SOCIAL_NEGATIVE_RE.search(name):
         return False
     return True
 
@@ -761,23 +786,8 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Search a query family with provider redundancy and a useful-result gate."""
-    results: list[dict] = []
-
-    with ThreadPoolExecutor(max_workers=2) as ex:
-        futures = [
-            ex.submit(searx_search, query, headers),
-            ex.submit(
-                search_engine,
-                query,
-                query_kind in {"local_news", "local_press", "radio"},
-            ),
-        ]
-        for fut in as_completed(futures):
-            try:
-                results.extend(fut.result())
-            except Exception:
-                pass
+    """Search sequentially to reduce provider throttling and keep fallback targeted."""
+    social_kinds = SOCIAL_KINDS
 
     def dedupe(items: list[dict]) -> list[dict]:
         seen: set[str] = set()
@@ -791,12 +801,6 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
             out.append(item)
         return out
 
-    out = dedupe(results)[:30]
-
-    social_kinds = {
-        "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
-    }
-
     def expected_result(item: dict) -> bool:
         url = str(item.get("url") or "")
         title = str(item.get("title") or "")
@@ -809,7 +813,7 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         terms = {
             "bands": r"band|zespół|zespo[lł]|kapela|metal|rock|hardcore|djent",
             "local_press": r"gazeta|portal|wiadomo|wiadom|lokal|zeitung|nachrichten|noviny|miest",
-            "radio": r"radio|rádio|radiostacja",
+            "radio": r"radio|rádio|radiostacja|broadcast",
             "podcasts": r"podcast|audycja|radio show|musikpodcast",
             "events": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|podujat",
             "culture": r"culture|kultura|kultur|centrum|center|zentrum|dom kultury|koncert|concert",
@@ -818,37 +822,33 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         pattern = terms.get(query_kind, r"music|muzyka|musik|hudba|koncert|concert")
         return bool(re.search(pattern, blob, re.I)) and not is_newsish(url)
 
-    # A provider returning one unrelated page is not success. Rescue the
-    # specific query family through Jina whenever no useful candidate exists.
-    useful_count = sum(1 for item in out if expected_result(item))
-    rescue_needed = (
-        not out
-        or useful_count == 0
-        or (query_kind in social_kinds and not any(
-            usable_direct_url(item.get("url", "")) for item in out
-        ))
-    )
+    first = dedupe(searx_search(query, headers))
+    useful = [item for item in first if expected_result(item)]
+    if useful and (query_kind not in social_kinds or any(usable_direct_url(x.get("url", "")) for x in useful)):
+        return useful[:30]
 
-    if rescue_needed:
-        rescue: list[dict] = []
-        try:
-            rescue.extend(jina_search(query, headers)[:20])
-        except Exception:
-            pass
+    second = dedupe(search_engine(query, query_kind in {"local_news", "local_press", "radio"}))
+    combined = dedupe(first + second)
+    useful = [item for item in combined if expected_result(item)]
+    if useful and (query_kind not in social_kinds or any(usable_direct_url(x.get("url", "")) for x in useful)):
+        return useful[:30]
 
-        # For site-constrained social searches, retry once without the
-        # site: qualifier because search proxies often mangle it.
-        if query_kind in social_kinds:
-            broad_query = re.sub(r"^site:\S+\s+", "", query).strip()
-            if broad_query and broad_query != query:
-                try:
-                    rescue.extend(jina_search(broad_query, headers)[:20])
-                except Exception:
-                    pass
+    rescue: list[dict] = []
+    try:
+        rescue.extend(jina_search(query, headers)[:20])
+    except Exception:
+        pass
+    if query_kind in social_kinds:
+        broad_query = re.sub(r"^site:\S+\s+", "", query).strip()
+        if broad_query and broad_query != query:
+            try:
+                rescue.extend(jina_search(broad_query, headers)[:20])
+            except Exception:
+                pass
 
-        out = dedupe(out + rescue)[:30]
-
-    return out
+    final = dedupe(combined + rescue)
+    useful = [item for item in final if expected_result(item)]
+    return (useful or final)[:30]
 
 
 def emails(text: str) -> list[str]:
@@ -1184,7 +1184,7 @@ def select_research_results(
     city: str,
     limit: int = 140,
 ) -> list[tuple[list[str], dict]]:
-    """Stratify the search pool so no connector family is starved."""
+    """Interleave connector families so enrichment sees local ecosystem coverage."""
     merged = merge_results(results)
     ranked = sorted(
         merged,
@@ -1192,28 +1192,41 @@ def select_research_results(
         reverse=True,
     )
 
+    family_order = (
+        "bands", "facebook_groups", "facebook_pages", "instagram", "youtube",
+        "local_press", "events", "radio", "podcasts", "culture", "promoters",
+    )
+    kinds_present = [
+        kind for kind in family_order
+        if any(kind in kinds for kinds, _ in ranked)
+    ]
+
     selected: list[tuple[list[str], dict]] = []
     seen: set[str] = set()
+    offsets = {kind: 0 for kind in kinds_present}
 
-    kinds_present = sorted({kind for kinds, _ in merged for kind in kinds})
-    for kind in kinds_present:
-        family = [pair for pair in ranked if kind in pair[0]][:6]
-        for pair in family:
-            url = norm(pair[1].get("url", "").rstrip("/"))
-            if url and url not in seen:
+    while len(selected) < limit:
+        added_this_round = False
+        for kind in kinds_present:
+            family = [pair for pair in ranked if kind in pair[0]]
+            idx = offsets[kind]
+            while idx < len(family):
+                pair = family[idx]
+                idx += 1
+                url = norm(pair[1].get("url", "").rstrip("/"))
+                if not url or url in seen:
+                    continue
                 seen.add(url)
                 selected.append(pair)
-
-    for pair in ranked:
-        url = norm(pair[1].get("url", "").rstrip("/"))
-        if url and url not in seen:
-            seen.add(url)
-            selected.append(pair)
-        if len(selected) >= limit:
+                added_this_round = True
+                break
+            offsets[kind] = idx
+            if len(selected) >= limit:
+                break
+        if not added_this_round:
             break
 
     return selected[:limit]
-
 
 
 def is_generic_social_destination(url: str) -> bool:
@@ -1244,18 +1257,21 @@ def is_generic_social_destination(url: str) -> bool:
 
 
 def entity_city_signal(city: str, name: str, url: str, context: str = "") -> bool:
-    """Require the entity itself to carry credible city evidence."""
+    """Require credible city evidence from the entity or its source context."""
     target = ascii_norm(city)
     if not target:
         return False
     entity_blob = ascii_norm(f"{name} {url}")
-    context_blob = ascii_norm(context.split("\x1f", 1)[1] if "\x1f" in context else context)
-    if target in entity_blob:
+    context_blob = ascii_norm(context)
+    if target in entity_blob or target in context_blob:
         return True
     city_tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
-    if city_tokens and all(token in entity_blob for token in city_tokens):
-        return True
-    return bool(city_tokens) and all(token in context_blob for token in city_tokens)
+    if not city_tokens:
+        return False
+    return (
+        all(token in entity_blob for token in city_tokens)
+        or all(token in context_blob for token in city_tokens)
+    )
 
 
 def country_domain_matches(country: str, url: str) -> bool:
@@ -1296,6 +1312,31 @@ EVENT_LISTING_DOMAINS = {
 }
 
 
+def canonical_media_destination(url: str) -> str:
+    parsed = urlparse(url)
+    host = parsed.netloc
+    if not parsed.scheme or not host:
+        return url
+    path = parsed.path.strip("/")
+    if not path and not parsed.query:
+        return url
+    return f"{parsed.scheme}://{host}/"
+
+
+def media_display_name(title: str, url: str, kind: str) -> str:
+    clean = re.sub(r"\s+", " ", title or "").strip()
+    if clean and len(clean) <= 140 and not looks_like_article_page(url, clean):
+        return clean[:180]
+    host = domain(url)
+    if not host:
+        return clean[:180]
+    parts = host.split(".")
+    label = parts[0] if parts else host
+    if label in {"www", "radio", "english"} and len(parts) > 1:
+        label = parts[1]
+    return re.sub(r"[-_]+", " ", label).strip().title()[:180]
+
+
 def discover(city: str, country: str, recovery: bool = False) -> dict:
     queries = city_queries(city, country, recovery)
     headers = {
@@ -1307,7 +1348,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     # SearXNG -> direct search engines -> Jina only if both returned nothing.
     # This keeps the pass cheap while avoiding a single external dependency.
     results: list[tuple[str, dict]] = []
-    with ThreadPoolExecutor(max_workers=min(4, len(queries))) as ex:
+    with ThreadPoolExecutor(max_workers=min(3, len(queries))) as ex:
         futures = {ex.submit(compact_search, kind, q, headers): kind for kind, q in queries}
         for fut in as_completed(futures):
             kind = futures[fut]
@@ -1420,6 +1461,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         context: str,
         allow_non_direct: bool = False,
         scoped_social: bool = False,
+        source_url: str = "",
     ) -> bool:
         if not beacon_candidate_ok(
             name, kind, url, context,
@@ -1434,7 +1476,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         beacons.append([
             name[:180], kind, city,
             found_emails[0] if found_emails else "",
-            url, url, "t", "t", "t", "f", 65, conf, conf,
+            url, source_url or url, "t", "t", "t", "f", 65, conf, conf,
         ])
         direct_urls.add(norm(url.rstrip("/")))
         source_families.add(kind)
@@ -1451,10 +1493,10 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         url = item["url"]
         title = item["title"]
         text_body = item["text"]
-        context = f'{city}\x1f{item["search_title"]} {item["snippet"]} {title} {text_body}'
+        context = f'{item["search_title"]}\x1f{item["snippet"]}\x1f{title}\x1f{text_body}'
         kinds = set(item["kinds"])
 
-        if len(evidence_urls) < 30 and url.startswith("http"):
+        if len(evidence_urls) < 30 and url.startswith("http") and not is_newsish(url):
             evidence_urls.append(url)
 
         if kinds & {"bands", "bands_events"} and likely_band_entity(title, context, url):
@@ -1500,9 +1542,12 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 else "podcast" if "podcasts" in kinds
                 else "local_media"
             )
+            media_url = canonical_media_destination(url)
+            media_name = media_display_name(title, url, media_kind)
             accepted_here = add_beacon(
-                title[:180], media_kind, url, context,
+                media_name, media_kind, media_url, context,
                 allow_non_direct=True,
+                source_url=url,
             ) or accepted_here
 
         if "events" in kinds:
@@ -1548,12 +1593,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             "source_families": sorted(source_families),
             "social_families": sorted(social_families),
             "media_families": sorted(media_families),
+            "source_categories": source_categories_from_parts(peers, beacons, contacts),
         }
         if result_quality_ok(probe):
             break
 
     unique_peers = {(norm(r[0]), norm(r[2])): r for r in peers}
-    unique_beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in beacons}
+    unique_beacons = {(norm(r[1]), norm(r[2]), norm(r[4])): r for r in beacons}
     unique_contacts = {(norm(r[0]), norm(r[3])): r for r in contacts}
 
     return {
@@ -1570,6 +1616,9 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "source_families": sorted(source_families),
         "social_families": sorted(social_families),
         "media_families": sorted(media_families),
+        "source_categories": source_categories_from_parts(
+            list(unique_peers.values()), list(unique_beacons.values()), list(unique_contacts.values())
+        ),
         "evidence_urls": evidence_urls,
         "query_counts": query_counts,
         "recovery": recovery,
@@ -1602,6 +1651,36 @@ def unique_useful_entity_count(
         if key:
             identities.add(("contact", key))
     return len(identities)
+
+
+
+def source_categories_from_parts(
+    peers: list[list[str]],
+    beacons: list[list[str]],
+    contacts: list[list[str]],
+) -> list[str]:
+    categories: set[str] = set()
+    if peers:
+        categories.add("peers")
+    beacon_kinds = {str(row[1]).strip() for row in beacons if len(row) > 1}
+    if beacon_kinds & SOCIAL_KINDS:
+        categories.add("social")
+    if beacon_kinds & MEDIA_KINDS:
+        categories.add("media")
+    if beacon_kinds & ECOSYSTEM_KINDS:
+        categories.add("ecosystem")
+    if contacts:
+        categories.add("contacts")
+    return sorted(categories)
+
+
+def source_categories(result: dict) -> list[str]:
+    existing = result.get("source_categories")
+    if existing:
+        return sorted(set(existing))
+    return source_categories_from_parts(
+        result.get("peers", []), result.get("beacons", []), result.get("contacts", [])
+    )
 
 
 def result_quality_ok(result: dict) -> bool:
@@ -1659,6 +1738,77 @@ def existing_emails(wb) -> set[str]:
     }
 
 
+def existing_name_city(wb, sheet: str) -> set[tuple[str, str]]:
+    ws = wb[sheet]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (norm(ws.cell(row, idx["name"]).value), norm(ws.cell(row, idx["city"]).value))
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["name"]).value
+    }
+
+
+def existing_beacon_keys(wb) -> set[tuple[str, str, str]]:
+    ws = wb["Beacons"]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (
+            norm(ws.cell(row, idx["kind"]).value),
+            norm(ws.cell(row, idx["city"]).value),
+            norm(ws.cell(row, idx["destination_url"]).value),
+        )
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["destination_url"]).value
+    }
+
+
+def existing_contact_keys(wb) -> set[tuple[str, str]]:
+    ws = wb["Contacts"]
+    headers = [c.value for c in ws[2]]
+    idx = {norm(h): i + 1 for i, h in enumerate(headers) if h}
+    return {
+        (norm(ws.cell(row, idx["email"]).value), norm(ws.cell(row, idx["city"]).value))
+        for row in range(3, ws.max_row + 1)
+        if ws.cell(row, idx["email"]).value
+    }
+
+
+def dedupe_pending_peers(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[0]), norm(row[2]))
+        if not key[0] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def dedupe_pending_beacons(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[1]), norm(row[2]), norm(row[4]))
+        if not key[2] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def dedupe_pending_contacts(rows, existing):
+    out, seen = [], set(existing)
+    for row in rows:
+        key = (norm(row[0]), norm(row[3]))
+        if not key[0] or key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+
 def write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
     if not rows:
         return
@@ -1692,9 +1842,9 @@ def main() -> None:
 
     accepted = []
     rejected = []
-    existing_peer = existing_names(wb, "Peer Bands")
-    existing_beacon = existing_names(wb, "Beacons")
-    existing_contact = existing_emails(wb)
+    existing_peer = existing_name_city(wb, "Peer Bands")
+    existing_beacon = existing_beacon_keys(wb)
+    existing_contact = existing_contact_keys(wb)
 
     # Pacing makes each city slower; stop starting new cities before the
     # workflow timeout so whatever qualified is still written and committed.
@@ -1740,18 +1890,18 @@ def main() -> None:
             })
             continue
 
-        peers = [r for r in result["peers"] if norm(r[0]) not in existing_peer]
-        beacons = [r for r in result["beacons"] if norm(r[0]) not in existing_beacon]
-        contacts = [r for r in result["contacts"] if norm(r[0]) not in existing_contact]
+        peers = dedupe_pending_peers(result["peers"], existing_peer)
+        beacons = dedupe_pending_beacons(result["beacons"], existing_beacon)
+        contacts = dedupe_pending_contacts(result["contacts"], existing_contact)
 
         city_file = safe_filename(city)
         write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city_file}.csv", PEER_HEADER, peers)
         write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city_file}.csv", BEACON_HEADER, beacons)
         write_csv(PENDING / f"Contacts__CityPass__{stamp}__{city_file}.csv", CONTACT_HEADER, contacts)
 
-        existing_peer.update(norm(r[0]) for r in peers)
-        existing_beacon.update(norm(r[0]) for r in beacons)
-        existing_contact.update(norm(r[0]) for r in contacts)
+        existing_peer.update((norm(r[0]), norm(r[2])) for r in peers)
+        existing_beacon.update((norm(r[1]), norm(r[2]), norm(r[4])) for r in beacons)
+        existing_contact.update((norm(r[0]), norm(r[3])) for r in contacts)
 
         accepted.append((city, country, result, peers, beacons, contacts))
 
@@ -1810,6 +1960,7 @@ def main() -> None:
             "source_families": result["source_families"],
             "social_families": result["social_families"],
             "media_families": result["media_families"],
+            "source_categories": source_categories(result),
             "evidence_urls": result["evidence_urls"],
             "recovery_used": bool(result.get("recovery")),
         })

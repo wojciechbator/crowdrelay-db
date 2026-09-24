@@ -195,16 +195,18 @@ def usable_direct_url(url: str) -> bool:
             "/reg", "/lite", "/about", "/careers", "/pages/create", "/ad_campaign",
             "/help", "/privacy", "/policies", "/login", "/recover",
         )
+        segments = [x for x in path.strip("/").split("/") if x]
+        if path.startswith("/groups/"):
+            return len(segments) == 2
+        if path.startswith("/pages/"):
+            return len(segments) in {2, 3}
+        if path.startswith("/profile.php"):
+            return True
         return (
-            path.startswith("/groups/")
-            or path.startswith("/pages/")
-            or path.startswith("/profile.php")
-            or (
-                len(path.strip("/")) >= 2
-                and not path.startswith(blocked)
-                and not path.startswith(generic_fb_paths)
-                and segment not in {"settings", "privacy", "terms", "policies"}
-            )
+            len(segments) == 1
+            and not path.startswith(blocked)
+            and not path.startswith(generic_fb_paths)
+            and segment not in {"settings", "privacy", "terms", "policies"}
         )
     if d in {"youtube.com", "youtu.be"}:
         if d == "youtu.be":
@@ -221,8 +223,10 @@ def usable_direct_url(url: str) -> bool:
             and not path.startswith(("/reel/", "/p/", "/tv/", "/stories/"))
         )
     if d == "tiktok.com":
+        segments = [x for x in path.strip("/").split("/") if x]
         return (
-            path.startswith("/@")
+            len(segments) == 1
+            and path.startswith("/@")
             and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
         )
     if d in {"bandcamp.com", "soundcloud.com"}:
@@ -308,6 +312,8 @@ def beacon_candidate_ok(
     context: str,
     allow_non_direct: bool = False,
     scoped_social: bool = False,
+    country: str = "",
+    city: str = "",
 ) -> bool:
     if not url.startswith("http") or not name:
         return False
@@ -321,6 +327,10 @@ def beacon_candidate_ok(
     if is_newsish(url):
         return False
 
+    if kind not in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+        if country and not country_domain_matches(country, url):
+            return False
+
     if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
         if not usable_direct_url(url):
             return False
@@ -332,16 +342,23 @@ def beacon_candidate_ok(
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
 
-        # The query is explicitly city-scoped and connector-scoped. For direct
-        # account/group URLs, the URL itself is the actionable destination. Do
-        # not require search-engine snippets to repeat the music keyword.
+        # Search scope is not entity evidence. Require the entity/URL itself to
+        # carry an outreach signal; an article cannot donate relevance.
+        semantic_blob = f"{name} {url}"
         if scoped_social:
-            return True
-        return bool(OUTREACH_SIGNAL_RE.search(title_blob))
+            semantic_blob = f"{name} {url} {context}"
+            if city and not entity_city_signal(city, name, url, context):
+                return False
+        return bool(OUTREACH_SIGNAL_RE.search(semantic_blob))
 
     # Search-result boilerplate is useful for rejecting article noise, but it
     # must not poison a direct social destination with terms/privacy/login text.
     if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+        return False
+
+    if kind in {"podcast", "local_media", "independent_radio"} and looks_like_article_page(url, name):
+        return False
+    if kind == "event_calendar" and domain(url) in EVENT_LISTING_DOMAINS:
         return False
 
     if not allow_non_direct:
@@ -1371,13 +1388,15 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         context: str,
         allow_non_direct: bool = False,
         scoped_social: bool = False,
-    ):
+    ) -> bool:
         if not beacon_candidate_ok(
             name, kind, url, context,
             allow_non_direct=allow_non_direct,
             scoped_social=scoped_social,
+            country=country,
+            city=city,
         ):
-            return
+            return False
         found_emails = emails(context)
         conf = confidence(url, "", context)
         beacons.append([
@@ -1386,6 +1405,12 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             url, url, "t", "t", "t", "f", 65, conf, conf,
         ])
         direct_urls.add(norm(url.rstrip("/")))
+        source_families.add(kind)
+        if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+            social_families.add(kind)
+        if kind in {"independent_radio", "podcast", "local_media"}:
+            media_families.add(kind)
+        return True
 
     for item in enriched:
         if not item["local"]:
@@ -1397,9 +1422,6 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         context = f'{city}\x1f{item["search_title"]} {item["snippet"]} {title} {text_body}'
         kinds = set(item["kinds"])
 
-        source_families.update(kinds)
-        social_families.update(kinds & social_kinds)
-        media_families.update(kinds & media_kinds)
         if len(evidence_urls) < 30 and url.startswith("http"):
             evidence_urls.append(url)
 
@@ -1418,6 +1440,8 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 "Research candidate", "City micro-pass",
                 f"Compact city research. Confidence {conf}%.",
             ])
+
+        accepted_here = False
 
         if usable_direct_url(url) and (kinds & social_kinds):
             kind = classify_beacon(title, item["snippet"], url)
@@ -1438,7 +1462,9 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             }
             name = social_name(url, title) if generic_social_title else title
             if name:
-                add_beacon(name, kind, url, context, scoped_social=True)
+                accepted_here = add_beacon(
+                    name, kind, url, context, scoped_social=True
+                ) or accepted_here
 
         if kinds & media_kinds:
             media_kind = (
@@ -1446,10 +1472,16 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 else "podcast" if "podcasts" in kinds
                 else "local_media"
             )
-            add_beacon(title[:180], media_kind, url, context, allow_non_direct=True)
+            accepted_here = add_beacon(
+                title[:180], media_kind, url, context,
+                allow_non_direct=True,
+            ) or accepted_here
 
         if "events" in kinds:
-            add_beacon(title[:180], "event_calendar", url, context, allow_non_direct=True)
+            accepted_here = add_beacon(
+                title[:180], "event_calendar", url, context,
+                allow_non_direct=True,
+            ) or accepted_here
 
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):
@@ -1458,37 +1490,33 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             if beacon_candidate_ok(
                 entity["name"], entity["kind"], entity["url"], context,
                 scoped_social=entity_scoped_social,
+                country=country,
+                city=city,
             ):
-                add_beacon(
+                accepted_here = add_beacon(
                     entity["name"], entity["kind"], entity["url"], context,
                     scoped_social=entity_scoped_social,
-                )
-            source_families.add(entity["kind"])
+                ) or accepted_here
             if entity["kind"] in {
                 "facebook_community","facebook_page","instagram_creator",
                 "tiktok_creator","youtube_channel",
             }:
                 social_families.add(entity["kind"])
 
-        for email in emails(context):
-            contacts.append([
-                email, title[:120], title[:160], city,
-                classify_beacon(title, item["snippet"], url), "",
-                f"Found on local source: {url}", TODAY, "f",
-            ])
+        if accepted_here:
+            for email in emails(context):
+                contacts.append([
+                    email, title[:120], title[:160], city,
+                    classify_beacon(title, item["snippet"], url), "",
+                    f"Found on accepted local source: {url}", TODAY, "f",
+                ])
 
         # Hard early stop: once the city already satisfies all QA gates, do not
         # fetch or process additional low-value search results.
         probe = {
             "raw_results": len(merged),
             "direct_leads": len(direct_urls),
-            "useful": len({
-                (norm(r[0]), norm(r[2])) for r in peers
-            }) + len({
-                (norm(r[0]), norm(r[1]), norm(r[2])) for r in beacons
-            }) + len({
-                (norm(r[0]), norm(r[3])) for r in contacts
-            }),
+            "useful": unique_useful_entity_count(peers, beacons, contacts),
             "source_families": sorted(source_families),
             "social_families": sorted(social_families),
             "media_families": sorted(media_families),
@@ -1506,7 +1534,11 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "contacts": list(unique_contacts.values()),
         "raw_results": len(merged),
         "direct_leads": len(direct_urls),
-        "useful": len(unique_peers) + len(unique_beacons) + len(unique_contacts),
+        "useful": unique_useful_entity_count(
+            list(unique_peers.values()),
+            list(unique_beacons.values()),
+            list(unique_contacts.values()),
+        ),
         "source_families": sorted(source_families),
         "social_families": sorted(social_families),
         "media_families": sorted(media_families),
@@ -1514,6 +1546,34 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         "query_counts": query_counts,
         "recovery": recovery,
     }
+
+
+def entity_identity(name: str) -> str:
+    clean = norm(name)
+    clean = re.sub(r"\s*[|–-]\s*(facebook|instagram|youtube|tiktok)(?:\s+channel)?\s*$", "", clean)
+    clean = re.sub(r"^(facebook|instagram|youtube|tiktok)\s*[–:-]\s*", "", clean)
+    return re.sub(r"[^a-z0-9]+", " ", ascii_norm(clean)).strip()
+
+
+def unique_useful_entity_count(
+    peers: list[list[str]],
+    beacons: list[list[str]],
+    contacts: list[list[str]],
+) -> int:
+    identities: set[tuple[str, str]] = set()
+    for row in peers:
+        key = entity_identity(row[0]) if row else ""
+        if key:
+            identities.add(("peer", key))
+    for row in beacons:
+        key = entity_identity(row[0]) if row else ""
+        if key:
+            identities.add(("beacon", key))
+    for row in contacts:
+        key = norm(row[0]) if row else ""
+        if key:
+            identities.add(("contact", key))
+    return len(identities)
 
 
 def result_quality_ok(result: dict) -> bool:

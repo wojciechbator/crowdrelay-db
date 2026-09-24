@@ -22,7 +22,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 13
+PASS_FORMAT_VERSION = 15
 FORCED_CITY_MIN_VERSION = {
     "poland/bydgoszcz": 5,
     "poland/warsaw": 5,
@@ -1192,6 +1192,59 @@ def is_generic_social_destination(url: str) -> bool:
         return path.startswith(("/discover", "/search", "/tag/"))
     return False
 
+
+
+def entity_city_signal(city: str, name: str, url: str, context: str = "") -> bool:
+    """Require the entity itself to carry credible city evidence."""
+    target = ascii_norm(city)
+    if not target:
+        return False
+    entity_blob = ascii_norm(f"{name} {url}")
+    context_blob = ascii_norm(context.split("\x1f", 1)[1] if "\x1f" in context else context)
+    if target in entity_blob:
+        return True
+    city_tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
+    if city_tokens and all(token in entity_blob for token in city_tokens):
+        return True
+    return bool(city_tokens) and all(token in context_blob for token in city_tokens)
+
+
+def country_domain_matches(country: str, url: str) -> bool:
+    """Reject non-social sources whose ccTLD contradicts the city country."""
+    d = domain(url)
+    if not d:
+        return False
+    cc = {"Poland": ".pl", "Germany": ".de", "Czechia": ".cz", "Slovakia": ".sk"}.get(country)
+    if not cc:
+        return True
+    parts = d.split(".")
+    return not (len(parts) >= 2 and len(parts[-1]) == 2) or d.endswith(cc)
+
+
+ARTICLEISH_TITLE_RE = re.compile(
+    r"\b(review|recenzja|relacja|interview|wywiad|reportaż|reportage|"
+    r"news|nachrichten|actualit|aktuality|mix|playlist|episode|odcinek)\b",
+    re.I,
+)
+
+
+def looks_like_article_page(url: str, title: str) -> bool:
+    path = urlparse(url).path.casefold()
+    if path.endswith((".html", ".htm")):
+        return True
+    if re.search(r"/(news|article|articles|story|stories|blog|review|interview|relacja|wywiad|aktuality)(/|$)", path):
+        return True
+    if re.search(r"/20\d{2}(?:[-_/]\d{1,2})", path):
+        return True
+    segments = [s for s in path.split("/") if s]
+    return len(segments) >= 4 and bool(ARTICLEISH_TITLE_RE.search(title))
+
+
+EVENT_LISTING_DOMAINS = {
+    "ebilet.pl", "krajownik.pl", "shazam.com", "setlist.fm", "goout.net",
+    "biletyna.pl", "goingapp.pl", "allevents.in", "ticketmaster.com",
+    "bandsintown.com", "songkick.com",
+}
 
 
 def discover(city: str, country: str, recovery: bool = False) -> dict:

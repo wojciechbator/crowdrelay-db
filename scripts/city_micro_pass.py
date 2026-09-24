@@ -147,21 +147,40 @@ def usable_direct_url(url: str) -> bool:
     if not is_direct_domain(url):
         return False
     if d == "facebook.com":
-        return path.startswith("/groups/") or (
-            len(path.strip("/")) >= 2
-            and not path.startswith((
-                "/search", "/watch", "/events", "/reel", "/biz/", "/sharer.php"
-            ))
-            and path != "/sharer.php"
+        segment = path.strip("/").split("/", 1)[0] if path.strip("/") else ""
+        blocked = (
+            "/search", "/watch", "/events", "/reel", "/biz/", "/sharer.php",
+            "/share", "/login", "/recover", "/help", "/plugins", "/dialog",
+            "/hashtag", "/gaming", "/marketplace"
+        )
+        return (
+            path.startswith("/groups/")
+            or path.startswith("/pages/")
+            or path.startswith("/profile.php")
+            or (
+                len(path.strip("/")) >= 2
+                and not path.startswith(blocked)
+                and segment not in {"settings", "privacy", "terms", "policies"}
+            )
         )
     if d in {"youtube.com", "youtu.be"}:
         if d == "youtu.be":
             return False
         return path.startswith(("/channel/", "/@", "/c/", "/user/"))
     if d == "instagram.com":
-        return len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
+        segment = path.strip("/").split("/", 1)[0] if path.strip("/") else ""
+        return (
+            len(segment) >= 2
+            and segment not in {
+                "explore", "reels", "p", "tv", "stories", "accounts", "direct",
+                "about", "legal", "privacy", "terms"
+            }
+        )
     if d == "tiktok.com":
-        return len(path.strip("/")) >= 2 and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
+        return (
+            path.startswith("/@")
+            and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
+        )
     if d in {"bandcamp.com", "soundcloud.com"}:
         return len(path.strip("/").split("/")) == 1
     if d in {"bandsintown.com", "songkick.com"}:
@@ -196,25 +215,40 @@ def social_name(url: str, title: str) -> str:
 def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, city: str) -> bool:
     if not usable_direct_url(url):
         return False
-    blob = f"{title} {snippet} {url}"
+    path = urlparse(url).path.casefold()
+    clean_title = norm(title)
+    generic = {
+        "link to facebook.com", "facebook", "log in or sign up",
+        "link to instagram.com", "instagram", "link to tiktok.com",
+        "tiktok", "youtube", "youtube channel",
+    }
+
     if query_kind == "youtube":
-        return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
+        return path.startswith(("/channel/", "/@", "/c/", "/user/")) and clean_title not in generic
+
     if query_kind == "facebook_groups":
-        return "/groups/" in urlparse(url).path.casefold()
-    if query_kind == "facebook_groups":
-        title_low = title.casefold().strip()
-        return "/groups/" in urlparse(url).path.casefold() and title_low not in {
-            "link to facebook.com", "facebook", "log in or sign up"
-        } and (
-            bool(ENTITY_RELEVANCE_RE.search(blob))
-            or ascii_norm(city) in ascii_norm(f"{title} {snippet}")
-        )
+        return path.startswith("/groups/") and clean_title not in generic
+
     if query_kind.startswith("facebook"):
-        return bool(ENTITY_RELEVANCE_RE.search(blob))
+        return clean_title not in generic and not path.startswith(
+            ("/search", "/watch", "/events", "/reel", "/biz/")
+        )
+
+    if query_kind in {"instagram", "tiktok", "youtube"}:
+        return clean_title not in generic
+
     if query_kind == "creators":
-        return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
+        return bool(re.search(
+            r"\\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\\b",
+            f"{title} {snippet} {url}", re.I
+        ))
+
     if query_kind == "culture":
-        return bool(re.search(r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b", blob, re.I))
+        return bool(re.search(
+            r"\\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\\b",
+            f"{title} {snippet} {url}", re.I
+        ))
+
     return True
 
 
@@ -223,7 +257,14 @@ def is_newsish(url: str) -> bool:
     return d in NEWSISH_DOMAINS or d.startswith("news.")
 
 
-def beacon_candidate_ok(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False) -> bool:
+def beacon_candidate_ok(
+    name: str,
+    kind: str,
+    url: str,
+    context: str,
+    allow_non_direct: bool = False,
+    scoped_social: bool = False,
+) -> bool:
     if not url.startswith("http") or not name:
         return False
 
@@ -248,6 +289,12 @@ def beacon_candidate_ok(name: str, kind: str, url: str, context: str, allow_non_
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
+
+        # The query is explicitly city-scoped and connector-scoped. For direct
+        # account/group URLs, the URL itself is the actionable destination. Do
+        # not require search-engine snippets to repeat the music keyword.
+        if scoped_social:
+            return True
         return bool(OUTREACH_SIGNAL_RE.search(title_blob))
 
     if not allow_non_direct:
@@ -817,10 +864,14 @@ def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[
     language = language_query_terms(country)
     if recovery:
         return [
-            ("facebook_groups", f'"{city}" {country} site:facebook.com/groups (music OR muzyka OR musik OR hudba OR metal)'),
-            ("facebook_pages", f'"{city}" {country} site:facebook.com (concert OR koncert OR metal OR music OR muzyka)'),
-            ("instagram", f'"{city}" {country} site:instagram.com (metal OR band OR koncert OR concert OR music)'),
-            ("tiktok", f'"{city}" {country} site:tiktok.com (metal OR band OR concert OR koncert OR music)'),
+            ("facebook_groups", f'"{city}" {country} site:facebook.com/groups/ (music OR muzyka OR metal OR koncert)'),
+            ("facebook_groups", f'"{city}" "muzyka" site:facebook.com/groups/'),
+            ("facebook_pages", f'"{city}" {country} site:facebook.com/ (concert OR koncert OR metal OR music OR muzyka OR klub OR zespół)'),
+            ("facebook_pages", f'"{city}" "koncert" site:facebook.com/'),
+            ("instagram", f'"{city}" {country} site:instagram.com/ (metal OR band OR koncert OR concert OR music)'),
+            ("instagram", f'"{city}" "koncert" site:instagram.com/'),
+            ("tiktok", f'"{city}" {country} site:tiktok.com/@ (metal OR band OR concert OR koncert OR music)'),
+            ("tiktok", f'"{city}" "koncert" site:tiktok.com/@'),
             ("local_press", f'"{city}" {country} (gazeta OR wiadomości OR portal OR zeitung OR lokalnachrichten OR noviny) (koncert OR metal OR muzyka OR musik OR hudba)'),
             ("events", f'"{city}" {country} (koncert OR koncerty OR konzert OR Veranstaltungen OR hudba) 2026'),
             ("radio", f'"{city}" {country} (radio OR rádiu OR rádio) (muzyka OR music OR musik OR hudba)'),
@@ -972,8 +1023,19 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
     media_kinds = {"local_news", "local_press", "radio", "podcasts"}
 
-    def add_beacon(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False):
-        if not beacon_candidate_ok(name, kind, url, context, allow_non_direct):
+    def add_beacon(
+        name: str,
+        kind: str,
+        url: str,
+        context: str,
+        allow_non_direct: bool = False,
+        scoped_social: bool = False,
+    ):
+        if not beacon_candidate_ok(
+            name, kind, url, context,
+            allow_non_direct=allow_non_direct,
+            scoped_social=scoped_social,
+        ):
             return
         found_emails = emails(context)
         conf = confidence(url, "", context)
@@ -1028,9 +1090,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 kind = "tiktok_creator"
             elif "youtube" in kinds and "youtube.com/" in url:
                 kind = "youtube_channel"
-            name = title if title.casefold() not in {"link to facebook.com","link to instagram.com"} else social_name(url, title)
+            generic_social_title = norm(title) in GENERIC_SOCIAL_NAMES or norm(title) in {
+                "link to facebook.com", "link to instagram.com", "link to tiktok.com",
+                "log in or sign up"
+            }
+            name = social_name(url, title) if generic_social_title else title
             if name:
-                add_beacon(name, kind, url, context)
+                add_beacon(name, kind, url, context, scoped_social=True)
 
         if kinds & media_kinds:
             media_kind = (

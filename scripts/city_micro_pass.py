@@ -236,14 +236,6 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
 
     return True
 
-    if query_kind == "creators":
-        return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
-
-    if query_kind == "culture":
-        return bool(re.search(r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b", blob, re.I))
-
-    return True
-
 
 def is_newsish(url: str) -> bool:
     d = domain(url)
@@ -984,24 +976,30 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             except Exception:
                 final_url = item["url"]
 
-            is_direct = any(
-                relevant_direct_entity(kind, item["url"], item.get("title",""), item.get("snippet",""), city)
-                for kind in kinds
-            )
-            if is_direct:
-                page_url, page_title, page_text, links = item["url"], "", "", []
-            else:
-                page_url, page_title, page_text, links = fetch_page(final_url, headers)
-
-            final_candidate = page_url or final_url
-            search_title = item.get("title", "").strip()
-            search_snippet = item.get("snippet", "").strip()
+            # Search engines (especially Bing) can return a redirect/tracking URL.
+            # Decide directness only after resolving it, otherwise valid Facebook /
+            # Instagram / YouTube destinations disappear before qualification.
+            final_candidate = final_url or item["url"]
             social_query = bool(set(kinds) & {
                 "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
             })
+            is_direct = any(
+                relevant_direct_entity(kind, final_candidate, item.get("title",""), item.get("snippet",""), city)
+                for kind in kinds
+            )
+            if is_direct:
+                page_url, page_title, page_text, links = final_candidate, "", "", []
+            else:
+                page_url, page_title, page_text, links = fetch_page(final_candidate, headers)
+
+            final_candidate = page_url or final_candidate
+            search_title = item.get("title", "").strip()
+            search_snippet = item.get("snippet", "").strip()
             page_local = local_signal(city, page_title or search_title, search_snippet, page_text, final_candidate)
             search_local = local_signal(city, search_title, search_snippet, "", item["url"])
-            scoped_direct = usable_direct_url(item["url"]) and social_query
+            # The query itself is city-scoped and connector-scoped. Use the
+            # resolved URL here, not the search-engine wrapper URL.
+            scoped_direct = usable_direct_url(final_candidate) and social_query
 
             enriched.append({
                 "kinds": kinds,

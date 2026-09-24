@@ -786,23 +786,8 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Search a query family with provider redundancy and a useful-result gate."""
-    results: list[dict] = []
-
-    with ThreadPoolExecutor(max_workers=2) as ex:
-        futures = [
-            ex.submit(searx_search, query, headers),
-            ex.submit(
-                search_engine,
-                query,
-                query_kind in {"local_news", "local_press", "radio"},
-            ),
-        ]
-        for fut in as_completed(futures):
-            try:
-                results.extend(fut.result())
-            except Exception:
-                pass
+    """Search sequentially to reduce provider throttling and keep fallback targeted."""
+    social_kinds = SOCIAL_KINDS
 
     def dedupe(items: list[dict]) -> list[dict]:
         seen: set[str] = set()
@@ -816,12 +801,6 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
             out.append(item)
         return out
 
-    out = dedupe(results)[:30]
-
-    social_kinds = {
-        "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
-    }
-
     def expected_result(item: dict) -> bool:
         url = str(item.get("url") or "")
         title = str(item.get("title") or "")
@@ -834,7 +813,7 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         terms = {
             "bands": r"band|zespół|zespo[lł]|kapela|metal|rock|hardcore|djent",
             "local_press": r"gazeta|portal|wiadomo|wiadom|lokal|zeitung|nachrichten|noviny|miest",
-            "radio": r"radio|rádio|radiostacja",
+            "radio": r"radio|rádio|radiostacja|broadcast",
             "podcasts": r"podcast|audycja|radio show|musikpodcast",
             "events": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|podujat",
             "culture": r"culture|kultura|kultur|centrum|center|zentrum|dom kultury|koncert|concert",
@@ -843,37 +822,33 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         pattern = terms.get(query_kind, r"music|muzyka|musik|hudba|koncert|concert")
         return bool(re.search(pattern, blob, re.I)) and not is_newsish(url)
 
-    # A provider returning one unrelated page is not success. Rescue the
-    # specific query family through Jina whenever no useful candidate exists.
-    useful_count = sum(1 for item in out if expected_result(item))
-    rescue_needed = (
-        not out
-        or useful_count == 0
-        or (query_kind in social_kinds and not any(
-            usable_direct_url(item.get("url", "")) for item in out
-        ))
-    )
+    first = dedupe(searx_search(query, headers))
+    useful = [item for item in first if expected_result(item)]
+    if useful and (query_kind not in social_kinds or any(usable_direct_url(x.get("url", "")) for x in useful)):
+        return useful[:30]
 
-    if rescue_needed:
-        rescue: list[dict] = []
-        try:
-            rescue.extend(jina_search(query, headers)[:20])
-        except Exception:
-            pass
+    second = dedupe(search_engine(query, query_kind in {"local_news", "local_press", "radio"}))
+    combined = dedupe(first + second)
+    useful = [item for item in combined if expected_result(item)]
+    if useful and (query_kind not in social_kinds or any(usable_direct_url(x.get("url", "")) for x in useful)):
+        return useful[:30]
 
-        # For site-constrained social searches, retry once without the
-        # site: qualifier because search proxies often mangle it.
-        if query_kind in social_kinds:
-            broad_query = re.sub(r"^site:\S+\s+", "", query).strip()
-            if broad_query and broad_query != query:
-                try:
-                    rescue.extend(jina_search(broad_query, headers)[:20])
-                except Exception:
-                    pass
+    rescue: list[dict] = []
+    try:
+        rescue.extend(jina_search(query, headers)[:20])
+    except Exception:
+        pass
+    if query_kind in social_kinds:
+        broad_query = re.sub(r"^site:\S+\s+", "", query).strip()
+        if broad_query and broad_query != query:
+            try:
+                rescue.extend(jina_search(broad_query, headers)[:20])
+            except Exception:
+                pass
 
-        out = dedupe(out + rescue)[:30]
-
-    return out
+    final = dedupe(combined + rescue)
+    useful = [item for item in final if expected_result(item)]
+    return (useful or final)[:30]
 
 
 def emails(text: str) -> list[str]:
@@ -1209,7 +1184,7 @@ def select_research_results(
     city: str,
     limit: int = 140,
 ) -> list[tuple[list[str], dict]]:
-    """Stratify the search pool so no connector family is starved."""
+    """Interleave connector families so enrichment sees local ecosystem coverage."""
     merged = merge_results(results)
     ranked = sorted(
         merged,
@@ -1217,28 +1192,41 @@ def select_research_results(
         reverse=True,
     )
 
+    family_order = (
+        "bands", "facebook_groups", "facebook_pages", "instagram", "youtube",
+        "local_press", "events", "radio", "podcasts", "culture", "promoters",
+    )
+    kinds_present = [
+        kind for kind in family_order
+        if any(kind in kinds for kinds, _ in ranked)
+    ]
+
     selected: list[tuple[list[str], dict]] = []
     seen: set[str] = set()
+    offsets = {kind: 0 for kind in kinds_present}
 
-    kinds_present = sorted({kind for kinds, _ in merged for kind in kinds})
-    for kind in kinds_present:
-        family = [pair for pair in ranked if kind in pair[0]][:6]
-        for pair in family:
-            url = norm(pair[1].get("url", "").rstrip("/"))
-            if url and url not in seen:
+    while len(selected) < limit:
+        added_this_round = False
+        for kind in kinds_present:
+            family = [pair for pair in ranked if kind in pair[0]]
+            idx = offsets[kind]
+            while idx < len(family):
+                pair = family[idx]
+                idx += 1
+                url = norm(pair[1].get("url", "").rstrip("/"))
+                if not url or url in seen:
+                    continue
                 seen.add(url)
                 selected.append(pair)
-
-    for pair in ranked:
-        url = norm(pair[1].get("url", "").rstrip("/"))
-        if url and url not in seen:
-            seen.add(url)
-            selected.append(pair)
-        if len(selected) >= limit:
+                added_this_round = True
+                break
+            offsets[kind] = idx
+            if len(selected) >= limit:
+                break
+        if not added_this_round:
             break
 
     return selected[:limit]
-
 
 
 def is_generic_social_destination(url: str) -> bool:

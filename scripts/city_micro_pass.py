@@ -239,13 +239,13 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
 
     if query_kind == "creators":
         return bool(re.search(
-            r"\\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\\b",
+            r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b",
             f"{title} {snippet} {url}", re.I
         ))
 
     if query_kind == "culture":
         return bool(re.search(
-            r"\\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\\b",
+            r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b",
             f"{title} {snippet} {url}", re.I
         ))
 
@@ -927,6 +927,70 @@ def merge_results(results: list[tuple[str, dict]]) -> list[tuple[list[str], dict
     return [(sorted(v["kinds"]), v) for v in merged.values()]
 
 
+
+def result_priority(kinds: list[str], item: dict, city: str) -> int:
+    """Prefer actionable connector results over article/search noise."""
+    url = str(item.get("url") or "")
+    title = str(item.get("title") or "")
+    snippet = str(item.get("snippet") or "")
+    kind_set = set(kinds)
+    score = 0
+
+    if usable_direct_url(url):
+        score += 100
+    if kind_set & {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}:
+        score += 45
+    if kind_set & {"bands", "bands_events"}:
+        score += 35
+    if kind_set & {"events", "culture", "promoters", "creators", "radio", "podcasts", "record_stores"}:
+        score += 25
+    if local_signal(city, title, snippet, "", url):
+        score += 20
+    if is_newsish(url):
+        score -= 30
+    if NON_ACTIONABLE_TITLE_RE.search(norm(f"{title} {snippet}")):
+        score -= 50
+    if OUTREACH_SIGNAL_RE.search(f"{title} {snippet}"):
+        score += 10
+    return score
+
+
+def select_research_results(
+    results: list[tuple[str, dict]],
+    city: str,
+    limit: int = 140,
+) -> list[tuple[list[str], dict]]:
+    """Stratify the search pool so no connector family is starved."""
+    merged = merge_results(results)
+    ranked = sorted(
+        merged,
+        key=lambda pair: result_priority(pair[0], pair[1], city),
+        reverse=True,
+    )
+
+    selected: list[tuple[list[str], dict]] = []
+    seen: set[str] = set()
+
+    kinds_present = sorted({kind for kinds, _ in merged for kind in kinds})
+    for kind in kinds_present:
+        family = [pair for pair in ranked if kind in pair[0]][:6]
+        for pair in family:
+            url = norm(pair[1].get("url", "").rstrip("/"))
+            if url and url not in seen:
+                seen.add(url)
+                selected.append(pair)
+
+    for pair in ranked:
+        url = norm(pair[1].get("url", "").rstrip("/"))
+        if url and url not in seen:
+            seen.add(url)
+            selected.append(pair)
+        if len(selected) >= limit:
+            break
+
+    return selected[:limit]
+
+
 def discover(city: str, country: str, recovery: bool = False) -> dict:
     queries = city_queries(city, country, recovery)
     headers = {
@@ -969,7 +1033,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             except Exception:
                 pass
 
-    merged = merge_results(results)[:140]
+    merged = select_research_results(results, city, 140)
 
     enriched: list[dict] = []
     with ThreadPoolExecutor(max_workers=12) as ex:

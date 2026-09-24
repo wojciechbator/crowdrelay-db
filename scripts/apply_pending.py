@@ -245,6 +245,7 @@ def beacon_row_allowed(row: list[str]) -> bool:
         "booking.com", "allegro.pl", "elements.envato.com", "envato.com",
         "kultura.cz", "tv.youtube.com", "music.youtube.com",
         "fm-radio.live", "onlineradiobox.com", "radiolista.pl", "radiovolna.net",
+        "zip.radio", "radio-shuffle.com", "shortwaveweb.com",
     }
 
     if kind in social_kinds:
@@ -264,7 +265,13 @@ def beacon_row_allowed(row: list[str]) -> bool:
             return False
         if not social_destination_coherent(name, destination):
             return False
-        return bool(social_positive.search(f"{name} {destination}"))
+        local_media_entity = bool(re.search(
+            r"\b(metropolia|portal|newspaper|gazeta|wiadom\w*|media|magazyn|zeitung|"
+            r"nachrichten|noviny|stadtmagazin|kultura|culture)\b",
+            f"{name} {destination}",
+            re.I,
+        ))
+        return bool(social_positive.search(f"{name} {destination}") or local_media_entity)
 
     if kind in {"podcast", "independent_radio", "local_media"}:
         if d in aggregators or any(d.endswith("." + x) for x in aggregators):

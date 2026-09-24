@@ -191,6 +191,7 @@ MEDIA_AGGREGATOR_DOMAINS = {
     "mixcloud.com", "player.fm", "radio.net", "radio-polska.pl",
     "podchaser.com", "podbean.com", "spotify.com", "soundcloud.com",
     "fm-radio.live", "onlineradiobox.com", "radiolista.pl", "radiovolna.net",
+    "zip.radio", "radio-shuffle.com", "shortwaveweb.com",
 }
 
 RESOURCE_NOISE_DOMAINS = {
@@ -431,7 +432,17 @@ def beacon_candidate_ok(
             return False
         if city and not entity_city_signal(city, name, url, context):
             return False
-        return bool(SOCIAL_ENTITY_RELEVANCE_RE.search(entity_blob) or OUTREACH_SIGNAL_RE.search(evidence_blob))
+        local_media_entity = bool(re.search(
+            r"\b(metropolia|portal|newspaper|gazeta|wiadom\w*|media|magazyn|zeitung|"
+            r"nachrichten|noviny|stadtmagazin|kultura|culture)\b",
+            entity_blob,
+            re.I,
+        ))
+        return bool(
+            SOCIAL_ENTITY_RELEVANCE_RE.search(entity_blob)
+            or OUTREACH_SIGNAL_RE.search(evidence_blob)
+            or local_media_entity
+        )
 
     if kind in MEDIA_KINDS:
         if d in MEDIA_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in MEDIA_AGGREGATOR_DOMAINS):

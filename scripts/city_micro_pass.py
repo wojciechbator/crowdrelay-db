@@ -196,44 +196,25 @@ def social_name(url: str, title: str) -> str:
 def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, city: str) -> bool:
     if not usable_direct_url(url):
         return False
-    path = urlparse(url).path.casefold()
     blob = f"{title} {snippet} {url}"
-    clean_title = norm(title)
-
     if query_kind == "youtube":
-        return path.startswith(("/channel/", "/@", "/c/", "/user/")) and clean_title not in {
-            "youtube", "youtube channel", "log in or sign up"
-        }
-
-    # These queries are explicitly city-scoped and connector-scoped. A direct
-    # social URL is therefore already a materially stronger local signal than
-    # the generic search-engine title. Do not require the engine to echo the
-    # city/genre in the title: Facebook/Instagram/YouTube frequently expose
-    # only a generic title while the slug/path identifies the entity.
+        return urlparse(url).path.casefold().startswith(("/channel/", "/@", "/c/", "/user/"))
     if query_kind == "facebook_groups":
-        return (
-            path.startswith("/groups/")
-            and clean_title not in {"link to facebook.com", "facebook", "log in or sign up"}
+        return "/groups/" in urlparse(url).path.casefold()
+    if query_kind == "facebook_groups":
+        title_low = title.casefold().strip()
+        return "/groups/" in urlparse(url).path.casefold() and title_low not in {
+            "link to facebook.com", "facebook", "log in or sign up"
+        } and (
+            bool(ENTITY_RELEVANCE_RE.search(blob))
+            or ascii_norm(city) in ascii_norm(f"{title} {snippet}")
         )
-
     if query_kind.startswith("facebook"):
-        return (
-            not path.startswith(("/search", "/watch", "/events", "/reel", "/biz/"))
-            and clean_title not in {"link to facebook.com", "facebook", "log in or sign up"}
-        )
-
-    if query_kind in {"instagram", "tiktok", "youtube"}:
-        return clean_title not in {
-            "link to instagram.com", "link to tiktok.com", "youtube",
-            "youtube channel", "log in or sign up"
-        }
-
+        return bool(ENTITY_RELEVANCE_RE.search(blob))
     if query_kind == "creators":
         return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
-
     if query_kind == "culture":
         return bool(re.search(r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b", blob, re.I))
-
     return True
 
 
@@ -242,21 +223,7 @@ def is_newsish(url: str) -> bool:
     return d in NEWSISH_DOMAINS or d.startswith("news.")
 
 
-def city_from_context(context: str) -> str:
-    # Context is assembled from city-scoped search results. This helper extracts
-    # the explicit city marker when available so scoped social results can survive
-    # generic search-engine titles without opening low-quality global pages.
-    return context.split("\x1f", 1)[0] if "\x1f" in context else ""
-
-
-def beacon_candidate_ok(
-    name: str,
-    kind: str,
-    url: str,
-    context: str,
-    allow_non_direct: bool = False,
-    scoped_social: bool = False,
-) -> bool:
+def beacon_candidate_ok(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False) -> bool:
     if not url.startswith("http") or not name:
         return False
 
@@ -266,14 +233,12 @@ def beacon_candidate_ok(
 
     if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
         return False
+    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
+        return False
     if is_newsish(url):
         return False
 
     if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
-        # Do not apply article/page-noise rejection to the entire fetched page
-        # context. Social pages often expose terms, cookie/login and privacy
-        # boilerplate even when the entity itself is perfectly valid.
-        entity_blob = norm(f"{name} {url}")
         if not usable_direct_url(url):
             return False
         if kind == "facebook_community" and not path.startswith("/groups/"):
@@ -283,18 +248,7 @@ def beacon_candidate_ok(
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
-        if NON_ACTIONABLE_TITLE_RE.search(entity_blob):
-            return False
-
-        # A social result reached through an explicitly city-scoped social query
-        # is acceptable even when the platform strips all semantic text from the
-        # result title. Keep hard URL/path checks above as the spam guard.
-        if scoped_social:
-            return True
-        return bool(OUTREACH_SIGNAL_RE.search(entity_blob))
-
-    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
-        return False
+        return bool(OUTREACH_SIGNAL_RE.search(title_blob))
 
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
@@ -976,30 +930,24 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             except Exception:
                 final_url = item["url"]
 
-            # Search engines (especially Bing) can return a redirect/tracking URL.
-            # Decide directness only after resolving it, otherwise valid Facebook /
-            # Instagram / YouTube destinations disappear before qualification.
-            final_candidate = final_url or item["url"]
-            social_query = bool(set(kinds) & {
-                "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
-            })
             is_direct = any(
-                relevant_direct_entity(kind, final_candidate, item.get("title",""), item.get("snippet",""), city)
+                relevant_direct_entity(kind, item["url"], item.get("title",""), item.get("snippet",""), city)
                 for kind in kinds
             )
             if is_direct:
-                page_url, page_title, page_text, links = final_candidate, "", "", []
+                page_url, page_title, page_text, links = item["url"], "", "", []
             else:
-                page_url, page_title, page_text, links = fetch_page(final_candidate, headers)
+                page_url, page_title, page_text, links = fetch_page(final_url, headers)
 
-            final_candidate = page_url or final_candidate
+            final_candidate = page_url or final_url
             search_title = item.get("title", "").strip()
             search_snippet = item.get("snippet", "").strip()
+            social_query = bool(set(kinds) & {
+                "facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"
+            })
             page_local = local_signal(city, page_title or search_title, search_snippet, page_text, final_candidate)
             search_local = local_signal(city, search_title, search_snippet, "", item["url"])
-            # The query itself is city-scoped and connector-scoped. Use the
-            # resolved URL here, not the search-engine wrapper URL.
-            scoped_direct = usable_direct_url(final_candidate) and social_query
+            scoped_direct = usable_direct_url(item["url"]) and social_query
 
             enriched.append({
                 "kinds": kinds,
@@ -1024,17 +972,8 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
     media_kinds = {"local_news", "local_press", "radio", "podcasts"}
 
-    def add_beacon(
-        name: str,
-        kind: str,
-        url: str,
-        context: str,
-        allow_non_direct: bool = False,
-        scoped_social: bool = False,
-    ):
-        if not beacon_candidate_ok(
-            name, kind, url, context, allow_non_direct=allow_non_direct, scoped_social=scoped_social
-        ):
+    def add_beacon(name: str, kind: str, url: str, context: str, allow_non_direct: bool = False):
+        if not beacon_candidate_ok(name, kind, url, context, allow_non_direct):
             return
         found_emails = emails(context)
         conf = confidence(url, "", context)
@@ -1052,7 +991,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         url = item["url"]
         title = item["title"]
         text_body = item["text"]
-        context = f'{city}\x1f{item["search_title"]} {item["snippet"]} {title} {text_body}'
+        context = f'{item["search_title"]} {item["snippet"]} {title} {text_body}'
         kinds = set(item["kinds"])
 
         source_families.update(kinds)
@@ -1089,18 +1028,9 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 kind = "tiktok_creator"
             elif "youtube" in kinds and "youtube.com/" in url:
                 kind = "youtube_channel"
-            generic_social_title = norm(title) in GENERIC_SOCIAL_NAMES or norm(title) in {
-                "link to facebook.com", "link to instagram.com", "log in or sign up"
-            }
-            name = social_name(url, title) if generic_social_title else title
+            name = title if title.casefold() not in {"link to facebook.com","link to instagram.com"} else social_name(url, title)
             if name:
-                add_beacon(
-                    name,
-                    kind,
-                    url,
-                    context,
-                    scoped_social=True,
-                )
+                add_beacon(name, kind, url, context)
 
         if kinds & media_kinds:
             media_kind = (

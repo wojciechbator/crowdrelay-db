@@ -1,0 +1,3 @@
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+berlin festival | Facebook,facebook_page,Berlin,,https://www.facebook.com/Berlinfestival,https://www.facebook.com/Berlinfestival,t,t,t,f,65,85,85
+nybillion | Facebook,facebook_page,Berlin,,https://www.facebook.com/nybillion.band,https://www.facebook.com/nybillion.band,t,t,t,f,65,85,85

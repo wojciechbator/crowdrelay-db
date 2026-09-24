@@ -1,0 +1,213 @@
+{
+  "date": "2026-09-24",
+  "research_version": 14,
+  "pass_id": 11,
+  "batch_size_requested": 4,
+  "batch_complete": true,
+  "candidate_window": 6,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Warsaw"
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź"
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin"
+    },
+    {
+      "country": "Germany",
+      "city": "Dresden"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 40,
+      "direct_leads": 4,
+      "useful": 4,
+      "useful_leads": 4,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 4,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 4,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "events",
+        "podcasts",
+        "radio",
+        "youtube"
+      ],
+      "social_families": [
+        "youtube"
+      ],
+      "media_families": [
+        "podcasts",
+        "radio"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/channel/UCxYlJBmXJeYwsEj5MYSEU9Q",
+        "https://www.youtube.com/channel/UCp4Nq9yUgudKy07gTCMOLwQ",
+        "https://www.facebook.com/wydarzenia.warsawcity.info",
+        "https://www.facebook.com/radiopoland/",
+        "https://www.virtualclubbinglife.com/armina-studio-podcast-warsaw-progressive-house-melodic-techno-mix-4k/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 40,
+      "direct_leads": 5,
+      "useful": 5,
+      "useful_leads": 5,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 5,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 5,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bands",
+        "facebook_page",
+        "local_press",
+        "youtube",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "youtube",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/@zywiolakofficial",
+        "https://music.youtube.com/playlist?list=PLL_yF1jzg44iVHHbyqmdpSsv8R9XrcgAM",
+        "https://www.youtube.com/channel/UCWowDPa2RV6etrQjmarFp1g",
+        "https://www.facebook.com/groups/polishpanzerwarsaw/",
+        "https://www.shazam.com/pl-pl/event/venue/06bd999b-210141523",
+        "https://www.ebilet.pl/muzyka/hard-heavy/tribute-to-metallica",
+        "https://krajownik.pl/lodz/wydarzenia/lodz-czarny-bez-jarzmo-w-ramionach-wiedzmy-4800",
+        "https://www.terazmuzyka.pl/pantera-rozerwala-lodz-na-strzepy-relacja-foto/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 40,
+      "direct_leads": 3,
+      "useful": 4,
+      "useful_leads": 4,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 4,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 2,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bands",
+        "facebook_groups",
+        "facebook_pages",
+        "podcasts"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_pages"
+      ],
+      "media_families": [
+        "podcasts"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/BerlinMusicCommission",
+        "https://www.facebook.com/Berlinfestival",
+        "https://www.facebook.com/nybillion.band"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "Dresden",
+      "raw_results": 40,
+      "direct_leads": 22,
+      "useful": 23,
+      "useful_leads": 23,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 21,
+      "contact_candidates": 2,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 21,
+      "new_contact_candidates": 2,
+      "source_families": [
+        "culture",
+        "events",
+        "facebook_page",
+        "facebook_pages",
+        "instagram",
+        "instagram_creator",
+        "local_press",
+        "promoters",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "facebook_pages",
+        "instagram",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/dresdenwolvesband",
+        "https://www.facebook.com/DresdenBigband/",
+        "https://www.facebook.com/partoutband",
+        "https://www.facebook.com/funkfragment",
+        "https://www.facebook.com/TECHNO.dresden",
+        "https://www.facebook.com/Musikverein.Dresden.71eV/",
+        "https://www.facebook.com/Veranstaltungen.Dresden/",
+        "https://www.instagram.com/hfm_dresden/",
+        "https://www.bandsintown.com/de/e/108921127-mesh-at-kulturzentrum-strasse-e",
+        "https://www.setlist.fm/venue/kulturzentrum-dixiebahnhof-dresden-germany-2bd06872.html",
+        "https://www.saechsische.de/lokales/dresden/unheilig-in-dresden-alle-infos-zu-den-konzerten-am-28-und-29-8-2026-bei-den-filmnaechten-C4EQ46SPD5FRVOIUJZDUBK74FE.html",
+        "https://www.welt.de/politik/deutschland/article136807699/Dresden-Pegida-Anhaenger-und-Gegner-beim-selben-Konzert.html",
+        "https://so-lebt-dresden.de/kulturhaus-freital-wo-kultur-auf-charakter-trifft/",
+        "https://www.canaletto-fest.de/dresden-feiert-drei-tage-voller-musik-begegnungen-und-lebensfreude/",
+        "https://dresdennightlife.de/locations/kulturhaus-freital-3832/rudy-giovannini-konzert-17-10-2026-376627/",
+        "https://www.severoceskafilharmonie.cz/cz/aktuality/dresden/"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 6,
+      "direct_leads": 2,
+      "useful": 2,
+      "source_families": [
+        "facebook_groups"
+      ],
+      "social_families": [
+        "facebook_groups"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ]
+}

@@ -93,6 +93,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import os
           from pathlib import Path
           files = sorted(Path("city_passes").glob("*.json"))
           if not files:

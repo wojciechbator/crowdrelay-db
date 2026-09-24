@@ -1,0 +1,218 @@
+{
+  "date": "2026-09-24",
+  "research_version": 14,
+  "pass_id": 10,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 8,
+  "cities": [
+    {
+      "country": "Germany",
+      "city": "Hamburg"
+    },
+    {
+      "country": "Czechia",
+      "city": "Brno"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Germany",
+      "city": "Hamburg",
+      "raw_results": 76,
+      "direct_leads": 19,
+      "useful": 20,
+      "useful_leads": 20,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 19,
+      "contact_candidates": 1,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 18,
+      "new_contact_candidates": 1,
+      "source_families": [
+        "events",
+        "facebook_groups",
+        "facebook_page",
+        "instagram",
+        "instagram_creator",
+        "local_music_resource",
+        "podcasts",
+        "radio"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "instagram",
+        "instagram_creator"
+      ],
+      "media_families": [
+        "podcasts",
+        "radio"
+      ],
+      "evidence_urls": [
+        "https://www.instagram.com/reel/CuCkfgupPrS/",
+        "https://news.google.com/rss/articles/CBMi3AFBVV95cUxOLWxjbjdzUHBUbUI4eUNjQzlIYlNaRGV0RUJqR0lvWEFzb1Q2YnM3VjZDeFZiVzZGanZKNnlELUNaZWstdXJkWW5vMjFYS1RjTU5vNm0yTktKalJSTlkzZTQ2dTA3ckYyMHpkcmpta1NZQVV5dHV6anVXbFByVmNjUzlQdWdINzk3WHVES0VxVnJvVzBQRU9MTU00b2FMTlZpMno5dERpV3dFOUR2SkNNZmc1QU10c1ZkMjdUVnl5ZmtsT3NqcnJ0QXJINmlLTTR3VE44eHlEaHR4d19L?oc=5&hl=pl&gl=PL&ceid=PL:pl",
+        "https://news.google.com/rss/articles/CBMikAFBVV95cUxNV3hNSGxzS3BSY1RFSW1PQ1VicXkwSTBVQzZJd2kxRThhZHVtVnBJQm9XOFR2emQxLXpzbUNjYUZyYXBDWXFhN0k3R1lXYUlJYVVGUlVZbTJtSU5uLUs1VGNWWWNnZFAtaEIxV0JSdkdab0JtWlBoaGgxQlIwNm1PMWc2T2lyLTBVNU9ielQ1VXo?oc=5&hl=pl&gl=PL&ceid=PL:pl",
+        "https://news.google.com/rss/articles/CBMipAFBVV95cUxPdFVBdHhvZWowcXc3cm1ZSVdkRFYzdzgyNUV2X1BuZm9NMlc4Qjc2bERwVnVGdTRtcTZwaHhtY2ZJb1pxOHg4cVBPUXpxQVI2dm9SUzE4VDV2ZV9FVkoxeWVUZkh0VlR3bGtXVjBqSklNeHlrUVdvSnFGWGROWjVBV0VsWVJHcXlvSU1WcmRkNzF3VElZeVZjdnNqNHVlYk9TLThudQ?oc=5&hl=pl&gl=PL&ceid=PL:pl",
+        "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQNEsyczlKdXpUOWUyYVF2QjJSemMwSU5lcU1EYy1wUFJuWHFNTEt6QnZmTk1pVmh2TUowVmFOaDR2QUdtOEg4Zkp4MmlhLThuVHhLdDUxdjNQcUVCUXJ3MmRMalVoLVFtQ2J1d0E1SDdVOUJqdEVxdW83V0pYOVp4SU5LZGlISVRh?oc=5&hl=pl&gl=PL&ceid=PL:pl",
+        "https://www.facebook.com/halfmeband",
+        "https://www.facebook.com/downtownbigbandhamburg/",
+        "https://www.facebook.com/people/Cruvior/61584214396900/",
+        "https://www.facebook.com/ErikaBandHamburg/",
+        "https://www.facebook.com/robotrontrio",
+        "https://www.facebook.com/login/?next=https%3A%2F%2Fwww.facebook.com%2Fcount.ii.zero%2F",
+        "https://hamburg.t-online.de/region/hamburg/id_100747022/hamburg-linkin-park-geben-2026-konzert-im-volksparkstadion.html",
+        "https://www.hamburg040.com/events/2026/heute-in-hamburg-ausstellungen-theater-konzerte-am-20-und-21-04-2026/93748",
+        "https://www.arnoldreisen.de/reiseprogramm/klassik-in-hamburg-1-veranstaltung/",
+        "https://www.tiktok.com/discover/kommende-konzerte-2026-hamburg",
+        "https://wheretopodcast.com/podcast-studios/hamburg-hh"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Brno",
+      "raw_results": 40,
+      "direct_leads": 13,
+      "useful": 13,
+      "useful_leads": 13,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 13,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 13,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "events",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "local_press",
+        "tiktok_creator",
+        "youtube",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/people/N%C3%B3taband-Brno/100086177749348/",
+        "https://www.facebook.com/people/Sva%C5%A5a-Kotas-band/61578029446943/",
+        "https://www.facebook.com/people/Hudba-Rex-Brno/61590014917821/",
+        "https://www.facebook.com/www.smokietributeband.sk/videos/brno-hity-smokie-a-chrise-normana-live-koncert/1554291629335451/",
+        "https://www.facebook.com/people/Ko%C5%A1t/100087286954006/",
+        "https://www.youtube.com/@KytarovkaBrno",
+        "https://www.facebook.com/people/Metropol-kapela-hudebn%C3%AD-skupina-%C5%BEiv%C3%A1-hudba/100063871740244/",
+        "https://www.youtube.com/channel/UCqTyJOgVUjZ2oUj-OMxmBHA",
+        "https://www.youtube.com/channel/UCBViJ9VjVz3TpV80pk5teGA",
+        "https://goout.net/cs/brno/koncerty/lezjyvlkkzf/"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 28,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [
+        "radio"
+      ],
+      "social_families": [],
+      "media_families": [
+        "radio"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 2,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 60,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [
+        "radio"
+      ],
+      "social_families": [],
+      "media_families": [
+        "radio"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Dresden",
+      "raw_results": 26,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [
+        "radio"
+      ],
+      "social_families": [],
+      "media_families": [
+        "radio"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Ostrava",
+      "raw_results": 42,
+      "direct_leads": 13,
+      "useful": 15,
+      "source_families": [
+        "bands",
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ]
+}

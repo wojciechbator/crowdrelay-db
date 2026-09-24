@@ -1,0 +1,241 @@
+{
+  "date": "2026-09-24",
+  "research_version": 8,
+  "pass_id": 8,
+  "batch_size_requested": 4,
+  "candidate_window": 8,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz"
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw"
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź"
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 40,
+      "direct_leads": 11,
+      "useful": 12,
+      "useful_leads": 12,
+      "quality_ok": true,
+      "peer_candidates": 1,
+      "beacon_candidates": 11,
+      "contact_candidates": 0,
+      "new_peer_candidates": 1,
+      "new_beacon_candidates": 11,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bands",
+        "events",
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "local_press",
+        "promoters",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/bydgoszczmusic",
+        "https://bandcamp.com/emuss",
+        "https://www.facebook.com/bydgoszczcom/",
+        "https://www.facebook.com/czystekbydgoszcz/",
+        "https://www.facebook.com/BydgoszczArchers",
+        "https://www.facebook.com/bim.bydgoszcz",
+        "https://www.facebook.com/CelitBydgoszcz",
+        "https://www.facebook.com/bydgoszczskupaut/",
+        "https://www.instagram.com/none.band/",
+        "https://www.facebook.com/pages/Glinki-Bydgoszcz-Poland/116889248321881/",
+        "https://www.muzilla.pl/koncert-koncert-walentynkowy-polish-gentlemen-27969/",
+        "https://koleo.pl/pkp-intercity/rozklad-jazdy"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 40,
+      "direct_leads": 6,
+      "useful": 7,
+      "useful_leads": 7,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 6,
+      "contact_candidates": 1,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 6,
+      "new_contact_candidates": 1,
+      "source_families": [
+        "culture",
+        "facebook_page",
+        "instagram_creator",
+        "promoters",
+        "radio",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "radio"
+      ],
+      "evidence_urls": [
+        "https://warsawnow.pl/wolska-jesien-kultury-koncert-zespolu-lemon/",
+        "https://www.tiktok.com/discover/od-ilu-lat-mozna-isc-na-koncert-the-weeknd-poland",
+        "https://discover.events.com/pl/wojewodztwo-mazowieckie/wawer/p/twojekoncertypl-10003998398",
+        "https://warsawmusicfestival.com/",
+        "https://tiesto.abilet.pl/",
+        "https://warsawinsider.pl/culture/",
+        "https://www.setlist.fm/venue/centrum-kultury-wilanow-warsaw-poland-3bd26078.html",
+        "https://allevents.in/warsaw",
+        "https://agencja-informacyjna.com/zblizaja-sie-16-targi-china-homelife-poland/",
+        "https://ticketshop.eu/en/events/107173",
+        "https://mapy.com/pl/?source=osm&id=1043681781",
+        "https://www.youtube.com/watch?v=Q6UozRvfKHk",
+        "https://mapy.com/pl/?source=osm&id=1001880405",
+        "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNWFg1Ynl6Sy1VMlFCSUhrc1FOMEZYWXZJVmpGd3V1cEdVTmVIdXRzSTVKZmg5WUJrUHU4UjVTVFhXSmlqZzBjeGdScXprQU53d0tUdGFWY1U4SlFtcnUydFBHdkx0X3VPMHREaGJGQ0RCXzlQd3lXLUVYa2FlR3doNzR6VnBqd2U5YnpBV2ZlTS1lOHU1Z1NTNmNMUXRoVmRBVzU2Z2I4bUJGQQ?oc=5&hl=pl&gl=PL&ceid=PL:pl"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 80,
+      "direct_leads": 33,
+      "useful": 35,
+      "useful_leads": 35,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 29,
+      "contact_candidates": 6,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 28,
+      "new_contact_candidates": 6,
+      "source_families": [
+        "culture",
+        "events",
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "local_press",
+        "promoters",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_press"
+      ],
+      "evidence_urls": [
+        "https://www.tiktok.com/@ticketmaster_polska/video/7614103644010597635",
+        "https://www.facebook.com/KlubZartyZartami/info",
+        "https://www.instagram.com/citylodz/",
+        "https://www.setlist.fm/venue/odzki-dom-kultury-od-poland-73d46eed.html",
+        "https://lodz.travel/cz/turistika/akce-v-lodzi/",
+        "https://kultura.wp.pl/10-dni-45-wydarzen-i-20-lokalizacji-w-calym-miescie-czyli-lodz-wielu-kultur-7202982429194848a",
+        "https://innpoland.pl/228979,przed-nami-lodz-summer-festival-idealna-darmowa-impreza-dla-fanow-muzyki",
+        "https://taniecpolska.pl/wydarzenia/lodz-ec1-lodz-miasto-kultury-body-music-koncert-muzyki-interaktywnej/",
+        "https://wytwornia.pl/",
+        "https://www.koncertniepodleglosci.pl/eng/",
+        "https://biletyna.pl/koncert/Poluzjanci/Lodz",
+        "https://atlasarena.pl/lodz-summer-festival-prezentuje-miasteczko-festiwalowe-oraz-przedstawia-dekalog-odpowiedzialnego-festiwalowicza/",
+        "https://cgm.pl/news/lodz-summer-festival-2026-przeszedl-do-historii-najwiekszy-festiwal-miejski-w-polsce-przyciagnal-tlumy/",
+        "https://lodz.tvp.pl/48026683/branza-rozrywkowa-w-zawieszeniu-organizatorzy-koncertow-maja-problemy",
+        "https://www.centrumdialogu.com/we-world-orchestra-grzech-piotrowski-koncert-otwarcia-festiwalu-lodz-wielu-kultur",
+        "https://shiningbeats.pl/sa-nowi-organizatorzy-dwoch-koncertow-ktore-we-wrzesniu-mial-organizowac-follow-the-step/",
+        "https://wlodekpawlik.com/",
+        "https://calendar.duolife.eu/en",
+        "https://www.facebook.com/groups/1429349763952309/permalink/2492701604283781/",
+        "https://www.facebook.com/61556261233299/videos/prawie-200-lat-historii-zapisanej-na-dunajcu-%EF%B8%8Fdzi%C5%9B-sp%C5%82yw-prze%C5%82omem-dunajca-jest-/28460429496909111/",
+        "https://www.shazam.com/pl-pl/event/0239e42c-3e1d-4f54-8cf1-590f9dcc835c",
+        "https://allevents.in/lodz-pl/this-weekend",
+        "https://www.tiktok.com/discover/lodz-simmer-festival-2026-kto-bedzie",
+        "https://goout.net/cs/dariusz-pietrzykowski/pziqsgg/"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 40,
+      "direct_leads": 9,
+      "useful": 9,
+      "useful_leads": 9,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 9,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 9,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bands",
+        "culture",
+        "events",
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "local_press",
+        "radio",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_groups",
+        "facebook_page",
+        "facebook_pages",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_press",
+        "radio"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/BerlinMusicCommission",
+        "https://www.facebook.com/musikatelier.Berlin/",
+        "https://www.facebook.com/wunderhaar.berlin",
+        "https://www.facebook.com/murtuma.berlin",
+        "https://www.rollingstone.de/metallica-berliner-olympiastadion-konzert-3148307/",
+        "https://gdi.berlin.de/"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": []
+}

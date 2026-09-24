@@ -93,6 +93,57 @@ SOCIAL_AGGREGATOR_DOMAINS = {
     "rollingstone.de", "rollingstone.com", "news.google.com",
 }
 
+COUNTRY_CC_TLD = {
+    "poland": ".pl",
+    "germany": ".de",
+    "czechia": ".cz",
+    "slovakia": ".sk",
+}
+
+
+def country_domain_matches(country: str, url: str) -> bool:
+    from urllib.parse import urlparse
+    d = urlparse(str(url or "")).netloc.casefold().removeprefix("www.")
+    if not d:
+        return False
+    expected = COUNTRY_CC_TLD.get(norm(country))
+    if not expected:
+        return True
+    parts = d.split(".")
+    return not (len(parts) >= 2 and len(parts[-1]) == 2) or d.endswith(expected)
+
+
+ARTICLEISH_TITLE_RE = re.compile(
+    r"\b(review|recenzja|relacja|interview|wywiad|reportaż|reportage|"
+    r"news|nachrichten|actualit|aktuality|mix|playlist|episode|odcinek)\b",
+    re.I,
+)
+
+
+def looks_like_article_page(url: str, title: str) -> bool:
+    from urllib.parse import urlparse
+    path = urlparse(str(url or "")).path.casefold()
+    if path.endswith((".html", ".htm")):
+        return True
+    if re.search(r"/(news|article|articles|story|stories|blog|review|interview|relacja|wywiad|aktuality)(/|$)", path):
+        return True
+    if re.search(r"/20\d{2}(?:[-_/]\d{1,2})", path):
+        return True
+    segments = [x for x in path.split("/") if x]
+    return len(segments) >= 4 and bool(ARTICLEISH_TITLE_RE.search(title))
+
+
+def city_entity_signal(city: str, name: str, url: str, extra: str = "") -> bool:
+    target = norm(city)
+    if not target:
+        return False
+    blob = norm(f"{name} {url} {extra}")
+    if target in blob:
+        return True
+    tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
+    return bool(tokens) and all(token in blob for token in tokens)
+
+
 
 def city_pass_pending_allowed(csv_path: Path) -> bool:
     match = CITY_PASS_PENDING_RE.match(csv_path.name)
@@ -162,10 +213,11 @@ def beacon_row_allowed(row: list[str]) -> bool:
             ok = d == "youtube.com" and path.startswith(("/channel/", "/@", "/c/", "/user/"))
         if not ok or norm(name) in GENERIC_SOCIAL_NAMES:
             return False
-        positive = bool(SOCIAL_POSITIVE_RE.search(blob))
-        city_tokens = [x for x in re.findall(r"[a-z0-9]+", norm(city)) if len(x) >= 4]
-        city_blob = norm(f"{name} {url} {blob}")
-        local = bool(city_tokens) and all(token in city_blob for token in city_tokens)
+        # Do not treat the canonical City column as evidence that the entity
+        # belongs to that city. Check the entity name/URL only.
+        entity_blob = f"{name} {url}"
+        positive = bool(SOCIAL_POSITIVE_RE.search(entity_blob))
+        local = city_entity_signal(city, name, url)
         return local and positive
 
     if kind == "event_calendar":
@@ -173,14 +225,26 @@ def beacon_row_allowed(row: list[str]) -> bool:
             return False
         if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
             return False
-        if re.search(r"\b(kritik|review|interview|news|nachrichten|article|blog|recenzja)\b", norm(name), re.I):
+        if re.search(r"\b(kritik|review|interview|news|nachrichten|article|blog|recenzja|mix|playlist)\b", norm(name), re.I):
             return False
-        if re.search(r"/(news|article|blog|story|review|interview)/", path):
+        if re.search(r"/(news|article|blog|story|review|interview|event|events|koncert|concert)/", path):
+            return False
+        if looks_like_article_page(url, name):
+            return False
+        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
             return False
         return bool(re.search(r"\b(calendar|kalendarz|events|event|koncert|koncerty|concert|veranstaltung|podujatia)\b", low, re.I))
 
     if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
         return False
+
+    if kind in {"podcast", "local_media", "independent_radio", "event_calendar", "cultural_hub", "promoter", "local_creator", "local_music_resource"}:
+        if city and not city_entity_signal(city, name, url):
+            return False
+        if country and not country_domain_matches(country, url):
+            return False
+        if looks_like_article_page(url, name):
+            return False
 
     terms = {
         "independent_radio": r"radio|rádio|radiostacja|musik|music|muzy|koncert|concert",

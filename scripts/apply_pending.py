@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import re
 import shutil
 from datetime import date
@@ -164,6 +165,36 @@ def norm(v: object) -> str:
     if v is None:
         return ""
     return str(v).strip().casefold()
+
+
+def norm_entity(v: object) -> str:
+    """Entity-key normalization: whitespace-collapsed, so 'Club  Foo' and
+    'club foo' resolve to one key. Kept separate from cell-level `norm` so
+    display values keep their original spacing."""
+    return re.sub(r"\s+", " ", norm(v))
+
+
+def canon_url(url: object) -> str:
+    """Key-form URL: no scheme, no www., no trailing slash. Two rows linking
+    the same page must dedupe even when one was copied with a slash."""
+    from urllib.parse import urlparse
+    try:
+        raw = str(url or "").strip()
+        p = urlparse(raw if "//" in raw else "//" + raw)
+        host = p.netloc.casefold().removeprefix("www.")
+        path = p.path.rstrip("/")
+        return host + path if host else norm(url)
+    except Exception:
+        return norm(url)
+
+
+def save_workbook_atomic(wb, path: Path) -> None:
+    """openpyxl writes the zip in place; a crash mid-save leaves a truncated
+    database.xlsx. Write beside it and rename — os.replace is atomic on the
+    same filesystem."""
+    tmp = path.with_name(path.name + ".tmp")
+    wb.save(tmp)
+    os.replace(tmp, path)
 
 
 def row_sig(row: list[object]) -> tuple[str, ...]:
@@ -457,6 +488,186 @@ def apply_removals(wb, csv_path: Path) -> int:
     return removed
 
 
+# Entity keys per sheet, in priority order — the first column set fully
+# present in the CSV header wins. Contacts fall back to (name, organization)
+# when the email cell is empty. Anything else keys on its first column.
+ENTITY_KEY_COLS = {
+    "Venues": [("name", "city")],
+    "Booking Agents": [("name", "agency"), ("name",)],
+    # A beacon's channel is its identity: name spellings drift between passes
+    # ("X" vs "X - muno.pl") while the destination URL stays stable. Same
+    # keying the emitter's dedupe uses.
+    "Beacons": [("kind", "city", "destination_url")],
+    "Contacts": [("email",), ("name", "organization")],
+}
+
+
+def entity_key(sheet: str, header: list[str], row: list[str]) -> tuple[str, ...]:
+    header_norm = [norm(h) for h in header]
+    for colset in ENTITY_KEY_COLS.get(sheet, []):
+        idxs = [header_norm.index(c) for c in colset if c in header_norm]
+        if len(idxs) != len(colset):
+            continue
+        key = tuple(
+            canon_url(row[i]) if "url" in colset[j] or colset[j] == "website"
+            else norm_entity(row[i])
+            for j, i in enumerate(idxs)
+        )
+        if all(key):
+            return key
+    if "name" in header_norm and norm_entity(row[header_norm.index("name")]):
+        return (norm_entity(row[header_norm.index("name")]),)
+    return row_sig(row)
+
+
+def process_pending_file(wb, csv_path: Path) -> tuple[int, str, bool]:
+    """Apply one pending CSV to the workbook. Returns (rows, action, changed).
+    Raises on malformed files — the caller quarantines the file and reloads
+    the workbook, so a raise anywhere here never lands a partial write."""
+    if csv_path.name.startswith("Removals__"):
+        removed = apply_removals(wb, csv_path)
+        return removed, "removed", removed > 0
+
+    # Audit / research Peer Bands deltas can use either the legacy 17-column
+    # audit header or the canonical 15-column city-pass header. Map by header
+    # names instead of requiring an exact-width workbook header.
+    if csv_path.name.startswith("Audit_Peer_Bands__") or csv_path.name.startswith("Peer_Bands__"):
+        header, data = load_csv(csv_path)
+        canonical = [
+            "Name","Country","City","Genre","Email","Social","Website","Source_URL",
+            "Activity","Research_Date","Confidence","Contact_Type","Contact_Source",
+            "Outreach_Readiness","Notes"
+        ]
+        legacy = [
+            "Name","Country","City","Genre","Email","Social","Website","Links",
+            "Source_URL","Activity","Research_Date","Status","Confidence",
+            "Contact_Type","Contact_Source","Outreach_Readiness","Notes"
+        ]
+        header_norm = [norm(x) for x in header]
+        if header_norm not in ([norm(x) for x in canonical], [norm(x) for x in legacy]):
+            raise RuntimeError(f"Invalid Peer Bands delta header in {csv_path}: {header}")
+
+        ws = wb["Peer Bands"]
+        header_row = find_existing_header_row(ws)
+        workbook_headers = [
+            norm(ws.cell(header_row, c).value)
+            for c in range(1, ws.max_column + 1)
+        ]
+        col_by_name = {name: i + 1 for i, name in enumerate(workbook_headers) if name}
+        if any(norm(h) not in col_by_name for h in header):
+            missing = [h for h in header if norm(h) not in col_by_name]
+            raise RuntimeError(f"Peer Bands workbook missing columns for {csv_path}: {missing}")
+
+        # Two bands share a name legitimately — "Utopia" exists in more than
+        # one city. The upsert key is (name, city), so a re-researched band
+        # updates its own row instead of overwriting a same-named band
+        # elsewhere or appending a duplicate.
+        name_col = col_by_name["name"]
+        city_col = col_by_name.get("city")
+        row_by_key = {}
+        for row_no in range(header_row + 1, ws.max_row + 1):
+            key = (
+                norm_entity(ws.cell(row_no, name_col).value),
+                norm_entity(ws.cell(row_no, city_col).value) if city_col else "",
+            )
+            if key[0]:
+                if key in row_by_key:
+                    print(
+                        f"WARN duplicate Peer Band key in canonical DB: "
+                        f"{ws.cell(row_no, name_col).value!r} / "
+                        f"{ws.cell(row_no, city_col).value if city_col else ''!r} "
+                        f"(rows {row_by_key[key]}, {row_no}) — updating the first"
+                    )
+                else:
+                    row_by_key[key] = row_no
+
+        # Validate every row before writing any: an empty name must reject
+        # the file, not leave half its rows applied.
+        rows = []
+        for raw in data:
+            if not raw or not any(norm(x) for x in raw):
+                continue
+            row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
+            if CITY_PASS_PENDING_RE.match(csv_path.name) and not peer_row_allowed(row):
+                print(f"CITY_PASS_DROP Peer Bands {csv_path.name}: {row[0]!r}")
+                continue
+            key = (
+                norm_entity(row[0]),
+                norm_entity(row[2]) if len(row) > 2 else "",
+            )
+            if not key[0]:
+                raise RuntimeError(f"Peer Bands row has empty Name: {raw}")
+            rows.append((key, row))
+
+        updated = 0
+        for key, row in rows:
+            row_no = row_by_key.get(key)
+            if row_no is None:
+                ws.append([""] * ws.max_column)
+                row_no = ws.max_row
+                row_by_key[key] = row_no
+            for csv_col, value in zip(header, row):
+                # An empty CSV cell means "no data this pass" — never erase a
+                # populated workbook cell. Removals are the only erase path.
+                if norm(value):
+                    ws.cell(row_no, col_by_name[norm(csv_col)]).value = value
+            updated += 1
+        return updated, "upserted", updated > 0
+
+    prefix = csv_path.name.split("__", 1)[0]
+    sheet = SHEET_MAP.get(prefix)
+    if not sheet:
+        print(f"SKIP {csv_path.name}: no sheet for prefix {prefix!r}")
+        return 0, "skipped-unknown-prefix", False
+    if sheet not in wb.sheetnames:
+        raise RuntimeError(f"Missing sheet {sheet!r}")
+
+    header, data = load_csv(csv_path)
+    ws = wb[sheet]
+    header_row = find_header_row(ws, header)
+    start_data_row = header_row + 1
+
+    # Dedupe on the entity key, not the whole row: a venue re-researched with
+    # a new Confidence_Pct or Source_URL is the same venue. On a key match the
+    # incoming row fills empty cells and refreshes populated ones; only a new
+    # entity appends a row.
+    row_by_key = {}
+    for row_no in range(start_data_row, ws.max_row + 1):
+        existing_row = [ws.cell(row_no, c).value for c in range(1, len(header) + 1)]
+        if any(norm(v) for v in existing_row):
+            row_by_key.setdefault(entity_key(sheet, header, [norm(v) for v in existing_row]), row_no)
+
+    added = 0
+    updated_rows = 0
+    for raw in data:
+        row = raw[: len(header)] + [""] * max(0, len(header) - len(raw))
+        if CITY_PASS_PENDING_RE.match(csv_path.name):
+            if sheet == "Beacons" and not beacon_row_allowed(row):
+                print(f"CITY_PASS_DROP Beacons {csv_path.name}: {row[0]!r}")
+                continue
+            if sheet == "Contacts" and not contact_row_allowed(row):
+                print(f"CITY_PASS_DROP Contacts {csv_path.name}: {row[0]!r}")
+                continue
+        key = entity_key(sheet, header, row)
+        row_no = row_by_key.get(key)
+        if row_no is None:
+            ws.append(row)
+            row_by_key[key] = ws.max_row
+            added += 1
+        else:
+            merged = False
+            for i, value in enumerate(row):
+                if norm(value):
+                    cell = ws.cell(row_no, i + 1)
+                    if cell.value != value:
+                        cell.value = value
+                        merged = True
+            if merged:
+                updated_rows += 1
+
+    return added + updated_rows, "applied", added > 0 or updated_rows > 0
+
+
 def main() -> None:
     if not DB.exists():
         raise RuntimeError("database.xlsx is missing")
@@ -475,119 +686,32 @@ def main() -> None:
             print(f"Rejected legacy city-pass pending file: {csv_path.name}")
             continue
 
-        if csv_path.name.startswith("Removals__"):
-            removed = apply_removals(wb, csv_path)
-            if removed:
-                changed = True
-            applied.append((csv_path, removed, "removed"))
+        # Per-file isolation: a malformed CSV must not freeze the queue.
+        # The failed file is quarantined with its error and the workbook is
+        # reloaded, discarding any partial writes it made — earlier files were
+        # already saved below, so the reload loses nothing committed.
+        try:
+            count, action, file_changed = process_pending_file(wb, csv_path)
+        except Exception as exc:
+            rejected_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(csv_path), str(rejected_dir / csv_path.name))
+            (rejected_dir / f"{csv_path.name}.error.txt").write_text(
+                f"{type(exc).__name__}: {exc}\n", encoding="utf-8"
+            )
+            print(f"REJECTED {csv_path.name}: {exc}")
+            wb = load_workbook(DB)
             continue
 
-        # Audit / research Peer Bands deltas can use either the legacy 17-column
-        # audit header or the canonical 15-column city-pass header. Map by header names
-        # instead of requiring an exact-width workbook header.
-        if csv_path.name.startswith("Audit_Peer_Bands__") or csv_path.name.startswith("Peer_Bands__"):
-            header, data = load_csv(csv_path)
-            canonical = [
-                "Name","Country","City","Genre","Email","Social","Website","Source_URL",
-                "Activity","Research_Date","Confidence","Contact_Type","Contact_Source",
-                "Outreach_Readiness","Notes"
-            ]
-            legacy = [
-                "Name","Country","City","Genre","Email","Social","Website","Links",
-                "Source_URL","Activity","Research_Date","Status","Confidence",
-                "Contact_Type","Contact_Source","Outreach_Readiness","Notes"
-            ]
-            header_norm = [norm(x) for x in header]
-            if header_norm not in ([norm(x) for x in canonical], [norm(x) for x in legacy]):
-                raise RuntimeError(f"Invalid Peer Bands delta header in {csv_path}: {header}")
-
-            ws = wb["Peer Bands"]
-            header_row = find_existing_header_row(ws)
-            workbook_headers = [
-                norm(ws.cell(header_row, c).value)
-                for c in range(1, ws.max_column + 1)
-            ]
-            col_by_name = {name: i + 1 for i, name in enumerate(workbook_headers) if name}
-            if any(norm(h) not in col_by_name for h in header):
-                missing = [h for h in header if norm(h) not in col_by_name]
-                raise RuntimeError(f"Peer Bands workbook missing columns for {csv_path}: {missing}")
-
-            name_col = col_by_name["name"]
-            row_by_name = {}
-            for row_no in range(header_row + 1, ws.max_row + 1):
-                key = norm(ws.cell(row_no, name_col).value)
-                if key:
-                    if key in row_by_name:
-                        raise RuntimeError(
-                            f"Duplicate Peer Band name in canonical DB: "
-                            f"{ws.cell(row_no, name_col).value!r}"
-                        )
-                    row_by_name[key] = row_no
-
-            updated = 0
-            for raw in data:
-                if not raw or not any(norm(x) for x in raw):
-                    continue
-                row = raw[:len(header)] + [""] * max(0, len(header) - len(raw))
-                if CITY_PASS_PENDING_RE.match(csv_path.name) and not peer_row_allowed(row):
-                    print(f"CITY_PASS_DROP Peer Bands {csv_path.name}: {row[0]!r}")
-                    continue
-                key = norm(row[0])
-                if not key:
-                    raise RuntimeError(f"Peer Bands row has empty Name: {raw}")
-                row_no = row_by_name.get(key)
-                if row_no is None:
-                    ws.append([""] * ws.max_column)
-                    row_no = ws.max_row
-                    row_by_name[key] = row_no
-                for csv_col, value in zip(header, row):
-                    ws.cell(row_no, col_by_name[norm(csv_col)]).value = value
-                updated += 1
-                changed = True
-
-            applied.append((csv_path, updated, "upserted"))
-            continue
-
-        prefix = csv_path.name.split("__", 1)[0]
-        sheet = SHEET_MAP.get(prefix)
-        if not sheet:
-            continue
-        if sheet not in wb.sheetnames:
-            raise RuntimeError(f"Missing sheet {sheet!r}")
-
-        header, data = load_csv(csv_path)
-        ws = wb[sheet]
-        header_row = find_header_row(ws, header)
-        start_data_row = header_row + 1
-
-        existing = set()
-        for row in ws.iter_rows(
-            min_row=start_data_row,
-            max_row=ws.max_row,
-            max_col=len(header),
-            values_only=True,
-        ):
-            existing.add(row_sig(list(row)))
-
-        added = 0
-        for raw in data:
-            row = raw[: len(header)] + [""] * max(0, len(header) - len(raw))
-            if CITY_PASS_PENDING_RE.match(csv_path.name):
-                if sheet == "Beacons" and not beacon_row_allowed(row):
-                    print(f"CITY_PASS_DROP Beacons {csv_path.name}: {row[0]!r}")
-                    continue
-                if sheet == "Contacts" and not contact_row_allowed(row):
-                    print(f"CITY_PASS_DROP Contacts {csv_path.name}: {row[0]!r}")
-                    continue
-            sig = row_sig(row)
-            if sig in existing:
-                continue
-            ws.append(row)
-            existing.add(sig)
-            added += 1
+        if file_changed:
+            save_workbook_atomic(wb, DB)
             changed = True
-
-        applied.append((csv_path, added, "added"))
+        if action == "skipped-unknown-prefix":
+            rejected_dir.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(csv_path), str(rejected_dir / csv_path.name))
+        else:
+            APPLIED.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(csv_path), str(APPLIED / csv_path.name))
+        applied.append((csv_path, count, action))
 
     # Idempotent CityPass safety pass. Re-check archived CityPass rows so bad records
     # from an older run are removed from the canonical workbook on the next apply.
@@ -667,14 +791,7 @@ def main() -> None:
         print(f"CITY_PASS_CLEANUP removed={dropped}")
 
     if changed:
-        wb.save(DB)
-
-    if applied:
-        APPLIED.mkdir(parents=True, exist_ok=True)
-        for path, _, action in applied:
-            if action == "rejected-legacy-city-pass":
-                continue
-            shutil.move(str(path), str(APPLIED / path.name))
+        save_workbook_atomic(wb, DB)
 
     print(f"pending_files={len(applied)} changed={changed}")
     for path, count, action in applied:

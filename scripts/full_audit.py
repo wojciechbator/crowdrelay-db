@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-import html
 import json
 import os
 import re
@@ -66,7 +65,7 @@ BAD_DOMAINS = {
     "walmart.com",
     "un.org",
     "tiktok.com",
-    "websud...".replace("...", "ok"),
+    "websudoku.com",
 }
 
 
@@ -106,7 +105,11 @@ def relevant(name: str, item: dict, query_kind: str) -> tuple[bool, int]:
     domain = result_domain(url)
     n = norm(name)
 
-    if not (n == title or n in title or (len(n) >= 6 and n in snippet)):
+    # Word-boundary match, not substring: "Cult" must not KEEP a page titled
+    # "Culture events in Berlin" — short names inside longer words were the
+    # source of false-positive KEEPs.
+    name_in_title = bool(re.search(r"\b" + re.escape(n) + r"\b", title)) if n else False
+    if not (n == title or name_in_title or (len(n) >= 6 and n in snippet)):
         return False, 0
 
     if domain in BAD_DOMAINS or any(domain.endswith("." + d) for d in BAD_DOMAINS):
@@ -389,18 +392,23 @@ def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> 
         values[idx["Country"] - 1] = r["Verified_Country"] or values[idx["Country"] - 1]
         values[idx["Genre"] - 1] = r["Verified_Genre"] or values[idx["Genre"] - 1]
         values[idx["Research_Date"] - 1] = TODAY
-        values[idx["Status"] - 1] = r["Verified_Status"] or (
-            "Needs verification" if r["Decision"] == "REVIEW" else "Active"
+        # An inconclusive re-audit must not downgrade fields a previous audit
+        # verified — only fill the marker when the cell is empty. REMOVE rows
+        # are deleted separately; REVIEW keeps what was already known.
+        review_only = r["Decision"] != "KEEP"
+        values[idx["Status"] - 1] = r["Verified_Status"] or values[idx["Status"] - 1] or (
+            "Needs verification" if review_only else "Active"
         )
         values[idx["Activity"] - 1] = (
             "2025/2026 activity verified"
             if r["Decision"] == "KEEP"
-            else "Needs current activity verification"
+            else values[idx["Activity"] - 1] or "Needs current activity verification"
         )
         values[idx["Confidence"] - 1] = (
-            r["Confidence_New"] if r["Decision"] == "KEEP" else "Low"
+            r["Confidence_New"] if r["Decision"] == "KEEP"
+            else values[idx["Confidence"] - 1] or "Low"
         )
-        values[idx["Contact_Source"] - 1] = r["Verified_Source"]
+        values[idx["Contact_Source"] - 1] = r["Verified_Source"] or values[idx["Contact_Source"] - 1]
 
         for col_no, value in enumerate(values, start=1):
             ws.cell(row_no, col_no).value = value
@@ -495,7 +503,9 @@ def main() -> None:
 
     if os.environ.get("APPLY_AUDIT") == "1":
         kept, removed, reviewed = update_batch_in_place(ws, headers, results)
-        wb.save(REPO_DB)
+        tmp = REPO_DB.with_name(REPO_DB.name + ".tmp")
+        wb.save(tmp)
+        os.replace(tmp, REPO_DB)
         print(
             f"PEER_AUDIT_APPLIED kept={kept} removed={removed} review={reviewed}"
         )

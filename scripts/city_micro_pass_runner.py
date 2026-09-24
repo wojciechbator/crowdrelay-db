@@ -9,12 +9,12 @@ module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
 # Revalidate priority cities whenever the lead-quality rules change.
-module.PASS_FORMAT_VERSION = 15
+module.PASS_FORMAT_VERSION = 16
 module.FORCED_CITY_MIN_VERSION = {
-    "poland::bydgoszcz": 15,
-    "poland::warsaw": 15,
-    "poland::łódź": 15,
-    "germany::berlin": 15,
+    "poland::bydgoszcz": 16,
+    "poland::warsaw": 16,
+    "poland::łódź": 16,
+    "germany::berlin": 16,
 }
 
 module.main()

@@ -29,7 +29,8 @@ jobs:
       CITY_MIN_USEFUL_LEADS: "4"
       CITY_MIN_SOURCE_FAMILIES: "3"
       CITY_MIN_SOCIAL_FAMILIES: "1"
-      CITY_MIN_MEDIA_FAMILIES: "1"
+      CITY_MIN_MEDIA_FAMILIES: "0"
+      CITY_MIN_SOURCE_CATEGORIES: "3"
       CITY_PASS_TIME_BUDGET: "1800"
     steps:
       - name: Checkout canonical database
@@ -80,8 +81,14 @@ jobs:
               "source_families": ["a"] * int(os.environ["CITY_MIN_SOURCE_FAMILIES"]),
               "social_families": ["facebook_groups"],
               "media_families": ["local_press"],
+              "source_categories": ["ecosystem", "media", "social"],
           }
           assert module.result_quality_ok(good), good
+          weak = dict(good)
+          weak["source_categories"] = ["social", "media"]
+          assert not module.result_quality_ok(weak), weak
+          assert not module.usable_direct_url("https://www.facebook.com/reg/")
+          assert not module.usable_direct_url("https://www.youtube.com/watch?v=abc")
           queries = module.city_queries("Bydgoszcz", "Poland")
           kinds = [kind for kind, _ in queries]
           required = {"bands", "facebook_groups", "facebook_pages", "instagram", "youtube", "local_press", "events", "radio", "culture", "promoters"}
@@ -158,8 +165,8 @@ jobs:
                   raise SystemExit(f"{summary.get('city')}: too few source families")
               if not summary.get("social_families"):
                   raise SystemExit(f"{summary.get('city')}: no social/community source")
-              if not summary.get("media_families"):
-                  raise SystemExit(f"{summary.get('city')}: no local-media source")
+              if len(summary.get("source_categories", [])) < int(os.environ["CITY_MIN_SOURCE_CATEGORIES"]):
+                  raise SystemExit(f"{summary.get('city')}: too few source categories")
           print("CITY_PASS_QA_OK", cities)
           PY
 

@@ -170,9 +170,32 @@ SOCIAL_NEGATIVE_RE = re.compile(
     r"auto(handel|serwis)?|car dealer|motoryz|friseur|fris[oö]r|hair|barber|"
     r"beauty|kosmetik|football|soccer|basketball|volleyball|handball|sportverein|"
     r"taxi|hotel|hostel|real estate|immobilien|restaurant|pizzeria|dentist|arzt|"
-    r"clinic|tourism|tourist|travel|flight|airport|ticketshop|ticketmaster)\b",
+    r"clinic|tourism|tourist|travel|flight|airport|ticketshop|ticketmaster|"
+    r"nfl|fashion|lifestyle|mode|stil|style|beauty magazine)\b",
     re.I,
 )
+
+SOCIAL_ENTITY_RELEVANCE_RE = re.compile(
+    r"\b(music\w*|muzy\w*|musik\w*|hudba\w*|metal\w*|metalcore|hardcore|"
+    r"rock\w*|punk\w*|djent\w*|band\w*|zesp[oó]ł\w*|kapela\w*|"
+    r"concert\w*|koncert\w*|konzer\w*|festival\w*|festiwal\w*|venue\w*|"
+    r"club\w*|klub\w*|radio\w*|podcast\w*|culture\w*|kultur\w*|"
+    r"promoter\w*|promotor\w*|organizer\w*|organizator\w*|booking\w*|"
+    r"artist\w*|artyst\w*|photograph\w*|fotograf\w*|creator\w*|"
+    r"media\w*|magazine\w*|magazyn\w*|gazeta\w*|filharmon\w*|"
+    r"orchestra\w*|ensemble\w*|choir\w*|opera\w*|symphon\w*|bigband\w*)\b",
+    re.I,
+)
+
+MEDIA_AGGREGATOR_DOMAINS = {
+    "mixcloud.com", "player.fm", "radio.net", "radio-polska.pl",
+    "podchaser.com", "podbean.com", "spotify.com", "soundcloud.com",
+}
+
+RESOURCE_NOISE_DOMAINS = {
+    "envato.com", "elements.envato.com", "linkedin.com", "booking.com",
+    "allegro.pl", "tv.youtube.com", "music.youtube.com", "kultura.cz",
+}
 
 SOCIAL_KINDS = {
     "facebook_community", "facebook_page", "instagram_creator",
@@ -338,6 +361,34 @@ def is_newsish(url: str) -> bool:
     return d in NEWSISH_DOMAINS or d.startswith("news.")
 
 
+def social_slug(url: str) -> str:
+    d = domain(url)
+    parts = [x for x in urlparse(url).path.strip("/").split("/") if x]
+    if d == "facebook.com" and parts and parts[0] in {"groups", "pages"} and len(parts) >= 2:
+        return ascii_norm(parts[1])
+    if d == "facebook.com" and parts and parts[0] not in {"profile.php"}:
+        return ascii_norm(parts[0])
+    if d in {"instagram.com", "tiktok.com", "youtube.com"} and parts:
+        return ascii_norm(parts[0].lstrip("@"))
+    if d in {"soundcloud.com", "bandcamp.com"} and parts:
+        return ascii_norm(parts[0])
+    return ""
+
+
+def social_destination_coherent(name: str, url: str) -> bool:
+    slug = social_slug(url)
+    if not slug or slug in {"facebook", "instagram", "youtube", "tiktok", "soundcloud", "bandcamp"}:
+        return True
+    clean = ascii_norm(name)
+    if slug in clean:
+        return True
+    core = slug.replace("official", "").replace("offical", "").replace("band", "").replace("music", "").strip()
+    compact = re.sub(r"[^a-z0-9]", "", clean)
+    if len(core) >= 5 and core in compact:
+        return True
+    return any(token in clean for token in re.findall(r"[a-z0-9]+", slug) if len(token) >= 4)
+
+
 def beacon_candidate_ok(
     name: str,
     kind: str,
@@ -359,6 +410,8 @@ def beacon_candidate_ok(
         return False
     if is_newsish(url):
         return False
+    if kind not in SOCIAL_KINDS and country and not country_domain_matches(country, url):
+        return False
 
     if kind in SOCIAL_KINDS:
         if is_generic_social_destination(url) or not usable_direct_url(url):
@@ -367,38 +420,39 @@ def beacon_candidate_ok(
             return False
         if kind == "youtube_channel" and not path.startswith(("/channel/", "/@", "/c/", "/user/")):
             return False
-        clean_name = norm(name)
-        if clean_name in GENERIC_SOCIAL_NAMES:
+        if norm(name) in GENERIC_SOCIAL_NAMES:
             return False
-        if SOCIAL_NEGATIVE_RE.search(f"{name} {url}"):
+        entity_blob = f"{name} {url}"
+        evidence_blob = " ".join(context.split("\x1f")[:3])
+        if SOCIAL_NEGATIVE_RE.search(f"{entity_blob} {evidence_blob}"):
             return False
-
-        # The search query is evidence only when the returned entity also
-        # carries a local/outreach signal. This keeps city-scoped discovery
-        # from accepting unrelated global accounts or search chrome.
-        semantic_blob = f"{name} {url} {context}"
+        if not social_destination_coherent(name, url):
+            return False
         if city and not entity_city_signal(city, name, url, context):
             return False
-        return bool(OUTREACH_SIGNAL_RE.search(semantic_blob))
+        return bool(SOCIAL_ENTITY_RELEVANCE_RE.search(entity_blob) or OUTREACH_SIGNAL_RE.search(evidence_blob))
 
-    if kind in MEDIA_KINDS and looks_like_article_page(url, name):
-        return False
-
-    if kind == "podcast" and not re.search(r"\bpodcast\b", f"{name} {url} {context}", re.I):
-        return False
-    if kind == "independent_radio" and not re.search(
-        r"\b(radio|rádio|radiostacja|broadcast)\b", f"{name} {url} {context}", re.I
-    ):
-        return False
-    if kind == "local_media" and not re.search(
-        r"\b(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music press)\b",
-        f"{name} {url} {context}",
-        re.I,
-    ):
-        return False
+    if kind in MEDIA_KINDS:
+        if d in MEDIA_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in MEDIA_AGGREGATOR_DOMAINS):
+            return False
+        if looks_like_article_page(url, name):
+            return False
+        if city and not entity_city_signal(city, name, url, context):
+            return False
+        media_blob = f"{name} {url} {context}"
+        if kind == "podcast" and not re.search(r"\bpodcast\b", media_blob, re.I):
+            return False
+        if kind == "independent_radio" and not re.search(r"\b(radio|rádio|radiostacja|broadcast)\b", media_blob, re.I):
+            return False
+        if kind == "local_media" and not re.search(
+            r"\b(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music press|wiadom)\b",
+            media_blob,
+            re.I,
+        ):
+            return False
 
     if kind == "event_calendar":
-        if domain(url) in EVENT_LISTING_DOMAINS:
+        if d in EVENT_LISTING_DOMAINS:
             return False
         if looks_like_article_page(url, name):
             return False
@@ -408,6 +462,11 @@ def beacon_candidate_ok(
             re.I,
         ):
             return False
+
+    if kind == "local_music_resource" and (
+        d in RESOURCE_NOISE_DOMAINS or any(d.endswith("." + x) for x in RESOURCE_NOISE_DOMAINS)
+    ):
+        return False
 
     if not allow_non_direct:
         return usable_direct_url(url) and bool(OUTREACH_SIGNAL_RE.search(title_blob))
@@ -510,19 +569,13 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
     out = []
     for href, label in links:
         d = domain(href)
-        if not is_direct_domain(href):
+        if not is_direct_domain(href) or not usable_direct_url(href):
             continue
         if d == "facebook.com":
-            kind = "facebook_community" if "/groups/" in href else "facebook_page"
+            kind = "facebook_community" if "/groups/" in urlparse(href).path.casefold() else "facebook_page"
         elif d in {"youtube.com", "youtu.be"}:
-            path = urlparse(href).path.casefold()
-            if path.startswith("/watch") or path.startswith("/shorts/"):
-                continue
             kind = "youtube_channel"
         elif d == "instagram.com":
-            path = urlparse(href).path.casefold()
-            if path.startswith(("/reel/", "/p/", "/tv/", "/stories/")):
-                continue
             kind = "instagram_creator"
         elif d == "tiktok.com":
             kind = "tiktok_creator"
@@ -536,7 +589,9 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             kind = "event_calendar"
         else:
             kind = "local_music_resource"
-        name = re.sub(r"\s+", " ", label or "").strip()
+        name = social_name(href, label) if (
+            kind in SOCIAL_KINDS or kind in {"bandcamp_artist", "soundcloud_artist"}
+        ) else re.sub(r"\s+", " ", label or "").strip()
         if len(name) < 3:
             name = re.sub(r"\s*[|–-].*$", "", page_title or "").strip()
         if len(name) < 3:
@@ -1010,6 +1065,18 @@ def likely_band_entity(name: str, context: str, url: str) -> bool:
     if not name or len(name) > 120:
         return False
     clean = norm(name)
+    d = domain(url)
+    path = urlparse(url).path.casefold().rstrip("/")
+    if d in {"youtube.com", "instagram.com", "facebook.com", "tiktok.com"} and not usable_direct_url(url):
+        return False
+    if d == "youtube.com" and not path.startswith(("/channel/", "/@", "/c/", "/user/")):
+        return False
+    if d == "instagram.com" and path.startswith(("/p/", "/reel/", "/tv/", "/stories/")):
+        return False
+    if d == "facebook.com" and path.startswith(("/watch", "/reel", "/events", "/share", "/sharer.php")):
+        return False
+    if re.search(r"\b(youtube|instagram|facebook|tiktok)\b", clean, re.I):
+        return False
     if NON_BAND_RE.search(clean) or NON_ACTIONABLE_TITLE_RE.search(clean):
         return False
     if clean in GENERIC_SOCIAL_NAMES or clean in {
@@ -1257,20 +1324,16 @@ def is_generic_social_destination(url: str) -> bool:
 
 
 def entity_city_signal(city: str, name: str, url: str, context: str = "") -> bool:
-    """Require credible city evidence from the entity or its source context."""
     target = ascii_norm(city)
     if not target:
         return False
     entity_blob = ascii_norm(f"{name} {url}")
-    context_blob = ascii_norm(context)
-    if target in entity_blob or target in context_blob:
+    evidence_blob = ascii_norm(" ".join(context.split("\x1f")[:3]))
+    if target in entity_blob or target in evidence_blob:
         return True
-    city_tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
-    if not city_tokens:
-        return False
-    return (
-        all(token in entity_blob for token in city_tokens)
-        or all(token in context_blob for token in city_tokens)
+    tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
+    return bool(tokens) and (
+        all(t in entity_blob for t in tokens) or all(t in evidence_blob for t in tokens)
     )
 
 
@@ -1662,15 +1725,13 @@ def source_categories_from_parts(
     categories: set[str] = set()
     if peers:
         categories.add("peers")
-    beacon_kinds = {str(row[1]).strip() for row in beacons if len(row) > 1}
-    if beacon_kinds & SOCIAL_KINDS:
+    kinds = {str(row[1]).strip() for row in beacons if len(row) > 1}
+    if kinds & SOCIAL_KINDS:
         categories.add("social")
-    if beacon_kinds & MEDIA_KINDS:
+    if kinds & MEDIA_KINDS:
         categories.add("media")
-    if beacon_kinds & ECOSYSTEM_KINDS:
+    if kinds & ECOSYSTEM_KINDS:
         categories.add("ecosystem")
-    if contacts:
-        categories.add("contacts")
     return sorted(categories)
 
 
@@ -1690,27 +1751,30 @@ def result_quality_ok(result: dict) -> bool:
         and int(result.get("useful", 0) or 0) >= MIN_USEFUL_LEADS
         and len(result.get("source_families", []) or []) >= MIN_SOURCE_FAMILIES
         and len(result.get("social_families", []) or []) >= MIN_SOCIAL_FAMILIES
-        and len(result.get("media_families", []) or []) >= MIN_MEDIA_FAMILIES
+        and len(source_categories(result)) >= MIN_SOURCE_CATEGORIES
     )
 
 
 def merge_discovery(primary: dict, recovery: dict) -> dict:
     peers = {(norm(r[0]), norm(r[2])): r for r in primary["peers"]}
     peers.update({(norm(r[0]), norm(r[2])): r for r in recovery["peers"]})
-    beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in primary["beacons"]}
-    beacons.update({(norm(r[0]), norm(r[1]), norm(r[2])): r for r in recovery["beacons"]})
+    beacons = {(norm(r[1]), norm(r[2]), norm(r[4])): r for r in primary["beacons"]}
+    beacons.update({(norm(r[1]), norm(r[2]), norm(r[4])): r for r in recovery["beacons"]})
     contacts = {(norm(r[0]), norm(r[3])): r for r in primary["contacts"]}
     contacts.update({(norm(r[0]), norm(r[3])): r for r in recovery["contacts"]})
+    mp, mb, mc = list(peers.values()), list(beacons.values()), list(contacts.values())
     return {
-        "peers": list(peers.values()),
-        "beacons": list(beacons.values()),
-        "contacts": list(contacts.values()),
+        "peers": mp,
+        "beacons": mb,
+        "contacts": mc,
         "raw_results": int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
         "direct_leads": int(primary.get("direct_leads", 0)) + int(recovery.get("direct_leads", 0)),
-        "useful": len(peers) + len(beacons) + len(contacts),
+        "useful": unique_useful_entity_count(mp, mb, mc),
         "source_families": sorted(set(primary.get("source_families", [])) | set(recovery.get("source_families", []))),
         "social_families": sorted(set(primary.get("social_families", [])) | set(recovery.get("social_families", []))),
         "media_families": sorted(set(primary.get("media_families", [])) | set(recovery.get("media_families", []))),
+        "source_categories": sorted(set(source_categories(primary)) | set(source_categories(recovery)))
+            or source_categories_from_parts(mp, mb, mc),
         "evidence_urls": list(dict.fromkeys(primary.get("evidence_urls", []) + recovery.get("evidence_urls", [])))[:40],
         "recovery": True,
     }

@@ -178,83 +178,138 @@ def url_domain(url: str) -> str:
         return ""
 
 
+def social_slug_from_url(url: str) -> str:
+    from urllib.parse import urlparse
+    d = url_domain(url)
+    parts = [x for x in urlparse(str(url or "")).path.strip("/").split("/") if x]
+    if d == "facebook.com" and parts and parts[0] in {"groups", "pages"} and len(parts) >= 2:
+        return norm(parts[1])
+    if d == "facebook.com" and parts and parts[0] != "profile.php":
+        return norm(parts[0])
+    if d in {"instagram.com", "tiktok.com", "youtube.com"} and parts:
+        return norm(parts[0].lstrip("@"))
+    if d in {"soundcloud.com", "bandcamp.com"} and parts:
+        return norm(parts[0])
+    return ""
+
+
+def social_destination_coherent(name: str, url: str) -> bool:
+    slug = social_slug_from_url(url)
+    if not slug or slug in {"facebook", "instagram", "youtube", "tiktok", "soundcloud", "bandcamp"}:
+        return True
+    clean = norm(name)
+    compact = re.sub(r"[^a-z0-9]", "", clean)
+    if slug in compact:
+        return True
+    core = slug.replace("official", "").replace("offical", "").replace("band", "").replace("music", "").strip()
+    if len(core) >= 5 and core in compact:
+        return True
+    return any(token in clean for token in re.findall(r"[a-z0-9]+", slug) if len(token) >= 4)
+
+
 def beacon_row_allowed(row: list[str]) -> bool:
     if len(row) < 13:
         return False
-    name, kind, city, url = row[0].strip(), row[1].strip(), row[2].strip(), row[4].strip()
-    blob = " ".join(row)
-    if not name or not city or not url.startswith("http"):
+    name, kind, city = row[0].strip(), row[1].strip(), row[2].strip()
+    destination, source = row[4].strip(), row[5].strip()
+    if not name or not city or not destination.startswith("http"):
         return False
-    d = url_domain(url)
+
     from urllib.parse import urlparse
-    path = urlparse(url).path.casefold().rstrip("/")
-    low = norm(blob)
+    d = url_domain(destination)
+    path = urlparse(destination).path.casefold().rstrip("/")
+    low = norm(f"{name} {kind} {city} {destination} {source}")
 
     if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
         return False
     if NON_ACTIONABLE_TITLE_RE.search(low):
         return False
+    if re.search(r"\b(nfl|fashion|lifestyle|mode|stil|style|beauty|tapicer|cleaning|football|soccer|taxi|hotel|restaurant)\b", low, re.I):
+        return False
 
     social_kinds = {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}
+    social_positive = re.compile(
+        r"\b(music\w*|muzy\w*|musik\w*|hudba\w*|metal\w*|metalcore|hardcore|"
+        r"rock\w*|punk\w*|djent\w*|band\w*|zesp[oó]ł\w*|kapela\w*|"
+        r"concert\w*|koncert\w*|konzer\w*|festival\w*|festiwal\w*|venue\w*|"
+        r"club\w*|klub\w*|radio\w*|podcast\w*|culture\w*|kultur\w*|"
+        r"promoter\w*|promotor\w*|organizer\w*|organizator\w*|booking\w*|"
+        r"artist\w*|artyst\w*|photograph\w*|fotograf\w*|creator\w*|"
+        r"media\w*|magazine\w*|magazyn\w*|gazeta\w*|filharmon\w*|"
+        r"orchestra\w*|ensemble\w*|choir\w*|opera\w*|symphon\w*|bigband\w*)\b",
+        re.I,
+    )
+    aggregators = {
+        "mixcloud.com", "player.fm", "radio.net", "radio-polska.pl",
+        "podchaser.com", "podbean.com", "spotify.com", "linkedin.com",
+        "booking.com", "allegro.pl", "elements.envato.com", "envato.com",
+        "kultura.cz", "tv.youtube.com", "music.youtube.com",
+    }
+
     if kind in social_kinds:
-        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
-            return False
-        if SOCIAL_NEGATIVE_RE.search(blob):
+        if d in aggregators or any(d.endswith("." + x) for x in aggregators):
             return False
         if kind == "facebook_community":
             ok = d == "facebook.com" and path.startswith("/groups/")
         elif kind == "facebook_page":
-            ok = d == "facebook.com" and len(path.strip("/")) >= 2 and not path.startswith(("/search", "/watch", "/events", "/reel", "/biz/", "/sharer.php"))
+            ok = d == "facebook.com" and not path.startswith(("/search", "/watch", "/events", "/reel", "/biz/", "/share", "/sharer.php", "/login", "/reg", "/pages/create"))
         elif kind == "instagram_creator":
-            ok = d == "instagram.com" and len(path.strip("/")) >= 2 and not path.startswith(("/explore", "/reels", "/p/"))
+            ok = d == "instagram.com" and not path.startswith(("/explore", "/reels", "/p/", "/tv/", "/stories/", "/accounts/", "/direct/"))
         elif kind == "tiktok_creator":
-            ok = d == "tiktok.com" and path.startswith("/@") and not path.startswith(("/search", "/tag", "/discover", "/foryou"))
+            ok = d == "tiktok.com" and re.fullmatch(r"/@[^/]+", path) is not None
         else:
             ok = d == "youtube.com" and path.startswith(("/channel/", "/@", "/c/", "/user/"))
         if not ok or norm(name) in GENERIC_SOCIAL_NAMES:
             return False
-        # Do not treat the canonical City column as evidence that the entity
-        # belongs to that city. Check the entity name/URL only.
-        entity_blob = f"{name} {url}"
-        positive = bool(SOCIAL_POSITIVE_RE.search(entity_blob))
-        local = city_entity_signal(city, name, url)
-        return local and positive
+        if not social_destination_coherent(name, destination):
+            return False
+        return bool(social_positive.search(f"{name} {destination}"))
 
-    if kind == "event_calendar":
-        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
+    if kind in {"podcast", "independent_radio", "local_media"}:
+        if d in aggregators or any(d.endswith("." + x) for x in aggregators):
             return False
-        if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
+    if kind in {"event_calendar", "local_music_resource"}:
+        if d in aggregators or any(d.endswith("." + x) for x in aggregators):
             return False
-        if re.search(r"\b(kritik|review|interview|news|nachrichten|article|blog|recenzja|mix|playlist)\b", norm(name), re.I):
-            return False
-        if re.search(r"/(news|article|blog|story|review|interview|event|events|koncert|concert)/", path):
-            return False
-        if looks_like_article_page(url, name):
-            return False
-        if d in SOCIAL_AGGREGATOR_DOMAINS or any(d.endswith("." + x) for x in SOCIAL_AGGREGATOR_DOMAINS):
-            return False
-        return bool(re.search(r"\b(calendar|kalendarz|events|event|koncert|koncerty|concert|veranstaltung|podujatia)\b", low, re.I))
 
-    if d in NEWSISH_DOMAINS or any(d.endswith("." + x) for x in NEWSISH_DOMAINS):
+    semantic = f"{name} {destination} {source}"
+    if kind == "podcast" and not re.search(r"\bpodcast\b", semantic, re.I):
+        return False
+    if kind == "independent_radio" and not re.search(r"\b(radio|rádio|radiostacja|broadcast)\b", semantic, re.I):
+        return False
+    if kind == "local_media" and not re.search(
+        r"\b(media|magazine|magazyn|gazeta|portal|zeitung|nachrichten|noviny|lokalnachrichten|stadtmagazin|music press|wiadom)\b",
+        semantic,
+        re.I,
+    ):
+        return False
+    if kind == "event_calendar" and not re.search(
+        r"\b(calendar|kalendarz|events?|wydarzenia|wydarzen|koncerty|concerts|veranstaltungen|podujatia|akce)\b",
+        semantic,
+        re.I,
+    ):
+        return False
+    if kind == "local_music_resource" and not re.search(
+        r"\b(music|muzyka|musik|hudba|metal|band|rock|vinyl|winyl|record|sklep muzyczny|music store|bandcamp|soundcloud)\b",
+        semantic,
+        re.I,
+    ):
+        return False
+    if kind == "cultural_hub" and not re.search(r"\b(culture|kultura|kultur|centrum|center|zentrum|music|muzyka|koncert|concert)\b", semantic, re.I):
+        return False
+    if kind == "promoter" and not re.search(r"\b(promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival)\b", semantic, re.I):
+        return False
+    if kind == "local_creator" and not re.search(r"\b(photograph|fotograf|creator|music|muzyka|musik|koncert|concert|artist|artyst|photo|video)\b", semantic, re.I):
         return False
 
-    if kind in {"podcast", "local_media", "independent_radio", "event_calendar", "cultural_hub", "promoter", "local_creator", "local_music_resource"}:
-        if city and not city_entity_signal(city, name, url):
-            return False
-        if looks_like_article_page(url, name):
-            return False
-
-    terms = {
-        "independent_radio": r"radio|rádio|radiostacja|musik|music|muzy|koncert|concert",
-        "podcast": r"podcast|music|muzy|musik|hudba|band|koncert|concert|metal",
-        "local_media": r"music|muzy|musik|hudba|band|koncert|concert|metal|culture|kultur|festival|festiwal|gazeta|portal",
-        "cultural_hub": r"culture|kultura|kultur|centrum|center|zentrum|music|muzy|koncert|concert|event",
-        "promoter": r"promoter|promotor|veranstalter|organizer|organizator|booking|concert|koncert|music|festival|festiwal",
-        "local_creator": r"photograph|fotograf|creator|music|muzy|musik|koncert|concert|artist|artyst",
-        "local_music_resource": r"record store|sklep|muzycz|music store|musikladen|vinyl|winyl|płyt|bandcamp|soundcloud|music",
-    }
-    return bool(re.search(terms.get(kind, r"music|muzy|musik|hudba|koncert|concert|metal|band|artist"), blob, re.I))
-
+    if kind in {"podcast", "independent_radio", "local_media", "event_calendar", "cultural_hub", "promoter", "local_creator", "local_music_resource"}:
+        city_blob = norm(f"{name} {destination} {source}")
+        target = norm(city)
+        if target and target not in city_blob:
+            tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
+            if tokens and not all(token in city_blob for token in tokens):
+                return False
+    return True
 
 
 def peer_row_allowed(row: list[str]) -> bool:

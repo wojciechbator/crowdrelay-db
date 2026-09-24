@@ -5,12 +5,14 @@ import csv
 import json
 import os
 import re
+import threading
+import time
 import unicodedata
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
-from urllib.parse import parse_qs, quote, quote_plus, unquote, urlparse
+from urllib.parse import parse_qs, quote, quote_plus, unquote, urlencode, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -28,6 +30,42 @@ FORCED_CITY_MIN_VERSION = {
     "germany/berlin": 5,
 }
 MIN_RAW_RESULTS = int(os.environ.get("CITY_MIN_RAW_RESULTS", "8"))
+
+
+# Search providers throttle bursts from a single runner IP. Without pacing the
+# first city's fan-out gets every engine blocked and later cities come back
+# with only RSS-backed results. Pace each search host and put it on cooldown
+# when it signals throttling, so the remaining providers carry the load.
+SEARCH_HOST_INTERVAL = float(os.environ.get("CITY_SEARCH_HOST_INTERVAL", "2.0"))
+SEARCH_HOST_COOLDOWN = float(os.environ.get("CITY_SEARCH_HOST_COOLDOWN", "90"))
+THROTTLE_STATUSES = {403, 429, 503}
+_host_lock = threading.Lock()
+_host_next_slot: dict[str, float] = {}
+_host_blocked_until: dict[str, float] = {}
+
+
+def throttled_get(url: str, **kwargs) -> requests.Response | None:
+    """GET a search endpoint with per-host pacing and throttle cooldown.
+
+    Returns None when the host is cooling down; raises RequestException like
+    requests.get otherwise.
+    """
+    host = urlparse(url).netloc.casefold()
+    with _host_lock:
+        now = time.monotonic()
+        if _host_blocked_until.get(host, 0.0) > now:
+            return None
+        slot = max(now, _host_next_slot.get(host, 0.0))
+        _host_next_slot[host] = slot + SEARCH_HOST_INTERVAL
+    delay = slot - time.monotonic()
+    if delay > 0:
+        time.sleep(delay)
+    r = requests.get(url, **kwargs)
+    if r.status_code in THROTTLE_STATUSES:
+        with _host_lock:
+            _host_blocked_until[host] = time.monotonic() + SEARCH_HOST_COOLDOWN
+        print(f"CITY_SEARCH_THROTTLED {host} status={r.status_code} cooldown={SEARCH_HOST_COOLDOWN:.0f}s")
+    return r
 MIN_DIRECT_LEADS = int(os.environ.get("CITY_MIN_DIRECT_LEADS", "3"))
 MIN_USEFUL_LEADS = int(os.environ.get("CITY_MIN_USEFUL_LEADS", "4"))
 MIN_SOURCE_FAMILIES = int(os.environ.get("CITY_MIN_SOURCE_FAMILIES", "4"))
@@ -440,8 +478,8 @@ def _parse_markdown_search(markdown: str) -> list[dict]:
 
 def jina_fetch(url: str, headers: dict, timeout: int = 20) -> str:
     target = "https://r.jina.ai/" + quote(url, safe=":/?=&%#,-_")
-    r = requests.get(target, timeout=timeout, headers=headers, allow_redirects=True)
-    if r.status_code != 200:
+    r = throttled_get(target, timeout=timeout, headers=headers, allow_redirects=True)
+    if r is None or r.status_code != 200:
         return ""
     return r.text or ""
 
@@ -543,22 +581,19 @@ SEARX_INSTANCES = (
 def searx_search(query: str, headers: dict) -> list[dict]:
     for base in SEARX_INSTANCES:
         try:
-            r = requests.get(
-                base + "/search",
-                params={
+            r = throttled_get(
+                base + "/search?" + urlencode({
                     "q": query,
                     "format": "json",
                     "language": "all",
                     "safesearch": 0,
                     "pageno": 1,
-                },
+                }),
                 timeout=8,
                 headers=headers,
                 allow_redirects=True,
             )
-            if r.status_code == 429:
-                continue
-            if r.status_code != 200 or not r.text:
+            if r is None or r.status_code != 200 or not r.text:
                 continue
             data = r.json()
             out = []
@@ -579,13 +614,13 @@ def jina_search(query: str, headers: dict) -> list[dict]:
     results = []
     for host in ("http://www.google.com/search?q=", "http://www.bing.com/search?q="):
         try:
-            r = requests.get(
+            r = throttled_get(
                 "https://r.jina.ai/" + host + quote_plus(query),
                 timeout=20,
                 headers=headers,
                 allow_redirects=True,
             )
-            if r.status_code == 200 and r.text:
+            if r is not None and r.status_code == 200 and r.text:
                 results.extend(_parse_markdown_search(r.text))
         except requests.RequestException:
             pass
@@ -621,12 +656,12 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
         ]
         for _, base, suffix in rss_endpoints:
             try:
-                r = requests.get(
+                r = throttled_get(
                     base + quote_plus(query) + suffix,
                     timeout=8,
                     headers=headers,
                 )
-                if r.status_code == 200:
+                if r is not None and r.status_code == 200:
                     results.extend(_parse_rss(r.text))
             except (requests.RequestException, ET.ParseError):
                 pass
@@ -638,13 +673,13 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
     ]
     for engine, base in endpoints:
         try:
-            r = requests.get(
+            r = throttled_get(
                 base + quote_plus(query),
                 timeout=6,
                 headers=headers,
                 allow_redirects=True,
             )
-            if r.status_code == 200:
+            if r is not None and r.status_code == 200:
                 results.extend(_parse_html(engine, r.text))
         except requests.RequestException:
             pass
@@ -1132,7 +1167,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
     # SearXNG -> direct search engines -> Jina only if both returned nothing.
     # This keeps the pass cheap while avoiding a single external dependency.
     results: list[tuple[str, dict]] = []
-    with ThreadPoolExecutor(max_workers=min(8, len(queries))) as ex:
+    with ThreadPoolExecutor(max_workers=min(4, len(queries))) as ex:
         futures = {ex.submit(compact_search, kind, q, headers): kind for kind, q in queries}
         for fut in as_completed(futures):
             kind = futures[fut]
@@ -1482,8 +1517,16 @@ def main() -> None:
     existing_beacon = existing_names(wb, "Beacons")
     existing_contact = existing_emails(wb)
 
+    # Pacing makes each city slower; stop starting new cities before the
+    # workflow timeout so whatever qualified is still written and committed.
+    time_budget = float(os.environ.get("CITY_PASS_TIME_BUDGET", "1500"))
+    started = time.monotonic()
+
     for city, country in candidates:
         if len(accepted) >= limit:
+            break
+        if time.monotonic() - started > time_budget:
+            print(f"CITY_PASS_TIME_BUDGET reached after {len(accepted) + len(rejected)} cities; stopping early")
             break
 
         result = discover(city, country)

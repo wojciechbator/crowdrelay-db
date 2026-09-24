@@ -42,9 +42,6 @@ jobs:
       - name: Install dependencies
         run: python -m pip install openpyxl requests beautifulsoup4
 
-      - name: Research next four eligible cities
-        run: python scripts/city_micro_pass_runner.py
-
       - name: Smoke test city research code
         run: |
           python -m py_compile scripts/city_micro_pass.py scripts/city_micro_pass_runner.py
@@ -73,8 +70,24 @@ jobs:
           assert merged["direct_leads"] == 0
           assert merged["useful"] == 0
           assert not merged["source_families"]
+
+          import os
+          good = {
+              "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),
+              "direct_leads": int(os.environ["CITY_MIN_DIRECT_LEADS"]),
+              "useful": int(os.environ["CITY_MIN_USEFUL_LEADS"]),
+              "source_families": ["a"] * int(os.environ["CITY_MIN_SOURCE_FAMILIES"]),
+              "social_families": ["facebook_groups"],
+              "media_families": ["local_press"],
+          }
+          assert module.result_quality_ok(good), good
+          queries = module.city_queries("Bydgoszcz", "Poland")
+          assert 6 <= len(queries) <= 10, len(queries)
           print("CITY_PASS_SMOKE_OK")
           PY
+
+      - name: Research next four eligible cities
+        run: python scripts/city_micro_pass_runner.py
 
       - name: Validate city pass
         run: |
@@ -98,9 +111,9 @@ jobs:
           if len(summaries) != len(cities):
               raise SystemExit("Summary/city count mismatch")
           floors = {
-              "raw_results": int("${CITY_MIN_RAW_RESULTS}"),
-              "direct_leads": int("${CITY_MIN_DIRECT_LEADS}"),
-              "useful": int("${CITY_MIN_USEFUL_LEADS}"),
+              "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),
+              "direct_leads": int(os.environ["CITY_MIN_DIRECT_LEADS"]),
+              "useful": int(os.environ["CITY_MIN_USEFUL_LEADS"]),
           }
           for summary in summaries:
               if not summary.get("quality_ok"):
@@ -108,7 +121,7 @@ jobs:
               for field, minimum in floors.items():
                   if int(summary.get(field, 0) or 0) < minimum:
                       raise SystemExit(f"{summary.get('city')}: {field} below QA floor")
-              if len(summary.get("source_families", [])) < int("${CITY_MIN_SOURCE_FAMILIES}"):
+              if len(summary.get("source_families", [])) < int(os.environ["CITY_MIN_SOURCE_FAMILIES"]):
                   raise SystemExit(f"{summary.get('city')}: too few source families")
               if not summary.get("social_families"):
                   raise SystemExit(f"{summary.get('city')}: no social/community source")

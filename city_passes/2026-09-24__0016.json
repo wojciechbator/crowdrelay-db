@@ -1,0 +1,135 @@
+{
+  "date": "2026-09-24",
+  "research_version": 16,
+  "pass_id": 16,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 2,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz"
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 40,
+      "direct_leads": 8,
+      "useful": 10,
+      "useful_leads": 10,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 8,
+      "contact_candidates": 3,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 4,
+      "new_contact_candidates": 3,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/channel/UCSRJal8YhWp5VVosby6mOGQ",
+        "https://www.youtube.com/channel/UC4jcGImpZs6S54NMEKDVZtQ",
+        "https://www.youtube.com/channel/UCReBWllXn4vRaFoK1ZSkRmQ",
+        "https://www.facebook.com/BaronFilipek/videos/koncert-bydgoszcz/852223211595193/",
+        "https://www.radiopik.pl/",
+        "https://www.ebilet.pl/now/branford-marsalis-wroci-do-polski-w-2026-roku-i-to-w-towarzystwie-legendarnej-dianne-reeves/",
+        "https://zip.radio/pl/bydgoszcz/radio-kultura",
+        "https://metropoliabydgoska.pl/program-film-song-festival-bydgoszcz-2026/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 80,
+      "direct_leads": 19,
+      "useful": 17,
+      "useful_leads": 17,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 20,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 20,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.mixcloud.com/radiokis/",
+        "https://soundcloud.com/user-217681255",
+        "https://stanko-polskieradio.bandcamp.com/track/16-drewniana-muzyka-cz-2",
+        "https://www.facebook.com/radiopoland/",
+        "https://podcasts.apple.com/pl/podcast/hive-mind-community/id1720199094",
+        "https://www.youtube.com/watch?v=eKbgasooAIY",
+        "https://zip.radio/pl/warsaw",
+        "https://linktr.ee/cyrylpl",
+        "https://www.booking.com/attractions/pl/prvmialccnwi-suntago-water-park-ticket.html",
+        "https://www.1001tracklists.com/tracklist/jfl6cy1/joris-voorn-spectrum-radio-037-part-1-smolna-warsaw-poland-2017-12-08-2017-12-28.html",
+        "https://agencja-informacyjna.com/zblizaja-sie-16-targi-china-homelife-poland/",
+        "https://xhamster46.desi/creators/elina-lizz",
+        "https://podspotters.com/cities/Warsaw/dynamic-podcast-studio-warsaw/",
+        "https://www.polskieradio.pl/podcasty/news-from-poland/news-from-poland-warsaw-and-algiers-strengthen-economic-ties",
+        "https://www.shortwaveweb.com/country/warsaw/",
+        "https://www.polskieradio.pl/79/1250,Polish-Radio-Orchestra-in-Warsaw",
+        "https://radio-shuffle.com/radio/radio-mbox-warsaw",
+        "https://www.booking.com/hotel/pl/przytulny-apartament-przy-barbakanie.en-gb.html",
+        "https://lukaszdembinski.com/",
+        "https://www.facebook.com/NOIZZPolska",
+        "https://www.facebook.com/musicbabyart/",
+        "https://www.facebook.com/szerokiebarywawa",
+        "https://www.facebook.com/AudioForte/",
+        "https://www.facebook.com/wydarzenia.warsawcity.info",
+        "https://www.eskarock.pl/radar/orange-warsaw-festival-2026-line-up-oto-kto-wystapi-na-wydarzeniu-aa-FnU4-6QDc-cx2E.html",
+        "https://afterwork.art/"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "rejected_candidates": []
+}

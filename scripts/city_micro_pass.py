@@ -932,6 +932,37 @@ def emails(text: str) -> list[str]:
     )))
 
 
+def email_domain(email: str) -> str:
+    return email.rsplit("@", 1)[-1].casefold().removeprefix("mail.").removeprefix("info.")
+
+
+def site_domain(url: str) -> str:
+    from urllib.parse import urlparse
+    return urlparse(url or "").netloc.casefold().removeprefix("www.")
+
+
+def pick_email(found: list[str], url: str) -> str:
+    """The alphabetically-first address on a page is usually a nav/footer
+    mailbox belonging to a different org. Prefer an address on the page's own
+    domain; fall back to the first only when nothing matches."""
+    d = site_domain(url)
+    for e in found:
+        ed = email_domain(e)
+        if d and (ed == d or ed.endswith("." + d) or d.endswith("." + ed)):
+            return e
+    return found[0] if found else ""
+
+
+def own_domain_emails(found: list[str], url: str, cap: int = 2) -> list[str]:
+    """Contacts harvested from an accepted page are only attributed to the
+    entity when the mailbox lives on the page's own domain — a footer or
+    comment-section address is not the entity's contact."""
+    d = site_domain(url)
+    out = [e for e in found
+           if d and (email_domain(e) == d or email_domain(e).endswith("." + d))]
+    return out[:cap]
+
+
 def city_key(country: str, city: str) -> str:
     return f"{norm(country)}::{norm(city)}"
 
@@ -1558,7 +1589,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
         conf = confidence(url, "", context)
         beacons.append([
             name[:180], kind, city,
-            found_emails[0] if found_emails else "",
+            pick_email(found_emails, url),
             url, source_url or url, "t", "t", "t", "f", 65, conf, conf,
         ])
         direct_urls.add(norm(url.rstrip("/")))
@@ -1589,13 +1620,13 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
             social = url if dmn in {"facebook.com","instagram.com","youtube.com","tiktok.com"} else ""
             website = "" if social else url
             peers.append([
-                title[:180], country, city, "", found_emails[0] if found_emails else "",
+                title[:180], country, city, "", pick_email(found_emails, url),
                 social, website, url,
                 "2026/current activity signal from direct/local source", TODAY,
-                "Needs verification",
+                "High" if conf >= 80 else "Medium" if conf >= 50 else "Low",
                 "public" if found_emails else "social", url,
-                "Research candidate", "City micro-pass",
-                f"Compact city research. Confidence {conf}%.",
+                "Research candidate",
+                f"City micro-pass. Compact city research. Confidence {conf}%.",
             ])
 
         accepted_here = False
@@ -1660,7 +1691,7 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 social_families.add(entity["kind"])
 
         if accepted_here:
-            for email in emails(context):
+            for email in own_domain_emails(emails(context), url):
                 contacts.append([
                     email, title[:120], title[:160], city,
                     classify_beacon(title, item["snippet"], url), "",
@@ -1833,6 +1864,19 @@ def existing_name_city(wb, sheet: str) -> set[tuple[str, str]]:
     }
 
 
+def canon_url_key(url: object) -> str:
+    """Key-form URL so 'https://x.com/a' and 'https://x.com/a/' are one beacon."""
+    from urllib.parse import urlparse
+    try:
+        raw = str(url or "").strip()
+        p = urlparse(raw if "//" in raw else "//" + raw)
+        host = p.netloc.casefold().removeprefix("www.")
+        path = p.path.rstrip("/")
+        return host + path if host else norm(url)
+    except Exception:
+        return norm(url)
+
+
 def existing_beacon_keys(wb) -> set[tuple[str, str, str]]:
     ws = wb["Beacons"]
     headers = [c.value for c in ws[2]]
@@ -1841,7 +1885,7 @@ def existing_beacon_keys(wb) -> set[tuple[str, str, str]]:
         (
             norm(ws.cell(row, idx["kind"]).value),
             norm(ws.cell(row, idx["city"]).value),
-            norm(ws.cell(row, idx["destination_url"]).value),
+            canon_url_key(ws.cell(row, idx["destination_url"]).value),
         )
         for row in range(3, ws.max_row + 1)
         if ws.cell(row, idx["destination_url"]).value
@@ -1873,7 +1917,7 @@ def dedupe_pending_peers(rows, existing):
 def dedupe_pending_beacons(rows, existing):
     out, seen = [], set(existing)
     for row in rows:
-        key = (norm(row[1]), norm(row[2]), norm(row[4]))
+        key = (norm(row[1]), norm(row[2]), canon_url_key(row[4]))
         if not key[2] or key in seen:
             continue
         seen.add(key)
@@ -1897,10 +1941,19 @@ def write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
     if not rows:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as fh:
+    tmp = path.with_name(path.name + ".tmp")
+    with tmp.open("w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(header)
         w.writerows(rows)
+    os.replace(tmp, path)
+
+
+def write_json_atomic(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
 
 
 def safe_filename(value: str) -> str:
@@ -1942,7 +1995,19 @@ def main() -> None:
             print(f"CITY_PASS_TIME_BUDGET reached after {len(accepted) + len(rejected)} cities; stopping early")
             break
 
-        result = discover(city, country)
+        try:
+            result = discover(city, country)
+        except Exception as exc:
+            # One city's failure must not orphan the CSVs already written for
+            # earlier cities nor kill the rest of the batch.
+            print(f"CITY_RESEARCH_ERROR {country}/{city}: {exc}")
+            rejected.append({
+                "country": country, "city": city,
+                "raw_results": 0, "direct_leads": 0, "useful": 0,
+                "source_families": [], "social_families": [], "media_families": [],
+                "recovery_used": False, "error": str(exc),
+            })
+            continue
         if not result_quality_ok(result):
             print(
                 f"CITY_RESEARCH_RECOVERY {country}/{city}: "
@@ -1979,12 +2044,28 @@ def main() -> None:
         contacts = dedupe_pending_contacts(result["contacts"], existing_contact)
 
         city_file = safe_filename(city)
+        # The pass JSON is the applier's gate for these CSVs — it must exist
+        # before they do, or a crash here strands files that the next run
+        # rejects as "legacy". Provisional state first, full summary at the end.
+        write_json_atomic(PASSES / f"{stamp}.json", {
+            "date": TODAY,
+            "research_version": PASS_FORMAT_VERSION,
+            "pass_id": pass_id,
+            "batch_size_requested": limit,
+            "batch_complete": False,
+            "candidate_window": len(candidates),
+            "cities": [{"country": c, "city": ci} for ci, c, *_ in accepted]
+                      + [{"country": country, "city": city}],
+            "summary": [],
+            "rejected_candidates": rejected,
+            "provisional": True,
+        })
         write_csv(PENDING / f"Peer_Bands__CityPass__{stamp}__{city_file}.csv", PEER_HEADER, peers)
         write_csv(PENDING / f"Beacons__CityPass__{stamp}__{city_file}.csv", BEACON_HEADER, beacons)
         write_csv(PENDING / f"Contacts__CityPass__{stamp}__{city_file}.csv", CONTACT_HEADER, contacts)
 
         existing_peer.update((norm(r[0]), norm(r[2])) for r in peers)
-        existing_beacon.update((norm(r[1]), norm(r[2]), norm(r[4])) for r in beacons)
+        existing_beacon.update((norm(r[1]), norm(r[2]), canon_url_key(r[4])) for r in beacons)
         existing_contact.update((norm(r[0]), norm(r[3])) for r in contacts)
 
         accepted.append((city, country, result, peers, beacons, contacts))
@@ -2006,10 +2087,7 @@ def main() -> None:
             "rejected_candidates": rejected,
             "no_progress": True,
         }
-        (PASSES / f"{stamp}.json").write_text(
-            json.dumps(state, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        write_json_atomic(PASSES / f"{stamp}.json", state)
         print(
             f"CITY_PASS_NO_PROGRESS candidates={len(candidates)} "
             f"rejected={len(rejected)}; saved diagnostic state for retry"
@@ -2061,10 +2139,7 @@ def main() -> None:
         "summary": summary,
         "rejected_candidates": rejected,
     }
-    (PASSES / f"{stamp}.json").write_text(
-        json.dumps(state, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    write_json_atomic(PASSES / f"{stamp}.json", state)
     print(json.dumps(state, ensure_ascii=False))
 
 

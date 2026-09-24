@@ -148,9 +148,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git stash push -u -m "pre-apply-rebase" || true
+          stashed=0
+          if [ -n "$(git status --porcelain)" ]; then
+            git stash push -u -m "pre-apply-rebase"
+            stashed=1
+          fi
           git pull --rebase origin main
-          git stash pop || true
+          if [ "$stashed" = "1" ]; then
+            # A pop conflict on the binary workbook must fail the run — the old
+            # `|| true` let the upstream copy win while applied/ already
+            # recorded the CSVs as landed.
+            git stash pop
+          fi
           git add database.xlsx updates/applied updates/pending updates/rejected
           if git diff --cached --quiet; then
             echo "No database changes."

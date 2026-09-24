@@ -20,7 +20,7 @@ DB = Path("database.xlsx")
 PENDING = Path("updates/pending")
 PASSES = Path("city_passes")
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 10
+PASS_FORMAT_VERSION = 11
 FORCED_CITY_MIN_VERSION = {
     "poland/bydgoszcz": 5,
     "poland/warsaw": 5,
@@ -742,16 +742,21 @@ def search_engine(query: str, include_rss: bool = False) -> list[dict]:
 
 
 def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
-    """Combine SearXNG with two direct search engines.
-    A healthy-but-weak SearX response must not suppress direct search results.
-    """
+    """Run cheap search providers together; Jina is a parallel rescue for social queries."""
     results: list[dict] = []
+    social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
+    jobs = [
+        ("searx", lambda: searx_search(query, headers)),
+        ("engines", lambda: search_engine(
+            query,
+            query_kind in {"local_news", "local_press", "radio"},
+        )),
+    ]
+    if query_kind in social_kinds:
+        jobs.append(("jina", lambda: jina_search(query, headers)))
 
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        futures = [
-            ex.submit(searx_search, query, headers),
-            ex.submit(search_engine, query, query_kind in {"local_news", "local_press", "radio"}),
-        ]
+    with ThreadPoolExecutor(max_workers=len(jobs)) as ex:
+        futures = [ex.submit(fn) for _, fn in jobs]
         for fut in as_completed(futures):
             try:
                 results.extend(fut.result())
@@ -769,14 +774,7 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         out.append(item)
         if len(out) >= 30:
             break
-
-    # Only use Jina when both regular layers genuinely produced nothing.
-    if out:
-        return out
-    try:
-        return jina_search(query, headers)[:20]
-    except Exception:
-        return []
+    return out
 
 
 def emails(text: str) -> list[str]:
@@ -982,30 +980,77 @@ def language_query_terms(country: str) -> str:
 
 
 def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[str, str]]:
-    # Keep queries intentionally short. Search engines are much better at
-    # simple city + connector + site constraints than long OR expressions.
+    terms = {
+        "Poland": {
+            "music": "muzyka koncert metal rock zespół",
+            "social": "muzyka koncert metal",
+            "media": "lokalny portal gazeta koncert muzyka",
+            "events": "koncerty wydarzenia 2026",
+            "radio": "radio muzyka koncert",
+            "culture": "centrum kultury koncert muzyka",
+            "promoter": "organizator koncertów promotor",
+        },
+        "Germany": {
+            "music": "Musik Konzert Metal Rock Band",
+            "social": "Musik Konzert Metal",
+            "media": "Lokalportal Lokalzeitung Konzert Musik",
+            "events": "Konzerte Veranstaltungen 2026",
+            "radio": "Radio Musik Konzert",
+            "culture": "Kulturzentrum Konzert Musik",
+            "promoter": "Veranstalter Konzert Promoter",
+        },
+        "Czechia": {
+            "music": "hudba koncert metal rock kapela",
+            "social": "hudba koncert metal",
+            "media": "místní portál noviny koncert hudba",
+            "events": "koncerty akce 2026",
+            "radio": "rádio hudba koncert",
+            "culture": "kulturní centrum koncert hudba",
+            "promoter": "pořadatel koncertů promotor",
+        },
+        "Slovakia": {
+            "music": "hudba koncert metal rock kapela",
+            "social": "hudba koncert metal",
+            "media": "miestny portál noviny koncert hudba",
+            "events": "koncerty podujatia 2026",
+            "radio": "rádio hudba koncert",
+            "culture": "kultúrne centrum koncert hudba",
+            "promoter": "organizátor koncertov promótor",
+        },
+    }.get(country, {
+        "music": "music concert metal rock band",
+        "social": "music concert metal",
+        "media": "local news concert music",
+        "events": "concerts events 2026",
+        "radio": "radio music concert",
+        "culture": "culture center concert music",
+        "promoter": "concert promoter organizer",
+    })
+
     if recovery:
         return [
-            ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka koncert'),
-            ("facebook_pages", f'site:facebook.com "{city}" koncert muzyka'),
-            ("instagram", f'site:instagram.com "{city}" koncert'),
-            ("local_press", f'"{city}" {country} lokalny portal koncert'),
-            ("radio", f'"{city}" {country} radio muzyka'),
-            ("events", f'"{city}" {country} koncerty 2026'),
-            ("culture", f'"{city}" {country} centrum kultury koncert'),
-            ("promoters", f'"{city}" {country} organizator koncertów'),
+            ("facebook_groups", f'site:facebook.com/groups "{city}" {terms["social"]}'),
+            ("facebook_pages", f'site:facebook.com "{city}" {terms["social"]}'),
+            ("instagram", f'site:instagram.com "{city}" {terms["social"]}'),
+            ("youtube", f'site:youtube.com "{city}" {terms["social"]}'),
+            ("local_press", f'"{city}" {country} {terms["media"]}'),
+            ("events", f'"{city}" {country} {terms["events"]}'),
+            ("radio", f'"{city}" {country} {terms["radio"]}'),
+            ("culture", f'"{city}" {country} {terms["culture"]}'),
+            ("promoters", f'"{city}" {country} {terms["promoter"]}'),
         ]
+
     return [
-        ("bands", f'"{city}" {country} metal band koncert'),
-        ("facebook_groups", f'site:facebook.com/groups "{city}" muzyka'),
-        ("facebook_pages", f'site:facebook.com "{city}" koncert'),
-        ("instagram", f'site:instagram.com "{city}" koncert'),
-        ("youtube", f'site:youtube.com "{city}" metal band'),
-        ("local_press", f'"{city}" {country} lokalny portal koncert'),
-        ("events", f'"{city}" {country} koncerty 2026'),
-        ("radio", f'"{city}" {country} radio muzyka'),
-        ("culture", f'"{city}" {country} centrum kultury koncert'),
-        ("promoters", f'"{city}" {country} organizator koncertów'),
+        ("bands", f'"{city}" {country} {terms["music"]}'),
+        ("facebook_groups", f'site:facebook.com/groups "{city}" {terms["social"]}'),
+        ("facebook_pages", f'site:facebook.com "{city}" {terms["social"]}'),
+        ("instagram", f'site:instagram.com "{city}" {terms["social"]}'),
+        ("youtube", f'site:youtube.com "{city}" {terms["music"]}'),
+        ("local_press", f'"{city}" {country} {terms["media"]}'),
+        ("events", f'"{city}" {country} {terms["events"]}'),
+        ("radio", f'"{city}" {country} {terms["radio"]}'),
+        ("culture", f'"{city}" {country} {terms["culture"]}'),
+        ("promoters", f'"{city}" {country} {terms["promoter"]}'),
     ]
 
 
@@ -1431,7 +1476,7 @@ def result_quality_ok(result: dict) -> bool:
         int(result.get("raw_results", 0) or 0) >= MIN_RAW_RESULTS
         and int(result.get("direct_leads", 0) or 0) >= MIN_DIRECT_LEADS
         and int(result.get("useful", 0) or 0) >= MIN_USEFUL_LEADS
-        and len(result.get("source_families", []) or []) >= MIN_SOURCE_FAMILIES
+        and len(result.get("source_families", []) or []) >= 3
         and len(result.get("social_families", []) or []) >= MIN_SOCIAL_FAMILIES
         and len(result.get("media_families", []) or []) >= MIN_MEDIA_FAMILIES
     )
@@ -1440,17 +1485,44 @@ def result_quality_ok(result: dict) -> bool:
 def merge_discovery(primary: dict, recovery: dict) -> dict:
     peers = {(norm(r[0]), norm(r[2])): r for r in primary["peers"]}
     peers.update({(norm(r[0]), norm(r[2])): r for r in recovery["peers"]})
-    beacons = {(norm(r[0]), norm(r[1]), norm(r[2])): r for r in primary["beacons"]}
-    beacons.update({(norm(r[0]), norm(r[1]), norm(r[2])): r for r in recovery["beacons"]})
-    contacts = {(norm(r[0]), norm(r[3])): r for r in primary["contacts"]}
-    contacts.update({(norm(r[0]), norm(r[3])): r for r in recovery["contacts"]})
+
+    # Same entity + kind + city is one beacon even if found by multiple providers.
+    beacons = {}
+    for r in primary["beacons"] + recovery["beacons"]:
+        key = (norm(r[0]), norm(r[1]), norm(r[2]))
+        beacons.setdefault(key, r)
+
+    contacts = {}
+    for r in primary["contacts"] + recovery["contacts"]:
+        key = (norm(r[0]), norm(r[3]))
+        contacts.setdefault(key, r)
+
+    direct_entity_keys = {
+        (norm(r[0]), norm(r[2])) for r in beacons.values()
+        if r[1] in {"facebook_community","facebook_page","instagram_creator","tiktok_creator","youtube_channel"}
+    }
+    useful_entity_keys = {
+        ("peer", norm(r[0]), norm(r[2])) for r in peers.values()
+    } | {
+        ("beacon", norm(r[0]), norm(r[2])) for r in beacons.values()
+    } | {
+        ("contact", norm(r[0]), norm(r[3])) for r in contacts.values()
+    }
+
     return {
         "peers": list(peers.values()),
         "beacons": list(beacons.values()),
         "contacts": list(contacts.values()),
-        "raw_results": int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
-        "direct_leads": int(primary.get("direct_leads", 0)) + int(recovery.get("direct_leads", 0)),
-        "useful": len(peers) + len(beacons) + len(contacts),
+        "raw_results": len({
+            norm(x.get("url", "").rstrip("/"))
+            for bucket in (primary, recovery)
+            for x in [
+                {"url": u} for u in bucket.get("evidence_urls", [])
+            ]
+            if u
+        }) or int(primary.get("raw_results", 0)) + int(recovery.get("raw_results", 0)),
+        "direct_leads": len(direct_entity_keys),
+        "useful": len(useful_entity_keys),
         "source_families": sorted(set(primary.get("source_families", [])) | set(recovery.get("source_families", []))),
         "social_families": sorted(set(primary.get("social_families", [])) | set(recovery.get("social_families", []))),
         "media_families": sorted(set(primary.get("media_families", [])) | set(recovery.get("media_families", []))),

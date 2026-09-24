@@ -1,0 +1,105 @@
+{
+  "date": "2026-09-24",
+  "research_version": 13,
+  "pass_id": 9,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 8,
+  "cities": [],
+  "summary": [],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Bydgoszcz",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Warsaw",
+      "raw_results": 30,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [
+        "radio"
+      ],
+      "social_families": [],
+      "media_families": [
+        "radio"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Łódź",
+      "raw_results": 2,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "raw_results": 4,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Dresden",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Hamburg",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Brno",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Ostrava",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ],
+  "no_progress": true
+}

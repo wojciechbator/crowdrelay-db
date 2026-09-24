@@ -692,13 +692,43 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
         if len(out) >= 30:
             break
 
-    # Only use Jina when both regular layers genuinely produced nothing.
-    if out:
-        return out
-    try:
-        return jina_search(query, headers)[:20]
-    except Exception:
-        return []
+    # Social search is especially brittle on public search engines: a healthy
+    # response can contain only Facebook/Instagram boilerplate or article URLs.
+    # When a social query produced no actionable direct destination, use Jina
+    # and one broader city-scoped variant before giving up.
+    social_kinds = {"facebook_groups", "facebook_pages", "instagram", "tiktok", "youtube"}
+    has_direct = any(usable_direct_url(item.get("url", "")) for item in out)
+    rescue = []
+
+    if query_kind in social_kinds and not has_direct:
+        try:
+            rescue.extend(jina_search(query, headers)[:20])
+        except Exception:
+            pass
+        broad_query = re.sub(r"^site:\\S+\\s+", "", query).strip()
+        if broad_query and broad_query != query:
+            try:
+                rescue.extend(jina_search(broad_query, headers)[:20])
+            except Exception:
+                pass
+    elif not out:
+        try:
+            rescue.extend(jina_search(query, headers)[:20])
+        except Exception:
+            pass
+
+    if rescue:
+        for item in rescue:
+            url = item.get("url", "")
+            key = norm(url.rstrip("/"))
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            out.append(item)
+            if len(out) >= 30:
+                break
+
+    return out
 
 
 def emails(text: str) -> list[str]:
@@ -1426,10 +1456,32 @@ def main() -> None:
         accepted.append((city, country, result, peers, beacons, contacts))
 
     if not accepted:
-        raise RuntimeError(
-            f"Daily city micro-pass qualified 0 of {min(limit, len(candidates))} candidates; "
-            f"candidate window {len(candidates)}; rejected={len(rejected)}"
+        # Search providers can transiently return no actionable destinations.
+        # Preserve the diagnostic state and finish cleanly so the scheduled
+        # pipeline can retry these still-eligible cities on the next run.
+        PASSES.mkdir(parents=True, exist_ok=True)
+        state = {
+            "date": TODAY,
+            "research_version": PASS_FORMAT_VERSION,
+            "pass_id": pass_id,
+            "batch_size_requested": limit,
+            "batch_complete": False,
+            "candidate_window": len(candidates),
+            "cities": [],
+            "summary": [],
+            "rejected_candidates": rejected,
+            "no_progress": True,
+        }
+        (PASSES / f"{stamp}.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2),
+            encoding="utf-8",
         )
+        print(
+            f"CITY_PASS_NO_PROGRESS candidates={len(candidates)} "
+            f"rejected={len(rejected)}; saved diagnostic state for retry"
+        )
+        print(json.dumps(state, ensure_ascii=False))
+        return
 
     # A partial batch is useful progress. Successful cities are persisted;
     # rejected cities remain eligible for a future pass.

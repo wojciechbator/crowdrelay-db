@@ -198,25 +198,43 @@ def relevant_direct_entity(query_kind: str, url: str, title: str, snippet: str, 
         return False
     path = urlparse(url).path.casefold()
     blob = f"{title} {snippet} {url}"
+    clean_title = norm(title)
 
     if query_kind == "youtube":
-        return path.startswith(("/channel/", "/@", "/c/", "/user/"))
+        return path.startswith(("/channel/", "/@", "/c/", "/user/")) and clean_title not in {
+            "youtube", "youtube channel", "log in or sign up"
+        }
 
+    # These queries are explicitly city-scoped and connector-scoped. A direct
+    # social URL is therefore already a materially stronger local signal than
+    # the generic search-engine title. Do not require the engine to echo the
+    # city/genre in the title: Facebook/Instagram/YouTube frequently expose
+    # only a generic title while the slug/path identifies the entity.
     if query_kind == "facebook_groups":
         return (
             path.startswith("/groups/")
-            and norm(title) not in {"link to facebook.com", "facebook", "log in or sign up"}
-            and (
-                bool(ENTITY_RELEVANCE_RE.search(blob))
-                or ascii_norm(city) in ascii_norm(blob)
-            )
+            and clean_title not in {"link to facebook.com", "facebook", "log in or sign up"}
         )
 
     if query_kind.startswith("facebook"):
         return (
             not path.startswith(("/search", "/watch", "/events", "/reel", "/biz/"))
-            and bool(ENTITY_RELEVANCE_RE.search(blob) or ascii_norm(city) in ascii_norm(blob))
+            and clean_title not in {"link to facebook.com", "facebook", "log in or sign up"}
         )
+
+    if query_kind in {"instagram", "tiktok", "youtube"}:
+        return clean_title not in {
+            "link to instagram.com", "link to tiktok.com", "youtube",
+            "youtube channel", "log in or sign up"
+        }
+
+    if query_kind == "creators":
+        return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
+
+    if query_kind == "culture":
+        return bool(re.search(r"\b(culture|kultura|music|muzyka|concert|koncert|mck|city|miasto)\b", blob, re.I))
+
+    return True
 
     if query_kind == "creators":
         return bool(re.search(r"\b(photo|photographer|fotograf|creator|music|muzyka|concert|koncert)\b", blob, re.I))
@@ -256,12 +274,14 @@ def beacon_candidate_ok(
 
     if d in NON_ACTIONABLE_DOMAINS or any(d.endswith("." + x) for x in NON_ACTIONABLE_DOMAINS):
         return False
-    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
-        return False
     if is_newsish(url):
         return False
 
     if kind in {"facebook_community", "facebook_page", "instagram_creator", "tiktok_creator", "youtube_channel"}:
+        # Do not apply article/page-noise rejection to the entire fetched page
+        # context. Social pages often expose terms, cookie/login and privacy
+        # boilerplate even when the entity itself is perfectly valid.
+        entity_blob = norm(f"{name} {url}")
         if not usable_direct_url(url):
             return False
         if kind == "facebook_community" and not path.startswith("/groups/"):
@@ -271,14 +291,17 @@ def beacon_candidate_ok(
         clean_name = norm(name)
         if clean_name in GENERIC_SOCIAL_NAMES:
             return False
+        if NON_ACTIONABLE_TITLE_RE.search(entity_blob):
+            return False
 
-        # Search results from the city-specific social queries are already scoped
-        # to a concrete city + connector type. Accept them when the URL/name carries
-        # a city signal even when the search engine title is generic (e.g. "Facebook").
-        if bool(OUTREACH_SIGNAL_RE.search(title_blob)):
-            return True
+        # A social result reached through an explicitly city-scoped social query
+        # is acceptable even when the platform strips all semantic text from the
+        # result title. Keep hard URL/path checks above as the spam guard.
         if scoped_social:
-            return bool(ascii_norm(city_from_context(context)) in ascii_norm(title_blob))
+            return True
+        return bool(OUTREACH_SIGNAL_RE.search(entity_blob))
+
+    if NON_ACTIONABLE_TITLE_RE.search(title_blob):
         return False
 
     if not allow_non_direct:
@@ -394,9 +417,9 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             kind = "event_calendar"
         else:
             kind = "local_music_resource"
-        name = re.sub(r"s+", " ", label or "").strip()
+        name = re.sub(r"\s+", " ", label or "").strip()
         if len(name) < 3:
-            name = re.sub(r"s*[|–-].*$", "", page_title or "").strip()
+            name = re.sub(r"\s*[|–-].*$", "", page_title or "").strip()
         if len(name) < 3:
             name = d
         out.append({"name": name[:180], "kind": kind, "url": href, "city": city})

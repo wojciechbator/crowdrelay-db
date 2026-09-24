@@ -191,6 +191,10 @@ def usable_direct_url(url: str) -> bool:
             "/share", "/login", "/recover", "/help", "/plugins", "/dialog",
             "/hashtag", "/gaming", "/marketplace"
         )
+        generic_fb_paths = (
+            "/reg", "/lite", "/about", "/careers", "/pages/create", "/ad_campaign",
+            "/help", "/privacy", "/policies", "/login", "/recover",
+        )
         return (
             path.startswith("/groups/")
             or path.startswith("/pages/")
@@ -198,6 +202,7 @@ def usable_direct_url(url: str) -> bool:
             or (
                 len(path.strip("/")) >= 2
                 and not path.startswith(blocked)
+                and not path.startswith(generic_fb_paths)
                 and segment not in {"settings", "privacy", "terms", "policies"}
             )
         )
@@ -213,6 +218,7 @@ def usable_direct_url(url: str) -> bool:
                 "explore", "reels", "p", "tv", "stories", "accounts", "direct",
                 "about", "legal", "privacy", "terms"
             }
+            and not path.startswith(("/reel/", "/p/", "/tv/", "/stories/"))
         )
     if d == "tiktok.com":
         return (
@@ -436,8 +442,13 @@ def direct_links(city: str, page_title: str, links: list[tuple[str, str]]) -> li
             kind = "facebook_community" if "/groups/" in href else "facebook_page"
         elif d in {"youtube.com", "youtu.be"}:
             path = urlparse(href).path.casefold()
-            kind = "youtube_video" if path.startswith("/watch") else "youtube_channel"
+            if path.startswith("/watch") or path.startswith("/shorts/"):
+                continue
+            kind = "youtube_channel"
         elif d == "instagram.com":
+            path = urlparse(href).path.casefold()
+            if path.startswith(("/reel/", "/p/", "/tv/", "/stories/")):
+                continue
             kind = "instagram_creator"
         elif d == "tiktok.com":
             kind = "tiktok_creator"
@@ -1153,6 +1164,33 @@ def select_research_results(
             break
 
     return selected[:limit]
+
+
+
+def is_generic_social_destination(url: str) -> bool:
+    d = domain(url)
+    path = urlparse(url).path.casefold().rstrip("/")
+    if d == "facebook.com":
+        return path in {
+            "/reg", "/lite", "/about", "/careers",
+            "/pages/create", "/ad_campaign", "/help",
+            "/privacy", "/policies", "/login", "/recover",
+        } or path.startswith((
+            "/pages/create/",
+            "/ad_campaign/",
+            "/login/",
+            "/recover/",
+        ))
+    if d == "instagram.com":
+        return path.startswith((
+            "/reel/", "/p/", "/tv/", "/stories/",
+            "/explore/", "/accounts/", "/direct/",
+        ))
+    if d == "youtube.com":
+        return path.startswith(("/watch", "/shorts/"))
+    if d == "tiktok.com":
+        return path.startswith(("/discover", "/search", "/tag/"))
+    return False
 
 
 

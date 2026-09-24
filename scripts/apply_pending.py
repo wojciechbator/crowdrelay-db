@@ -58,12 +58,6 @@ GENERIC_SOCIAL_NAMES = {
     "link to facebook.com", "link to instagram.com", "link to youtube.com",
 }
 
-NEWSISH_DOMAINS = {
-    "news.google.com", "reuters.com", "bbc.com", "theguardian.com", "rollingstone.com",
-    "rollingstone.de", "timeout.com", "loudersound.com", "blabbermouth.net",
-    "metalinjection.net", "brooklynvegan.com", "residentadvisor.net",
-}
-
 SOCIAL_NEGATIVE_RE = re.compile(
     r"\b(tapicer|czyszczen|sprz[aą]tan|cleaning|upholster|skup aut|samochod|"
     r"auto(handel|serwis)?|car dealer|motoryz|friseur|fris[oö]r|hair|barber|"
@@ -94,58 +88,6 @@ SOCIAL_AGGREGATOR_DOMAINS = {
     "rollingstone.de", "rollingstone.com", "news.google.com",
 }
 
-COUNTRY_CC_TLD = {
-    "poland": ".pl",
-    "germany": ".de",
-    "czechia": ".cz",
-    "slovakia": ".sk",
-}
-
-
-def country_domain_matches(country: str, url: str) -> bool:
-    from urllib.parse import urlparse
-    d = urlparse(str(url or "")).netloc.casefold().removeprefix("www.")
-    if not d:
-        return False
-    expected = COUNTRY_CC_TLD.get(norm(country))
-    if not expected:
-        return True
-    parts = d.split(".")
-    return not (len(parts) >= 2 and len(parts[-1]) == 2) or d.endswith(expected)
-
-
-ARTICLEISH_TITLE_RE = re.compile(
-    r"\b(review|recenzja|relacja|interview|wywiad|reportaż|reportage|"
-    r"news|nachrichten|actualit|aktuality|mix|playlist|episode|odcinek)\b",
-    re.I,
-)
-
-
-def looks_like_article_page(url: str, title: str) -> bool:
-    from urllib.parse import urlparse
-    path = urlparse(str(url or "")).path.casefold()
-    if path.endswith((".html", ".htm")):
-        return True
-    if re.search(r"/(news|article|articles|story|stories|blog|review|interview|relacja|wywiad|aktuality)(/|$)", path):
-        return True
-    if re.search(r"/20\d{2}(?:[-_/]\d{1,2})", path):
-        return True
-    segments = [x for x in path.split("/") if x]
-    return len(segments) >= 4 and bool(ARTICLEISH_TITLE_RE.search(title))
-
-
-def city_entity_signal(city: str, name: str, url: str, extra: str = "") -> bool:
-    target = norm(city)
-    if not target:
-        return False
-    blob = norm(f"{name} {url} {extra}")
-    if target in blob:
-        return True
-    tokens = [x for x in re.findall(r"[a-z0-9]+", target) if len(x) >= 4]
-    return bool(tokens) and all(token in blob for token in tokens)
-
-
-
 def city_pass_pending_allowed(csv_path: Path) -> bool:
     match = CITY_PASS_PENDING_RE.match(csv_path.name)
     if not match:
@@ -175,17 +117,27 @@ def norm_entity(v: object) -> str:
 
 
 def canon_url(url: object) -> str:
-    """Key-form URL: no scheme, no www., no trailing slash. Two rows linking
-    the same page must dedupe even when one was copied with a slash."""
+    """Key-form URL: no scheme, no www., no trailing slash, casefolded path.
+    Two rows linking the same page must dedupe even when one was copied with
+    a slash — and social handles differ only by case between passes."""
     from urllib.parse import urlparse
     try:
         raw = str(url or "").strip()
         p = urlparse(raw if "//" in raw else "//" + raw)
         host = p.netloc.casefold().removeprefix("www.")
-        path = p.path.rstrip("/")
+        path = p.path.rstrip("/").casefold()
         return host + path if host else norm(url)
     except Exception:
         return norm(url)
+
+
+def safe_cell(value: object) -> object:
+    """A scraped cell starting with =, +, - or @ is a formula when Excel
+    opens the workbook (CSV/DDE injection) and a valueless formula cell to
+    the Rust importer. Prefix with an apostrophe so it stays text."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+        return "'" + value
+    return value
 
 
 def save_workbook_atomic(wb, path: Path) -> None:
@@ -373,7 +325,17 @@ def peer_row_allowed(row: list[str]) -> bool:
         return False
     if re.search(r"\b(festival|festiwal|radio|podcast|magazine|media|venue|club|klub|agency|agencja|booking|promoter|calendar|kalendarz|culture|centrum kultury|event|wydarzen|collection|playlist|ticket|tickets|bilety|shop|store|sklep|tour dates|setlist)\b", norm(name), re.I):
         return False
-    return bool(re.search(r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|music|muzyka|musik|hudba)\b", blob, re.I))
+    if re.search(r"\b(metal|metalcore|deathcore|hardcore|rock|punk|djent|band|zesp[oó]ł|kapela|music|muzyka|musik|hudba)\b", blob, re.I):
+        return True
+    # Whole-word matching cannot see the band-platform domains — "bandcamp.com"
+    # fails \bband\b — yet those URLs are the strongest peer signal the
+    # emitter produces. Accept a row carrying one verbatim.
+    return bool(re.search(
+        r"(bandcamp\.com|bandsintown\.com|soundcloud\.com|songkick\.com|"
+        r"spotify\.com/artist|youtube\.com/@|music\.apple\.com|deezer\.com|"
+        r"tidal\.com|last\.fm)",
+        blob, re.I,
+    ))
 
 
 def contact_row_allowed(row: list[str]) -> bool:
@@ -449,21 +411,31 @@ def apply_removals(wb, csv_path: Path) -> int:
         ]
         idx = {value: i + 1 for i, value in enumerate(headers) if value}
 
+        # Normalization must match how the column is keyed elsewhere: URLs
+        # compare through canon_url (scheme/www/case/trailing-slash agnostic),
+        # entity names through norm_entity (whitespace-collapsed). A removal
+        # that normalizes differently silently matches nothing.
         if key_type == "name":
             required_cols = ["name"]
-            values = [key]
+            values = [norm_entity(key_raw)]
+            norms = [norm_entity]
         elif key_type == "email":
             required_cols = ["email"]
             values = [key]
+            norms = [norm]
         elif key_type == "website":
             required_cols = ["website"]
-            values = [key]
+            values = [canon_url(key_raw)]
+            norms = [canon_url]
         elif key_type == "name+city":
             required_cols = ["name", "city"]
-            values = [norm(x) for x in key_raw.split("||", 1)]
+            parts = key_raw.split("||", 1)
+            values = [norm_entity(parts[0]), norm(parts[1])]
+            norms = [norm_entity, norm]
         elif key_type == "name+country":
             required_cols = ["name", "country"]
             values = [norm(x) for x in key_raw.split("||", 1)]
+            norms = [norm, norm]
         elif key_type == "name+city+url":
             parts = key_raw.split("||", 2)
             if len(parts) != 3:
@@ -477,7 +449,8 @@ def apply_removals(wb, csv_path: Path) -> int:
             else:
                 raise RuntimeError(f"No URL column available for exact removal in {target_sheet!r}")
             required_cols = ["name", "city", url_col]
-            values = [norm(parts[0]), norm(parts[1]), norm(parts[2])]
+            values = [norm_entity(parts[0]), norm(parts[1]), canon_url(parts[2])]
+            norms = [norm_entity, norm, canon_url]
         else:
             raise RuntimeError(f"Unsupported removal key type {raw[1]!r}")
 
@@ -486,8 +459,8 @@ def apply_removals(wb, csv_path: Path) -> int:
 
         for row_no in range(ws.max_row, header_row, -1):
             if all(
-                norm(ws.cell(row_no, idx[col]).value) == value
-                for col, value in zip(required_cols, values)
+                normalizer(ws.cell(row_no, idx[col]).value) == value
+                for col, value, normalizer in zip(required_cols, values, norms)
             ):
                 ws.delete_rows(row_no, 1)
                 removed += 1
@@ -505,7 +478,9 @@ ENTITY_KEY_COLS = {
     # ("X" vs "X - muno.pl") while the destination URL stays stable. Same
     # keying the emitter's dedupe uses.
     "Beacons": [("kind", "city", "destination_url")],
-    "Contacts": [("email",), ("name", "organization")],
+    # Same mailbox harvested for two cities (regional press covering both) is
+    # two contacts — the emitter and the cleanup pass both key (email, city).
+    "Contacts": [("email", "city"), ("email",), ("name", "organization")],
 }
 
 
@@ -522,6 +497,13 @@ def entity_key(sheet: str, header: list[str], row: list[str]) -> tuple[str, ...]
         )
         if all(key):
             return key
+    # A name-only fallback on a keyed sheet merges entities across cities —
+    # a venue row with a blank city would key ("avantgarde",) and overwrite
+    # the other city's same-named venue. Sheets with declared keys append a
+    # row instead of merging on a partial key; name-only keying stays for
+    # sheets that declare it (Booking Agents) or declare nothing at all.
+    if sheet in ENTITY_KEY_COLS:
+        return row_sig(row)
     if "name" in header_norm and norm_entity(row[header_norm.index("name")]):
         return (norm_entity(row[header_norm.index("name")]),)
     return row_sig(row)
@@ -617,7 +599,7 @@ def process_pending_file(wb, csv_path: Path) -> tuple[int, str, bool]:
                 # An empty CSV cell means "no data this pass" — never erase a
                 # populated workbook cell. Removals are the only erase path.
                 if norm(value):
-                    ws.cell(row_no, col_by_name[norm(csv_col)]).value = value
+                    ws.cell(row_no, col_by_name[norm(csv_col)]).value = safe_cell(value)
             updated += 1
         return updated, "upserted", updated > 0
 
@@ -642,7 +624,11 @@ def process_pending_file(wb, csv_path: Path) -> tuple[int, str, bool]:
     for row_no in range(start_data_row, ws.max_row + 1):
         existing_row = [ws.cell(row_no, c).value for c in range(1, len(header) + 1)]
         if any(norm(v) for v in existing_row):
-            row_by_key.setdefault(entity_key(sheet, header, [norm(v) for v in existing_row]), row_no)
+            # Raw values, not pre-normed: entity_key's canon_url casefolds
+            # the URL path itself, so a stored @FrontThree and an incoming
+            # @frontthree resolve to one key only when both sides go through
+            # the same normalization.
+            row_by_key.setdefault(entity_key(sheet, header, existing_row), row_no)
 
     added = 0
     updated_rows = 0
@@ -658,7 +644,7 @@ def process_pending_file(wb, csv_path: Path) -> tuple[int, str, bool]:
         key = entity_key(sheet, header, row)
         row_no = row_by_key.get(key)
         if row_no is None:
-            ws.append(row)
+            ws.append([safe_cell(v) for v in row])
             row_by_key[key] = ws.max_row
             added += 1
         else:
@@ -667,7 +653,7 @@ def process_pending_file(wb, csv_path: Path) -> tuple[int, str, bool]:
                 if norm(value):
                     cell = ws.cell(row_no, i + 1)
                     if cell.value != value:
-                        cell.value = value
+                        cell.value = safe_cell(value)
                         merged = True
             if merged:
                 updated_rows += 1
@@ -776,7 +762,7 @@ def main() -> None:
                                 ws.delete_rows(row_no, 1)
                                 cleanup_counts["Peer Bands"] += 1
                                 changed = True
-                            elif norm(ws.cell(row_no, 17).value) == "city micro-pass" and norm(ws.cell(row_no, 10).value) == norm(row[9]):
+                            elif norm(ws.cell(row_no, 17).value).startswith("city micro-pass") and norm(ws.cell(row_no, 10).value) == norm(row[9]):
                                 ws.delete_rows(row_no, 1)
                                 cleanup_counts["Peer Bands"] += 1
                                 changed = True

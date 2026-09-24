@@ -13,8 +13,9 @@ import requests
 from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 
-REPO_DB = Path("database.xlsx")
-AUDIT_DIR = Path("audit")
+ROOT = Path(__file__).resolve().parents[1]
+REPO_DB = ROOT / "database.xlsx"
+AUDIT_DIR = ROOT / "audit"
 TODAY = date.today().isoformat()
 USER_AGENT = "CrowdRelayDB-ResearchAudit/3.0"
 
@@ -25,8 +26,10 @@ COUNTRY_FROM_SOURCE = {
     "/country/Slovakia": "Slovakia",
 }
 
+# 'artist(s)'/artysta is deliberately absent: a band literally named "The
+# Artists" must not auto-REMOVE on a word that is also a plausible band name.
 NON_BAND_TERMS = re.compile(
-    r"(festival|festiwal|radio|turbo top|music city|\bartyst[a-z]*\b|artists?\b|"
+    r"(festival|festiwal|radio|turbo top|music city|"
     r"tour\s+20\d\d|\bclub\b|\bklub\b|\bpub\b|\bvenue\b|\bbooking\b|"
     r"\bpromotion\b|\bagency\b|music review|podcast|magazine|media)",
     re.I,
@@ -67,6 +70,15 @@ BAD_DOMAINS = {
     "tiktok.com",
     "websudoku.com",
 }
+
+
+def safe_cell(value: object) -> object:
+    """A scraped cell starting with =, +, - or @ is a formula when Excel
+    opens the workbook (CSV/DDE injection) and a valueless formula cell to
+    the Rust importer. Prefix with an apostrophe so it stays text."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@"):
+        return "'" + value
+    return value
 
 
 def norm(v: object) -> str:
@@ -333,7 +345,7 @@ def inspect(rec: dict) -> dict:
 
 def load_prior_audited_names() -> set[str]:
     audited: set[str] = set()
-    search_roots = [Path("updates/applied"), Path("audit")]
+    search_roots = [ROOT / "updates" / "applied", AUDIT_DIR]
     patterns = [
         "Audit_Peer_Bands__*.csv",
         "peer_bands_audit_batch__*.csv",
@@ -357,25 +369,38 @@ def load_prior_audited_names() -> set[str]:
 def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> tuple[int, int, int]:
     idx = {h: i + 1 for i, h in enumerate(headers)}
     name_col = idx["Name"]
+    city_col = idx.get("City")
 
-    rows_by_name: dict[str, int] = {}
+    def row_key(name: object, city: object) -> tuple[str, str]:
+        # (name, city) — Peer Bands legitimately holds same-named bands in
+        # different cities; a name-only key writes city A's audit onto city
+        # B's row, or deletes the wrong band entirely.
+        return (norm(name), norm(city) if city_col else "")
+
+    rows_by_key: dict[tuple[str, str], int] = {}
     for row_no in range(3, ws.max_row + 1):
-        key = norm(ws.cell(row_no, name_col).value)
-        if key:
-            rows_by_name[key] = row_no
+        key = row_key(
+            ws.cell(row_no, name_col).value,
+            ws.cell(row_no, city_col).value if city_col else "",
+        )
+        if key[0]:
+            rows_by_key[key] = row_no
 
     kept = removed = reviewed = 0
     for r in batch_results:
-        key = norm(r["Name"])
-        row_no = rows_by_name.get(key)
+        key = row_key(r["Name"], r.get("City", ""))
+        row_no = rows_by_key.get(key)
 
         if r["Decision"] == "REMOVE":
             if row_no is not None:
                 ws.delete_rows(row_no, 1)
                 removed += 1
                 # Rebuild row index after deletion because row numbers shift.
-                rows_by_name = {
-                    norm(ws.cell(n, name_col).value): n
+                rows_by_key = {
+                    row_key(
+                        ws.cell(n, name_col).value,
+                        ws.cell(n, city_col).value if city_col else "",
+                    ): n
                     for n in range(3, ws.max_row + 1)
                     if norm(ws.cell(n, name_col).value)
                 }
@@ -384,9 +409,9 @@ def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> 
         if row_no is None:
             # The source record should normally exist. If another job removed it,
             # preserve the audited data rather than silently dropping it.
-            ws.append([r[h] if r[h] is not None else "" for h in headers])
+            ws.append([safe_cell(r[h]) if r[h] is not None else "" for h in headers])
             row_no = ws.max_row
-            rows_by_name[key] = row_no
+            rows_by_key[key] = row_no
 
         values = [r[h] if r[h] is not None else "" for h in headers]
         values[idx["Country"] - 1] = r["Verified_Country"] or values[idx["Country"] - 1]
@@ -411,7 +436,7 @@ def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> 
         values[idx["Contact_Source"] - 1] = r["Verified_Source"] or values[idx["Contact_Source"] - 1]
 
         for col_no, value in enumerate(values, start=1):
-            ws.cell(row_no, col_no).value = value
+            ws.cell(row_no, col_no).value = safe_cell(value)
 
         if r["Decision"] == "KEEP":
             kept += 1
@@ -424,7 +449,9 @@ def update_batch_in_place(ws, headers: list[str], batch_results: list[dict]) -> 
 def main() -> None:
     wb = load_workbook(REPO_DB)
     ws = wb["Peer Bands"]
-    headers = [c.value for c in ws[2]]
+    # A stray trailing cell pads ws.max_column and puts None in headers —
+    # every rec then gets a None key and DictWriter raises. Filter falsy.
+    headers = [h for h in (c.value for c in ws[2]) if h]
     records = [
         {h: row[i] if i < len(row) else "" for i, h in enumerate(headers)}
         for row in ws.iter_rows(min_row=3, values_only=True)
@@ -477,10 +504,12 @@ def main() -> None:
         "Verified_Country","Verified_Genre","Verified_Status","Confidence_New","Evidence"
     ]
     AUDIT_DIR.mkdir(exist_ok=True)
-    with report.open("w", encoding="utf-8", newline="") as f:
+    report_tmp = report.with_suffix(report.suffix + ".tmp")
+    with report_tmp.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=out_headers)
         w.writeheader()
         w.writerows(results)
+    os.replace(report_tmp, report)
 
     summary = {
         "date": TODAY,

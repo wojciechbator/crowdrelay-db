@@ -160,7 +160,11 @@ jobs:
             # recorded the CSVs as landed.
             git stash pop
           fi
+          # .staging/ is rm -rf'd by the materialize step but the deletion is
+          # untracked here — `git add -A` on it stages the removal so a
+          # tracked snapshot cannot keep resurrecting over database.xlsx.
           git add database.xlsx updates/applied updates/pending updates/rejected
+          git add -A -- .staging || true
           if git diff --cached --quiet; then
             echo "No database changes."
             exit 0

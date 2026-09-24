@@ -244,6 +244,7 @@ def beacon_row_allowed(row: list[str]) -> bool:
         "podchaser.com", "podbean.com", "spotify.com", "linkedin.com",
         "booking.com", "allegro.pl", "elements.envato.com", "envato.com",
         "kultura.cz", "tv.youtube.com", "music.youtube.com",
+        "fm-radio.live", "onlineradiobox.com", "radiolista.pl", "radiovolna.net",
     }
 
     if kind in social_kinds:
@@ -273,8 +274,16 @@ def beacon_row_allowed(row: list[str]) -> bool:
             return False
 
     semantic = f"{name} {destination} {source}"
-    if kind == "podcast" and not re.search(r"\bpodcast\b", semantic, re.I):
-        return False
+    if kind == "podcast":
+        if not re.search(r"\bpodcast\b", semantic, re.I):
+            return False
+        if not re.search(
+            r"\b(music|muzyka|musik|hudba|band|koncert|concert|metal|rock|artist|artyst|"
+            r"festiwal|festival|hardcore|djent)\b",
+            semantic,
+            re.I,
+        ):
+            return False
     if kind == "independent_radio" and not re.search(r"\b(radio|rádio|radiostacja|broadcast)\b", semantic, re.I):
         return False
     if kind == "local_media" and not re.search(

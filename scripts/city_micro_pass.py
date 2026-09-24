@@ -190,6 +190,7 @@ SOCIAL_ENTITY_RELEVANCE_RE = re.compile(
 MEDIA_AGGREGATOR_DOMAINS = {
     "mixcloud.com", "player.fm", "radio.net", "radio-polska.pl",
     "podchaser.com", "podbean.com", "spotify.com", "soundcloud.com",
+    "fm-radio.live", "onlineradiobox.com", "radiolista.pl", "radiovolna.net",
 }
 
 RESOURCE_NOISE_DOMAINS = {
@@ -440,8 +441,16 @@ def beacon_candidate_ok(
         if city and not entity_city_signal(city, name, url, context):
             return False
         media_blob = f"{name} {url} {context}"
-        if kind == "podcast" and not re.search(r"\bpodcast\b", media_blob, re.I):
-            return False
+        if kind == "podcast":
+            if not re.search(r"\bpodcast\b", media_blob, re.I):
+                return False
+            if not re.search(
+                r"\b(music|muzyka|musik|hudba|band|koncert|concert|metal|rock|artist|artyst|"
+                r"festiwal|festival|hardcore|djent)\b",
+                media_blob,
+                re.I,
+            ):
+                return False
         if kind == "independent_radio" and not re.search(r"\b(radio|rádio|radiostacja|broadcast)\b", media_blob, re.I):
             return False
         if kind == "local_media" and not re.search(

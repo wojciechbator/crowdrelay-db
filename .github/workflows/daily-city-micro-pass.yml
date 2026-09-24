@@ -32,6 +32,7 @@ jobs:
       CITY_MIN_MEDIA_FAMILIES: "0"
       CITY_MIN_SOURCE_CATEGORIES: "3"
       CITY_PASS_TIME_BUDGET: "1800"
+      CITY_MAX_NOISE_RATE: "0.35"
     steps:
       - name: Checkout canonical database
         uses: actions/checkout@v4
@@ -89,6 +90,24 @@ jobs:
           assert not module.result_quality_ok(weak), weak
           assert not module.usable_direct_url("https://www.facebook.com/reg/")
           assert not module.usable_direct_url("https://www.youtube.com/watch?v=abc")
+          assert not module.beacon_candidate_ok(
+              "Radio Eska łódź Na Żywo Za Darmo | FM-RADIO.live",
+              "independent_radio",
+              "https://fm-radio.live/",
+              "Łódź FM-RADIO live radio",
+              allow_non_direct=True,
+              country="Poland",
+              city="Łódź",
+          )
+          assert not module.beacon_candidate_ok(
+              "Best Polisher Podcasts (2025)",
+              "podcast",
+              "https://player.fm/",
+              "Łódź podcast music",
+              allow_non_direct=True,
+              country="Poland",
+              city="Łódź",
+          )
           queries = module.city_queries("Bydgoszcz", "Poland")
           kinds = [kind for kind, _ in queries]
           required = {"bands", "facebook_groups", "facebook_pages", "instagram", "youtube", "local_press", "events", "radio", "culture", "promoters"}

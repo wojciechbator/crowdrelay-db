@@ -83,6 +83,7 @@ jobs:
           print("CITY_QUEUE_SMOKE_OK", len(queue), queue[:4])
 
           import os
+          from openpyxl import load_workbook
           good = {
               "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),
               "direct_leads": int(os.environ["CITY_MIN_DIRECT_LEADS"]),

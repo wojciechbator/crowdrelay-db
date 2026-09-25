@@ -1,0 +1,127 @@
+{
+  "date": "2026-09-25",
+  "research_version": 16,
+  "pass_id": 17,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [],
+  "summary": [],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Gdańsk",
+      "raw_results": 80,
+      "direct_leads": 30,
+      "useful": 19,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "podcast",
+        "tiktok_creator",
+        "venue",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media",
+        "podcast"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Katowice",
+      "raw_results": 80,
+      "direct_leads": 29,
+      "useful": 16,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "podcast",
+        "tiktok_creator",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media",
+        "podcast"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kielce",
+      "raw_results": 80,
+      "direct_leads": 38,
+      "useful": 26,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "local_music_resource",
+        "tiktok_creator",
+        "venue",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media"
+      ],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kraków",
+      "raw_results": 80,
+      "direct_leads": 22,
+      "useful": 16,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "local_media",
+        "tiktok_creator",
+        "venue",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_media"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "no_progress": false,
+  "scanned_count": 4
+}

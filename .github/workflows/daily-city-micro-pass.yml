@@ -51,6 +51,7 @@ jobs:
           python3 - <<'PY'
           import importlib.util
           from pathlib import Path
+          from openpyxl import load_workbook
           spec = importlib.util.spec_from_file_location("city_micro_pass", Path("scripts/city_micro_pass.py"))
           if spec is None or spec.loader is None:
               raise SystemExit("Could not load city_micro_pass.py")
@@ -83,7 +84,6 @@ jobs:
           print("CITY_QUEUE_SMOKE_OK", len(queue), queue[:4])
 
           import os
-          from openpyxl import load_workbook
           good = {
               "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),
               "direct_leads": int(os.environ["CITY_MIN_DIRECT_LEADS"]),

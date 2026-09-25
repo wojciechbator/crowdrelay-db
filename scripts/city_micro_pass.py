@@ -1145,17 +1145,19 @@ def all_cities(wb) -> list[tuple[str, str]]:
         seen.add(key)
         ordered.append((city, country))
 
-    # Also pick up any active city added to Venues that is not yet in the
-    # canonical universe. New database cities must never become invisible to
-    # the research queue.
-    for country in COUNTRIES:
-        extra = sorted(
-            (city, country)
-            for c, city in found.values()
-            if c == country and city_key(country, city) not in seen
-        )
-        ordered.extend(extra)
-        seen.update(city_key(c, city) for city, c in extra)
+    # Pick up every city already present in Venues regardless of venue
+    # status, plus cities already represented by Peer Bands. This prevents the
+    # queue from disappearing a city merely because it currently has zero
+    # active venues.
+    for source in (found, peer_cities):
+        for country in COUNTRIES:
+            extra = sorted(
+                (city, country)
+                for c, city in source.values()
+                if c == country and city_key(country, city) not in seen
+            )
+            ordered.extend(extra)
+            seen.update(city_key(c, city) for city, c in extra)
 
     return ordered
 

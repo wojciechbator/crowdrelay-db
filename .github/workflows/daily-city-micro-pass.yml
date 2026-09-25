@@ -74,6 +74,14 @@ jobs:
           assert merged["useful"] == 0
           assert not merged["source_families"]
 
+          queue = module.all_cities(load_workbook("database.xlsx", read_only=True))
+          assert len(queue) >= 31, len(queue)
+          assert ("Gdańsk", "Poland") in queue
+          assert ("Dortmund", "Germany") in queue
+          assert ("Liberec", "Czechia") in queue
+          assert ("Košice", "Slovakia") in queue
+          print("CITY_QUEUE_SMOKE_OK", len(queue), queue[:4])
+
           import os
           good = {
               "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),

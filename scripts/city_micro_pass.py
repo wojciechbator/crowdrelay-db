@@ -1018,6 +1018,50 @@ def load_done() -> set[str]:
     return done
 
 
+# Canonical city research universe. These are the touring-market cities we
+# intentionally scan even when Venues currently has zero active rows for them.
+# Active cities discovered in Venues but missing here are appended automatically,
+# so the queue can grow without another code change.
+CITY_RESEARCH_UNIVERSE: list[tuple[str, str]] = [
+    # Poland
+    ("Poland", "Bydgoszcz"),
+    ("Poland", "Gdańsk"),
+    ("Poland", "Katowice"),
+    ("Poland", "Kielce"),
+    ("Poland", "Kraków"),
+    ("Poland", "Lublin"),
+    ("Poland", "Poznań"),
+    ("Poland", "Rzeszów"),
+    ("Poland", "Szczecin"),
+    ("Poland", "Warsaw"),
+    ("Poland", "Wrocław"),
+    # Germany
+    ("Germany", "Berlin"),
+    ("Germany", "Dortmund"),
+    ("Germany", "Dresden"),
+    ("Germany", "Erfurt"),
+    ("Germany", "Frankfurt am Main"),
+    ("Germany", "Hamburg"),
+    ("Germany", "Köln"),
+    ("Germany", "Leipzig"),
+    ("Germany", "München"),
+    ("Germany", "Nürnberg"),
+    ("Germany", "Stuttgart"),
+    # Czechia
+    ("Czechia", "Brno"),
+    ("Czechia", "Liberec"),
+    ("Czechia", "Olomouc"),
+    ("Czechia", "Ostrava"),
+    ("Czechia", "Plzeň"),
+    ("Czechia", "Prague"),
+    # Slovakia
+    ("Slovakia", "Bratislava"),
+    ("Slovakia", "Košice"),
+    ("Slovakia", "Nitra"),
+    ("Slovakia", "Žilina"),
+]
+
+
 def all_cities(wb) -> list[tuple[str, str]]:
     ws = wb["Venues"]
     headers = [c.value for c in ws[2]]
@@ -1035,18 +1079,46 @@ def all_cities(wb) -> list[tuple[str, str]]:
             found.setdefault(city_key(country, city), (country, city))
 
     ordered = []
+    seen = set()
+
+    # Always scan the canonical universe in deterministic order, even when
+    # Venues currently has no active row for a city.
+    for country, city in CITY_RESEARCH_UNIVERSE:
+        key = city_key(country, city)
+        if key in seen:
+            continue
+        seen.add(key)
+        ordered.append((city, country))
+
+    # Also pick up any active city added to Venues that is not yet in the
+    # canonical universe. New database cities must never become invisible to
+    # the research queue.
     for country in COUNTRIES:
-        ordered.extend(sorted((city, country) for c, city in found.values() if c == country))
+        extra = sorted(
+            (city, country)
+            for c, city in found.values()
+            if c == country and city_key(country, city) not in seen
+        )
+        ordered.extend(extra)
+        seen.update(city_key(c, city) for city, c in extra)
+
     return ordered
 
 
 def choose_cities(wb, limit: int):
     done = load_done()
-    return [
+    universe = all_cities(wb)
+    eligible = [
         (city, country)
-        for city, country in all_cities(wb)
+        for city, country in universe
         if city_key(country, city) not in done
-    ][:limit]
+    ]
+    preview = ", ".join(f"{country}/{city}" for city, country in eligible[:limit])
+    print(
+        f"CITY_QUEUE_STATE universe={len(universe)} done={len(done)} "
+        f"eligible={len(eligible)} next={preview or 'none'}"
+    )
+    return eligible[:limit]
 
 
 def classify_beacon(title: str, snippet: str, url: str = "") -> str:

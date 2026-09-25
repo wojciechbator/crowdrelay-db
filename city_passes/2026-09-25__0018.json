@@ -1,0 +1,82 @@
+{
+  "date": "2026-09-25",
+  "research_version": 16,
+  "pass_id": 18,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [],
+  "summary": [],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Gdańsk",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Katowice",
+      "raw_results": 6,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kielce",
+      "raw_results": 40,
+      "direct_leads": 26,
+      "useful": 23,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kraków",
+      "raw_results": 48,
+      "direct_leads": 23,
+      "useful": 24,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "local_media",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_media"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "no_progress": false,
+  "scanned_count": 4
+}

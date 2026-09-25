@@ -23,7 +23,7 @@ DB = ROOT / "database.xlsx"
 PENDING = ROOT / "updates" / "pending"
 PASSES = ROOT / "city_passes"
 TODAY = date.today().isoformat()
-PASS_FORMAT_VERSION = 16
+PASS_FORMAT_VERSION = 17
 FORCED_CITY_MIN_VERSION = {
     "poland::bydgoszcz": 16,
     "poland::warsaw": 16,
@@ -998,7 +998,6 @@ def load_done() -> set[str]:
             for x in payload.get("summary", []):
                 key = city_key(x.get("country", ""), x.get("city", ""))
                 raw = int(x.get("raw_results", 0) or 0)
-                direct = int(x.get("direct_leads", 0) or 0)
                 useful = int(
                     x.get("useful_leads",
                         (int(x.get("peer_candidates", 0) or 0)
@@ -1017,6 +1016,48 @@ def load_done() -> set[str]:
         except Exception:
             continue
     return done
+
+
+CITY_RESCAN_DAYS = int(os.environ.get("CITY_RESCAN_DAYS", "30"))
+
+
+def load_scanned() -> dict[str, date]:
+    """Return the most recent completed research date per city.
+
+    New-format rejected candidates count as scanned so a weak/throttled city
+    cannot block the next four. After CITY_RESCAN_DAYS the city becomes
+    eligible again for a fresh search.
+    """
+    latest: dict[str, date] = {}
+    if not PASSES.exists():
+        return latest
+
+    for p in PASSES.glob("*.json"):
+        try:
+            payload = json.loads(p.read_text(encoding="utf-8"))
+            if payload.get("invalidated") or payload.get("provisional"):
+                continue
+            version = int(payload.get("research_version", 1) or 1)
+            raw_date = str(payload.get("date") or "")
+            scan_date = date.fromisoformat(raw_date)
+            if version < 17:
+                # Preserve old accepted work as scanned, but do not let old
+                # rejected candidates block the new queue introduced in v17.
+                items = list(payload.get("cities", []))
+            else:
+                items = list(payload.get("cities", [])) + list(payload.get("rejected_candidates", []))
+            for x in items:
+                country = str(x.get("country") or "").strip()
+                city = str(x.get("city") or "").strip()
+                if not country or not city:
+                    continue
+                key = city_key(country, city)
+                previous = latest.get(key)
+                if previous is None or scan_date > previous:
+                    latest[key] = scan_date
+        except Exception:
+            continue
+    return latest
 
 
 # Canonical city research universe. These are the touring-market cities we
@@ -1075,9 +1116,22 @@ def all_cities(wb) -> list[tuple[str, str]]:
     for row in range(3, ws.max_row + 1):
         country = str(ws.cell(row, idx["country"]).value or "").strip()
         city = str(ws.cell(row, idx["city"]).value or "").strip()
-        status = norm(ws.cell(row, idx["status"]).value)
-        if city and country in COUNTRIES and status in ACTIVE_VENUE_STATUSES:
+        # City discovery is independent from venue status. A city with zero
+        # active venues still belongs in the research queue.
+        if city and country in COUNTRIES:
             found.setdefault(city_key(country, city), (country, city))
+
+    peer_cities = {}
+    if "Peer Bands" in wb.sheetnames:
+        peer_ws = wb["Peer Bands"]
+        peer_headers = [c.value for c in peer_ws[2]]
+        peer_idx = {norm(h): i + 1 for i, h in enumerate(peer_headers) if h}
+        if {"city", "country"}.issubset(peer_idx):
+            for row in range(3, peer_ws.max_row + 1):
+                country = str(peer_ws.cell(row, peer_idx["country"]).value or "").strip()
+                city = str(peer_ws.cell(row, peer_idx["city"]).value or "").strip()
+                if city and country in COUNTRIES:
+                    peer_cities.setdefault(city_key(country, city), (country, city))
 
     ordered = []
     seen = set()
@@ -1107,17 +1161,22 @@ def all_cities(wb) -> list[tuple[str, str]]:
 
 
 def choose_cities(wb, limit: int):
-    done = load_done()
     universe = all_cities(wb)
+    scanned = load_scanned()
+    today = date.today()
     eligible = [
         (city, country)
         for city, country in universe
-        if city_key(country, city) not in done
+        if (
+            city_key(country, city) not in scanned
+            or (today - scanned[city_key(country, city)]).days >= CITY_RESCAN_DAYS
+        )
     ]
     preview = ", ".join(f"{country}/{city}" for city, country in eligible[:limit])
     print(
-        f"CITY_QUEUE_STATE universe={len(universe)} done={len(done)} "
-        f"eligible={len(eligible)} next={preview or 'none'}"
+        f"CITY_QUEUE_STATE universe={len(universe)} scanned={len(scanned)} "
+        f"eligible={len(eligible)} rescan_days={CITY_RESCAN_DAYS} "
+        f"next={preview or 'none'}"
     )
     return eligible[:limit]
 
@@ -2069,9 +2128,11 @@ def safe_filename(value: str) -> str:
 
 def main() -> None:
     limit = int(os.environ.get("CITY_BATCH_SIZE", "4"))
-    candidate_window = int(os.environ.get("CITY_CANDIDATE_WINDOW", str(max(limit * 3, limit))))
     wb = load_workbook(DB)
-    candidates = choose_cities(wb, candidate_window)
+    # Exactly four queue positions are attempted per pass. A rejected city
+    # advances the queue just like an accepted one; it can return on refresh.
+    candidates = choose_cities(wb, limit)
+    candidate_window = len(candidates)
     if not candidates:
         print("CITY_PASS_DONE no eligible unprocessed cities")
         return
@@ -2180,9 +2241,9 @@ def main() -> None:
         accepted.append((city, country, result, peers, beacons, contacts))
 
     if not accepted:
-        # Search providers can transiently return no actionable destinations.
-        # Preserve the diagnostic state and finish cleanly so the scheduled
-        # pipeline can retry these still-eligible cities on the next run.
+        # All four cities were still fully scanned. Keep their rejection state
+        # in the committed pass so the queue advances instead of retrying the
+        # same batch forever.
         PASSES.mkdir(parents=True, exist_ok=True)
         state = {
             "date": TODAY,
@@ -2194,12 +2255,13 @@ def main() -> None:
             "cities": [],
             "summary": [],
             "rejected_candidates": rejected,
-            "no_progress": True,
+            "no_progress": False,
+            "scanned_count": len(rejected),
         }
         write_json_atomic(PASSES / f"{stamp}.json", state)
         print(
-            f"CITY_PASS_NO_PROGRESS candidates={len(candidates)} "
-            f"rejected={len(rejected)}; saved diagnostic state for retry"
+            f"CITY_PASS_PARTIAL scanned={len(candidates)} accepted=0 "
+            f"rejected={len(rejected)}; queue advanced"
         )
         print(json.dumps(state, ensure_ascii=False))
         return

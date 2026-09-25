@@ -23,7 +23,8 @@ jobs:
     timeout-minutes: 45
     env:
       CITY_BATCH_SIZE: "4"
-      CITY_CANDIDATE_WINDOW: "12"
+      CITY_CANDIDATE_WINDOW: "4"
+      CITY_RESCAN_DAYS: "30"
       CITY_MIN_RAW_RESULTS: "4"
       CITY_MIN_DIRECT_LEADS: "3"
       CITY_MIN_USEFUL_LEADS: "4"
@@ -82,6 +83,8 @@ jobs:
           assert ("Liberec", "Czechia") in queue
           assert ("Košice", "Slovakia") in queue
           print("CITY_QUEUE_SMOKE_OK", len(queue), queue[:4])
+          # Four-position batches are the queue contract.
+          assert len(module.choose_cities(load_workbook("database.xlsx", read_only=True), 4)) <= 4
 
           import os
           good = {
@@ -153,9 +156,9 @@ jobs:
               print("No eligible cities left.")
               raise SystemExit(0)
           payload = json.loads(files[-1].read_text(encoding="utf-8"))
-          if payload.get("no_progress") or not payload.get("cities"):
+          if payload.get("no_progress") and not payload.get("cities") and not payload.get("rejected_candidates"):
               raise SystemExit(
-                  "CITY_PASS_NO_PROGRESS: latest research pass did not qualify any city"
+                  "CITY_PASS_NO_PROGRESS: latest research pass did not scan any city"
               )
           if payload.get("batch_complete") is False:
               # Partial batches are real progress: qualified cities are kept and
@@ -178,6 +181,11 @@ jobs:
           summaries = payload.get("summary", [])
           if len(summaries) != len(cities):
               raise SystemExit("Summary/city count mismatch")
+          scanned_total = len(cities) + len(payload.get("rejected_candidates", []))
+          if scanned_total > 4:
+              raise SystemExit(f"City batch scanned too many cities: {scanned_total} > 4")
+          if scanned_total == 0:
+              raise SystemExit("City pass scanned zero cities")
           floors = {
               "raw_results": int(os.environ["CITY_MIN_RAW_RESULTS"]),
               "direct_leads": int(os.environ["CITY_MIN_DIRECT_LEADS"]),

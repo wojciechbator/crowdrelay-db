@@ -207,7 +207,7 @@ SOCIAL_KINDS = {
 }
 MEDIA_KINDS = {"local_media", "independent_radio", "podcast"}
 ECOSYSTEM_KINDS = {
-    "event_calendar", "cultural_hub", "promoter", "local_creator",
+    "event_calendar", "venue", "cultural_hub", "promoter", "local_creator",
     "local_music_resource",
 }
 
@@ -892,6 +892,7 @@ def compact_search(query_kind: str, query: str, headers: dict) -> list[dict]:
             "radio": r"radio|rádio|radiostacja|broadcast",
             "podcasts": r"podcast|audycja|radio show|musikpodcast",
             "events": r"event|wydarzen|kalendarz|calendar|koncert|concert|veranstaltung|podujat",
+            "venues": r"venue|club|klub|concert hall|musikclub|live music|koncert|konzert|podujat",
             "culture": r"culture|kultura|kultur|centrum|center|zentrum|dom kultury|koncert|concert",
             "promoters": r"promoter|promotor|veranstalter|organizator|booking|pořadatel",
         }
@@ -1306,6 +1307,7 @@ def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[
 
     if recovery:
         return [
+            ("venues", f'"{city}" {country} venue club koncert live music'),
             ("facebook_groups", f'site:facebook.com/groups "{city}" {locale["music"]}'),
             ("facebook_pages", f'site:facebook.com "{city}" {locale["music"]}'),
             ("instagram", f'site:instagram.com "{city}" {locale["music"]}'),
@@ -1318,6 +1320,7 @@ def city_queries(city: str, country: str, recovery: bool = False) -> list[tuple[
         ]
     return [
         ("bands", f'"{city}" {country} {locale["music"]} metal rock hardcore'),
+        ("venues", f'"{city}" {country} venue club koncert live music'),
         ("facebook_groups", f'site:facebook.com/groups "{city}" {locale["music"]}'),
         ("facebook_pages", f'site:facebook.com "{city}" {locale["music"]}'),
         ("instagram", f'site:instagram.com "{city}" {locale["music"]}'),
@@ -1372,7 +1375,7 @@ def result_priority(kinds: list[str], item: dict, city: str) -> int:
         score += 45
     if kind_set & {"bands", "bands_events"}:
         score += 35
-    if kind_set & {"events", "culture", "promoters", "creators", "radio", "podcasts", "record_stores"}:
+    if kind_set & {"events", "venues", "culture", "promoters", "creators", "radio", "podcasts", "record_stores"}:
         score += 25
     if local_signal(city, title, snippet, "", url):
         score += 20
@@ -1399,7 +1402,7 @@ def select_research_results(
     )
 
     family_order = (
-        "bands", "facebook_groups", "facebook_pages", "instagram", "youtube",
+        "bands", "venues", "facebook_groups", "facebook_pages", "instagram", "youtube",
         "local_press", "events", "radio", "podcasts", "culture", "promoters",
     )
     kinds_present = [
@@ -1755,6 +1758,14 @@ def discover(city: str, country: str, recovery: bool = False) -> dict:
                 title[:180], "event_calendar", url, context,
                 allow_non_direct=True,
             ) or accepted_here
+
+        if "venues" in kinds:
+            venue_domain = domain(url)
+            if venue_domain not in EVENT_LISTING_DOMAINS:
+                accepted_here = add_beacon(
+                    title[:180], "venue", url, context,
+                    allow_non_direct=True,
+                ) or accepted_here
 
         for entity in direct_links(city, title, item["links"]):
             if not local_signal(city, entity["name"], "", text_body, entity["url"]) and not (kinds & social_kinds):

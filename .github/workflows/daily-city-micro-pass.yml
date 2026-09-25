@@ -119,12 +119,12 @@ jobs:
           )
           queries = module.city_queries("Bydgoszcz", "Poland")
           kinds = [kind for kind, _ in queries]
-          required = {"bands", "facebook_groups", "facebook_pages", "instagram", "youtube", "local_press", "events", "radio", "culture", "promoters"}
+          required = {"bands", "venues", "facebook_groups", "facebook_pages", "instagram", "youtube", "local_press", "events", "radio", "culture", "promoters"}
           assert required.issubset(set(kinds)), sorted(set(kinds))
           assert len(queries) <= 12, len(queries)
           recovery = module.city_queries("Bydgoszcz", "Poland", recovery=True)
           recovery_kinds = {kind for kind, _ in recovery}
-          assert {"facebook_groups", "facebook_pages", "instagram", "local_press", "radio", "events", "culture", "promoters"}.issubset(recovery_kinds)
+          assert {"venues", "facebook_groups", "facebook_pages", "instagram", "local_press", "radio", "events", "culture", "promoters"}.issubset(recovery_kinds)
           print("CITY_PASS_SMOKE_OK", len(queries), len(recovery))
           PY
 

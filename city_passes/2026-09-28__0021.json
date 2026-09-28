@@ -1,0 +1,58 @@
+{
+  "date": "2026-09-28",
+  "research_version": 16,
+  "pass_id": 21,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [],
+  "summary": [],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Gdańsk",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Katowice",
+      "raw_results": 6,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kielce",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Kraków",
+      "raw_results": 6,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ],
+  "no_progress": false,
+  "scanned_count": 4
+}

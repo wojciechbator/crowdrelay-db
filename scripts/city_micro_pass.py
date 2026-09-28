@@ -1045,7 +1045,11 @@ def load_scanned() -> dict[str, date]:
                 # rejected candidates block the new queue introduced in v17.
                 items = list(payload.get("cities", []))
             else:
-                items = list(payload.get("cities", [])) + list(payload.get("rejected_candidates", []))
+                # Only qualified cities are done. Rejected candidates must
+                # remain eligible for the next pass instead of being hidden
+                # for CITY_RESCAN_DAYS merely because a search provider
+                # throttled or the quality gate was not met.
+                items = list(payload.get("cities", []))
             for x in items:
                 country = str(x.get("country") or "").strip()
                 city = str(x.get("city") or "").strip()

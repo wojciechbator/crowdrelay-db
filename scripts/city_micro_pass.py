@@ -1953,9 +1953,14 @@ def source_categories(result: dict) -> list[str]:
 def result_quality_ok(result: dict) -> bool:
     raw = int(result.get("raw_results", 0) or 0)
     useful = int(result.get("useful", 0) or 0)
-    # Noise rate: a city whose harvest is mostly unusable fails even when the
-    # absolute counts clear the floors — a pass built on noise imports junk.
-    noise_ok = raw <= 0 or (1.0 - useful / raw) <= MAX_NOISE_RATE
+    # Noise is measured against accepted direct leads, not the raw search
+    # result window. Raw search results intentionally contain supporting
+    # articles/listings and therefore are not a quality denominator.
+    # Clamp useful to direct leads because contacts/peer candidates can make
+    # the useful-entity count larger than the unique direct URL count.
+    direct = int(result.get("direct_leads", 0) or 0)
+    attributable_useful = min(useful, direct)
+    noise_ok = direct <= 0 or (1.0 - attributable_useful / direct) <= MAX_NOISE_RATE
     return (
         raw >= MIN_RAW_RESULTS
         and int(result.get("direct_leads", 0) or 0) >= MIN_DIRECT_LEADS

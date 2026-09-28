@@ -1024,9 +1024,10 @@ CITY_RESCAN_DAYS = int(os.environ.get("CITY_RESCAN_DAYS", "30"))
 def load_scanned() -> dict[str, date]:
     """Return the most recent completed research date per city.
 
-    New-format rejected candidates count as scanned so a weak/throttled city
-    cannot block the next four. After CITY_RESCAN_DAYS the city becomes
-    eligible again for a fresh search.
+    Only qualified cities count as scanned. Rejected candidates remain
+    eligible for the next pass so weak or throttled research never marks
+    a city done. Qualified cities become eligible again after
+    CITY_RESCAN_DAYS for a fresh search.
     """
     latest: dict[str, date] = {}
     if not PASSES.exists():

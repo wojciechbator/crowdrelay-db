@@ -1,4 +1,5 @@
 name: Daily city micro-pass
+# Manual verification trigger: rerun the canonical city-pass against fresh search results.
 
 on:
   workflow_dispatch:

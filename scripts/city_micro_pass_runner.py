@@ -8,4 +8,5 @@ if spec is None or spec.loader is None:
 module = module_from_spec(spec)
 spec.loader.exec_module(module)
 
+# Runner uses the canonical module configuration; do not override queue/version constants here.
 module.main()

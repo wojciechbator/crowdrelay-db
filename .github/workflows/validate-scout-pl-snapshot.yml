@@ -1,0 +1,27 @@
+name: Validate SCOUT_PL snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "database_festivals.xlsx"
+      - "scripts/validate_scout_snapshot.py"
+      - ".github/workflows/validate-scout-pl-snapshot.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate current SCOUT_PL snapshot
+        run: python scripts/validate_scout_snapshot.py

@@ -107,43 +107,42 @@ def read_workbook(path: Path) -> dict[str, list[list[str]]]:
 
     wb_root = ET.fromstring(zip_read(path, "xl/workbook.xml"))
     rel_root = ET.fromstring(zip_read(path, "xl/_rels/workbook.xml.rels"))
-        rel_targets = {
-            rel.attrib["Id"]: rel.attrib["Target"]
-            for rel in rel_root.findall("r:Relationship", NS_REL)
-        }
+    rel_targets = {
+        rel.attrib["Id"]: rel.attrib["Target"]
+        for rel in rel_root.findall("r:Relationship", NS_REL)
+    }
 
-        sheets: dict[str, list[list[str]]] = {}
-        for sheet in wb_root.findall("x:sheets/x:sheet", NS_MAIN):
-            name = sheet.attrib["name"]
-            rid = sheet.attrib[f"{{{REL_NS}}}id"]
-            target = rel_targets.get(rid)
-            if not target:
-                fail(f"sheet {name!r} has no relationship target")
-            if target.startswith("/"):
-                sheet_path = target.lstrip("/")
-            else:
-                sheet_path = posixpath.normpath(posixpath.join("xl", target))
-            if sheet_path not in names:
-                fail(f"sheet {name!r} target missing: {sheet_path}")
+    sheets: dict[str, list[list[str]]] = {}
+    for sheet in wb_root.findall("x:sheets/x:sheet", NS_MAIN):
+        name = sheet.attrib["name"]
+        rid = sheet.attrib[f"{{{REL_NS}}}id"]
+        target = rel_targets.get(rid)
+        if not target:
+            fail(f"sheet {name!r} has no relationship target")
+        if target.startswith("/"):
+            sheet_path = target.lstrip("/")
+        else:
+            sheet_path = posixpath.normpath(posixpath.join("xl", target))
+        if sheet_path not in names:
+            fail(f"sheet {name!r} target missing: {sheet_path}")
 
-            root = ET.fromstring(zip_read(path, sheet_path))
-            rows: list[list[str]] = []
-            max_col = 0
-            parsed = []
-            for row in root.findall(".//x:sheetData/x:row", NS_MAIN):
-                cells = {}
-                for c in row.findall("x:c", NS_MAIN):
-                    idx = col_number(c.attrib.get("r", ""))
-                    if idx:
-                        max_col = max(max_col, idx)
-                        cells[idx] = cell_value(c, shared_strings).strip()
-                parsed.append(cells)
+        root = ET.fromstring(zip_read(path, sheet_path))
+        rows: list[list[str]] = []
+        max_col = 0
+        parsed = []
+        for row in root.findall(".//x:sheetData/x:row", NS_MAIN):
+            cells = {}
+            for c in row.findall("x:c", NS_MAIN):
+                idx = col_number(c.attrib.get("r", ""))
+                if idx:
+                    max_col = max(max_col, idx)
+                    cells[idx] = cell_value(c, shared_strings).strip()
+            parsed.append(cells)
 
-            for cells in parsed:
-                rows.append([cells.get(i, "") for i in range(1, max_col + 1)])
+        for cells in parsed:
+            rows.append([cells.get(i, "") for i in range(1, max_col + 1)])
 
-            sheets[name] = rows
-
+        sheets[name] = rows
     return sheets
 
 

@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "source": "SCOUT_PL",
+  "snapshot_mode": "current_run_only",
+  "run_date": "2026-09-29",
+  "sheets": {
+    "CANONICAL_APPEND": {
+      "headers": [
+        "Target_Sheet",
+        "Action",
+        "Email",
+        "Name",
+        "Organization",
+        "City",
+        "Kind",
+        "Source_URL",
+        "Reason"
+      ],
+      "rows": [
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Dom Kultury w Kozach",
+          "KozyNostra Rock Fest",
+          "Kozy",
+          "organizer / contest",
+          "https://kozynostra.pl/",
+          "Official organizer contact; no matching email found in repo text search."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "zgloszenia@mck.tychy.pl",
+          "Miejskie Centrum Kultury w Tychach",
+          "Rock pod Żyrafą",
+          "Tychy",
+          "contest submissions",
+          "https://kultura.tychy.pl/",
+          "Official contest submission contact; existing VIRYA relationship documented separately."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "RCK Kołobrzeg",
+          "RoCK Festiwal",
+          "Kołobrzeg",
+          "contest submissions",
+          "https://rck.kolobrzeg.eu/",
+          "Official contest contact; no matching email found in repo text search."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "spi_nie_spi@okandaluzja.pl",
+          "Ośrodek Kultury „Andaluzja”",
+          "SPI NIE ŚPI",
+          "Piekary Śląskie",
+          "contest submissions",
+          "https://okandaluzja.pl/",
+          "Current 2026 call contact; no matching email found in repo text search."
+        ]
+      ]
+    },
+    "OPPORTUNITIES": {
+      "headers": [
+        "Name",
+        "Organizer",
+        "Type",
+        "Voivodeship",
+        "City",
+        "Current_Status",
+        "Event_Date",
+        "Application_Deadline",
+        "Next_Cycle",
+        "Eligibility",
+        "Economics",
+        "VIRYA_History",
+        "Next_Action",
+        "Source_URL",
+        "Evidence"
+      ],
+      "rows": [
+        [
+          "KozyNostra Rock Fest — Przegląd Zespołów Rockowo-Metalowych",
+          "Dom Kultury w Kozach",
+          "CONTEST / FESTIVAL",
+          "śląskie",
+          "Kozy",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-22",
+          "2026-06-30",
+          "UNKNOWN — recheck from May 2027",
+          "Likely fit; 2026 allowed original rock/metal, no age limit; verify 2027 rules",
+          "Free entry; food provided to qualified bands in 2026",
+          "Applied 2026; not selected; existing Master record",
+          "Monitor official 2027 call from May; preserve existing relationship",
+          "https://kozynostra.pl/",
+          "Official festival + 2026 rules; 58 applications, 5 finalists; rock/metal focus."
+        ],
+        [
+          "Rock pod Żyrafą Festival Tychy — Konkurs Rocka pod Żyrafą",
+          "Miejskie Centrum Kultury w Tychach",
+          "CONTEST / FESTIVAL",
+          "śląskie",
+          "Tychy",
+          "CONFIRMED_HISTORICAL — 2026 closed; 2027 pathway evidenced",
+          "2026-09-05",
+          "2026 closed",
+          "2027 — exact call date not yet published",
+          "Strong stylistic fit; 65 nationwide applications in 2026",
+          "2026 finalists received 2500 PLN gross; winner 7000 PLN + 7000 PLN for 2027 performance",
+          "Applied 2026; VIRYA received honorary distinction",
+          "Re-open relationship before 2027 call; monitor MCK Tychy",
+          "https://kultura.tychy.pl/2026/09/07/kakol-zwyciezca-konkursu-rock-pod-zyrafa-festival-tychy-2026/",
+          "Official MCK result: VIRYA named among 17 honorary distinctions; winner receives 2027 main-stage slot."
+        ],
+        [
+          "RoCK Festiwal — Ogólnopolski Konkurs Muzyki Rockowej",
+          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
+          "CONTEST / FESTIVAL",
+          "zachodniopomorskie",
+          "Kołobrzeg",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-21",
+          "2026-06-28",
+          "Likely annual; 2027 call not yet evidenced",
+          "Strong fit: nationwide, rock and variants, min. 2 original songs, min. 2 members, age 16+",
+          "Free; 5000/3000/1000 PLN; winner invited to next edition",
+          "No verified Gmail history found in available exported records",
+          "Monitor 2027 call and map RCK booking/contest decision-maker",
+          "https://rck.kolobrzeg.eu/dzial-aktualnosci/428-ogolnopolski-konkurs-muzyki-rockowej-rock-festiwal-zgloszenia-otwarte",
+          "Official RCK: nationwide open rock contest, free entry, live final, winner invitation to next edition."
+        ],
+        [
+          "MATERIAFEST XIV — Konkurs Zespołów",
+          "MATERIAFEST / The Materia ecosystem",
+          "CONTEST / METAL FESTIVAL",
+          "zachodniopomorskie",
+          "Szczecinek",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-28",
+          "2026-05-31",
+          "Likely annual; 2027 call not yet evidenced",
+          "Very strong genre fit; metal/rock variants, original repertoire, >=2 members, no label contract",
+          "Gateway to Tower Stage next year; 2026 rules required 2 original recordings + live recording",
+          "No verified Gmail history found in available exported records",
+          "Monitor 2027 competition; verify current label-status rule before applying",
+          "https://materiafest.com/konkurs/",
+          "Official competition page: metal/rock, original repertoire, no label contract, winner gets next-year Tower Stage slot."
+        ],
+        [
+          "SPI NIE ŚPI XIV — Ogólnopolski Przegląd Twórczości Muzycznej",
+          "Ośrodek Kultury „Andaluzja” + Miasto Piekary Śląskie + Młodzieżowa Rada Miasta",
+          "CONTEST / SHOWCASE",
+          "śląskie",
+          "Piekary Śląskie",
+          "CONFIRMED_CURRENT — deadline 2026-09-30",
+          "2026-11-07",
+          "2026-09-30",
+          "2027 unknown",
+          "Likely eligible: nationwide, instrumental/vocal bands, broad genres; exact 2026 rules require manual final check",
+          "Free; financial/material prizes; possible Dni Miasta 2027 performance",
+          "No verified prior contact found in available exported records",
+          "Verify official 2026 form/rules immediately and prepare submission before 2026-09-30 if eligibility clears",
+          "https://piekary.pl/przegladspi-nie-spi-trwa-nabor-zgloszen/",
+          "Current 2026 reporting: nationwide bands, deadline 30 Sep; official organizer is OK Andaluzja."
+        ]
+      ]
+    },
+    "ORGANIZERS": {
+      "headers": [
+        "Organization",
+        "Type",
+        "City",
+        "Voivodeship",
+        "Website",
+        "Email",
+        "Role/Fit",
+        "Verification"
+      ],
+      "rows": [
+        [
+          "Dom Kultury w Kozach",
+          "institution",
+          "Kozy",
+          "śląskie",
+          "https://kozynostra.pl/",
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Festival + contest organizer; strong rock/metal fit",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "Miejskie Centrum Kultury w Tychach",
+          "institution",
+          "Tychy",
+          "śląskie",
+          "https://kultura.tychy.pl/",
+          "zgloszenia@mck.tychy.pl",
+          "Rock pod Żyrafą; decision-maker for 2026 contest; VIRYA honorary distinction",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
+          "institution",
+          "Kołobrzeg",
+          "zachodniopomorskie",
+          "https://rck.kolobrzeg.eu/",
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "Runs RoCK Festiwal contest + festival",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "MATERIAFEST / The Materia ecosystem",
+          "festival organizer",
+          "Szczecinek",
+          "zachodniopomorskie",
+          "https://materiafest.com/",
+          "UNKNOWN",
+          "Metal festival + gateway contest to Tower Stage",
+          "PARTIALLY_VERIFIED"
+        ],
+        [
+          "Ośrodek Kultury „Andaluzja”",
+          "institution",
+          "Piekary Śląskie",
+          "śląskie",
+          "https://okandaluzja.pl/",
+          "spi_nie_spi@okandaluzja.pl",
+          "Runs SPI NIE ŚPI; current 2026 call",
+          "PARTIALLY_VERIFIED"
+        ]
+      ]
+    },
+    "CONTACTS": {
+      "headers": [
+        "Email",
+        "Name",
+        "Organization/Event",
+        "City",
+        "Kind",
+        "Source",
+        "History/Notes"
+      ],
+      "rows": [
+        [
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Dom Kultury w Kozach",
+          "KozyNostra Rock Fest",
+          "Kozy",
+          "organizer",
+          "https://kozynostra.pl/",
+          "No new Gmail state verified in this run; prior Master application exists"
+        ],
+        [
+          "zgloszenia@mck.tychy.pl",
+          "Miejskie Centrum Kultury w Tychach",
+          "Rock pod Żyrafą",
+          "Tychy",
+          "contest submissions",
+          "https://kultura.tychy.pl/",
+          "VIRYA 2026 application + honorary distinction; do not start a cold thread"
+        ],
+        [
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "RCK Kołobrzeg",
+          "RoCK Festiwal",
+          "Kołobrzeg",
+          "contest submissions",
+          "https://rck.kolobrzeg.eu/",
+          "No new Gmail state verified in this run; canonical DB did not contain this contact"
+        ],
+        [
+          "spi_nie_spi@okandaluzja.pl",
+          "Ośrodek Kultury Andaluzja",
+          "SPI NIE ŚPI",
+          "Piekary Śląskie",
+          "contest submissions",
+          "https://okandaluzja.pl/",
+          "Current 2026 submission route reported; final eligibility check required"
+        ]
+      ]
+    },
+    "RUN_INFO": {
+      "headers": [
+        "Run_Date",
+        "Scope",
+        "New_Organizer_Targets",
+        "New_or_Updated_Opportunities",
+        "Current_Deadline",
+        "Outreach_This_Run",
+        "MASTER_Writeback",
+        "SCOUT_Writeback",
+        "Continuation"
+      ],
+      "rows": [
+        [
+          "2026-09-29",
+          "Poland — targeted gateway/organizer pass; focus on high-fit rock/metal contests and current nationwide call",
+          5,
+          5,
+          "SPI NIE ŚPI — 2026-09-30",
+          "0",
+          "QUEUED — safe XLSX editor unavailable",
+          "BLOCKED — Google Sheets connector unavailable",
+          "Next: verify SCOUT continuation/coverage, then expand underrepresented voivodeships; recheck 2027 cycles for Tychy/Kozy/Kołobrzeg/Szczecinek. Do not duplicate these exact leads."
+        ]
+      ]
+    }
+  }
+}

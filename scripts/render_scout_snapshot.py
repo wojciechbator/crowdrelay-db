@@ -5,7 +5,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 from xml.sax.saxutils import escape
 
-ROOT=Path(__file__).resolve().parents[1]
+# Deterministic SCOUT_PL renderer: the only writer of the binary snapshot.\nROOT=Path(__file__).resolve().parents[1]
 INPUT=Path(os.environ.get("SCOUT_PL_PAYLOAD", ROOT/"scout_runs/current.json"))
 OUTPUT=Path(os.environ.get("SCOUT_PL_OUTPUT", ROOT/"database_festivals.xlsx"))
 MAIN="http://schemas.openxmlformats.org/spreadsheetml/2006/main"

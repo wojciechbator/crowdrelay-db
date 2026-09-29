@@ -73,6 +73,14 @@ def col_number(ref: str) -> int:
     return n
 
 
+def zip_read(path: Path, member: str) -> bytes:
+    try:
+        with ZipFile(path) as z:
+            return z.read(member)
+    except Exception as exc:
+        fail(f"cannot read XLSX member {member!r}: {exc}")
+
+
 def read_workbook(path: Path) -> dict[str, list[list[str]]]:
     if not path.exists():
         fail("database_festivals.xlsx is missing")
@@ -80,26 +88,25 @@ def read_workbook(path: Path) -> dict[str, list[list[str]]]:
         fail("database_festivals.xlsx is empty")
 
     try:
-        z = ZipFile(path)
+        with ZipFile(path) as z:
+            names = set(z.namelist())
     except Exception as exc:
         fail(f"not a readable XLSX/ZIP: {exc}")
 
-    with z:
-        names = set(z.namelist())
-        required_files = {"xl/workbook.xml", "xl/_rels/workbook.xml.rels"}
-        if not required_files.issubset(names):
-            fail("missing workbook XML parts")
+    required_files = {"xl/workbook.xml", "xl/_rels/workbook.xml.rels"}
+    if not required_files.issubset(names):
+        fail("missing workbook XML parts")
 
-        shared_strings: list[str] = []
-        if "xl/sharedStrings.xml" in names:
-            root = ET.fromstring(z.read("xl/sharedStrings.xml"))
-            for si in root.findall("x:si", NS_MAIN):
-                shared_strings.append(
-                    "".join(t.text or "" for t in si.findall(".//x:t", NS_MAIN))
-                )
+    shared_strings: list[str] = []
+    if "xl/sharedStrings.xml" in names:
+        root = ET.fromstring(zip_read(path, "xl/sharedStrings.xml"))
+        for si in root.findall("x:si", NS_MAIN):
+            shared_strings.append(
+                "".join(t.text or "" for t in si.findall(".//x:t", NS_MAIN))
+            )
 
-        wb_root = ET.fromstring(z.read("xl/workbook.xml"))
-        rel_root = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+    wb_root = ET.fromstring(zip_read(path, "xl/workbook.xml"))
+    rel_root = ET.fromstring(zip_read(path, "xl/_rels/workbook.xml.rels"))
         rel_targets = {
             rel.attrib["Id"]: rel.attrib["Target"]
             for rel in rel_root.findall("r:Relationship", NS_REL)
@@ -119,7 +126,7 @@ def read_workbook(path: Path) -> dict[str, list[list[str]]]:
             if sheet_path not in names:
                 fail(f"sheet {name!r} target missing: {sheet_path}")
 
-            root = ET.fromstring(z.read(sheet_path))
+            root = ET.fromstring(zip_read(path, sheet_path))
             rows: list[list[str]] = []
             max_col = 0
             parsed = []
@@ -137,7 +144,7 @@ def read_workbook(path: Path) -> dict[str, list[list[str]]]:
 
             sheets[name] = rows
 
-        return sheets
+    return sheets
 
 
 def header_map(rows: list[list[str]], sheet: str) -> tuple[list[str], dict[str, int]]:

@@ -1,0 +1,176 @@
+{
+  "date": "2026-09-29",
+  "research_version": 17,
+  "pass_id": 25,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Gdańsk"
+    },
+    {
+      "country": "Poland",
+      "city": "Lublin"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Gdańsk",
+      "raw_results": 40,
+      "direct_leads": 15,
+      "useful": 14,
+      "useful_leads": 14,
+      "quality_ok": true,
+      "peer_candidates": 1,
+      "beacon_candidates": 15,
+      "contact_candidates": 0,
+      "new_peer_candidates": 1,
+      "new_beacon_candidates": 15,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "bandcamp_artist",
+        "event_calendar",
+        "facebook_page",
+        "instagram_creator",
+        "local_music_resource",
+        "soundcloud_artist",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "source_categories": [
+        "ecosystem",
+        "peers",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/watch?v=vjTv6jyq9_4",
+        "https://www.youtube.com/watch?v=6Scfk6WJPek",
+        "https://www.tiktok.com/@natalia.nati91/video/7591997616502639894",
+        "https://www.tiktok.com/discover/sanah-gda%C5%84sk-2026-taniec",
+        "https://www.tiktok.com/discover/gdansk-poland-beach-club",
+        "https://www.ebilet.pl/muzyka/miasto/gdansk",
+        "https://www.jambase.com/show/polish-metal-alliance-klub-b90-20260110",
+        "https://www.lrt.lt/pl/wiadomosci/1261/2927090/gdansk-w-wilnie-2026-darmowe-wydarzenia-kulturalne-przybliza-polska-sztuke-i-muzyke",
+        "https://pl.ra.co/events/1345566",
+        "https://parlament.com.pl/facebook-event/gdansk-%C7%80-enej-koncert-walentynkowy/",
+        "https://www.youtube.com/watch?v=GsyHd7S2WGs",
+        "https://hermanosgutierrez.bandcamp.com/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Lublin",
+      "raw_results": 50,
+      "direct_leads": 21,
+      "useful": 20,
+      "useful_leads": 20,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 21,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 21,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "local_media",
+        "local_music_resource",
+        "soundcloud_artist",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_community",
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_media"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/LSMDomKultury/",
+        "https://funinpoland.pl/miejsce/klub-dom-kultury-lublin/",
+        "https://www.radioplus.pl/lublin/atanas-valkov-piano-odyseja-wyjatkowy-koncert-w-centrum-kultury-w-lublinie-audio-aa-87dP-mh9b-tRNo.html",
+        "https://www.youtube.com/watch?v=IgcbGZy-a04",
+        "https://www.nuzle.pl/lublin,promotor.html",
+        "https://mapa.targeo.pl/wojewodzki-dom-kultury-dolna-panny-marii-lublin~5296146/centrum-kultury/adres",
+        "https://spottedlublin.pl/lublin-odwolali-koncert-na-11-godzin-przed-rozpoczeciem-organizator-nie-podaje-powodu/",
+        "https://chortownia.org/index.php?vaction=chor_view&chid=557",
+        "https://lublininfo.com/odkryj-lublin/dom-kultury/",
+        "https://mapfy.pl/lokalizacje/lublin-voivodeship/dom-kultury",
+        "https://domowo.org.pl/dom-kultury-wallenroda-lublin-centrum-kulturalne-dla-kazdego/",
+        "https://panoramafirm.pl/lubelskie,,lublin,kra%C5%84cowa,106/dzielnicowy_dom_kultury_bronowice-mpkxg_cce.html",
+        "https://www.tiktok.com/@dom.kultury.lublin/video/7563233822322576673",
+        "https://www.whitemad.pl/stary-dom-kultury-zmieni-sie-w-centrum-sztuki-dzieci-i-mlodziezy/",
+        "https://lublin4you.pl/przewodnik/centrum-kultury-w-lublinie",
+        "https://wiadomosci.wp.pl/ed-sheeran-w-ogniu-krytyki-poniosl-najwieksze-straty-wizerunkowe-7330382158457056a",
+        "https://www.tomaszowskidomkultury.pl/?koncert-noworoczny-w-tomaszowskim-domu-kultury",
+        "https://adria-art.pl/sale/223/zamojski-dom-kultury",
+        "https://www.instagram.com/teatrstarylublin/p/CV5Q0zfsly1/",
+        "https://www.radiotune.fm/en-bz/?region=lublin",
+        "https://www.radio.de/country/poland/lublin",
+        "https://soundcloud.com/alainm2/ottawa-prog-vibes-309-radeus-lublin-poland",
+        "https://fm-radio.live/poland/radio/radio-eska-lublin",
+        "https://podscan.fm/podcasts/podroze-male-i-duze-w-radiu-lublin",
+        "https://zip.radio/pl/lublin/polskie-radio-lublin",
+        "https://time-for-metal.eu/releases/airforce-live-locked-n-loaded-in-poland-lublin-radio/",
+        "https://www.instagram.com/p/CpZ3bNysZmD/",
+        "https://www.instagram.com/reel/CoFSojvIiqL/",
+        "https://podtail.com/ru/podcast/hellopolish/lublin-wielokulturowe-miasto-b2/",
+        "https://wiadomoscilublin.pl/wydarzenie/afterparty-cash-for-tricks-lublin-muzyka-i-tance",
+        "https://wiadomosci.wp.pl/lublin/lublin-miasto-wspiera-koncert-tworcy-nowego-hymnu-zbrodniczej-organizacji-ukrainskich-nacjonalistow-6319341137901697a"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Katowice",
+      "raw_results": 10,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Poznań",
+      "raw_results": 37,
+      "direct_leads": 10,
+      "useful": 11,
+      "source_families": [
+        "facebook_page",
+        "instagram_creator",
+        "local_music_resource",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ]
+}

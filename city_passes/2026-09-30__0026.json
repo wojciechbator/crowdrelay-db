@@ -1,0 +1,178 @@
+{
+  "date": "2026-09-30",
+  "research_version": 17,
+  "pass_id": 26,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Katowice"
+    },
+    {
+      "country": "Poland",
+      "city": "Poznań"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Katowice",
+      "raw_results": 40,
+      "direct_leads": 7,
+      "useful": 6,
+      "useful_leads": 6,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 7,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 7,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/channel/UC-vEp8fz_sAmU2h5cfk0n7A",
+        "https://www.youtube.com/watch?v=ccfiE5nAzxI",
+        "https://www.ebilet.pl/",
+        "https://www.rockmetal.pl/patronat.html",
+        "https://onlineradio.pl/",
+        "https://tunein.com/podcasts/Music-Podcasts/My-Awesome-music-podcast-p1616617/",
+        "https://mapa.targeo.pl/mlodziezowy-dom-kultury-gliwicka-214-40-861-katowice~10368944/centrum-kultury/adres",
+        "https://www.ebilet.pl/klasyka/muzyka-filmowa/koncert-przy-swiecach-muzyka-filmowa",
+        "https://www.bandsintown.com/de/c/katowice-poland/all-dates/genre/country",
+        "https://www.setlist.fm/venue/klub-muzyczny-rodo-katowice-poland-3bd75cb0.html",
+        "https://streema.com/radios/Katowice",
+        "https://appradiofm.com/radio/Open.FM---We-Dwoje-Katowice-Poland-vyze8",
+        "https://katowice.tvp.pl/71367549/wyjatkowe-warsztaty-w-aiesec-w-siemianowickim-centrum-kultury-fot-polska-press",
+        "https://www.eventim.pl/artist/tymek/tymek-katowice-4076175/",
+        "https://www.youtube.com/watch?v=iK3tKj1Pr9Q"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Poznań",
+      "raw_results": 47,
+      "direct_leads": 25,
+      "useful": 23,
+      "useful_leads": 23,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 25,
+      "contact_candidates": 1,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 25,
+      "new_contact_candidates": 1,
+      "source_families": [
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "local_music_resource",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.songkick.com/metro-areas/31765-poland-poznan",
+        "https://www.ebilet.pl/",
+        "https://www.bandsintown.com/de/c/poznan-poland",
+        "https://poznan.atrakcje.pl/wydarzenia/koncert-marek-piekarczyk-akustycznie-poznan-koncert-poznan-649",
+        "https://www.rockmetal.pl/relacje/poznan.dark.festival-poznan.03.html",
+        "https://www.tiktok.com/",
+        "https://www.setlist.fm/venue/klub-muzyczny-b17-pozna-poland-53d3bb19.html",
+        "https://poznanmagazine.com/ray-dalton-comes-to-poznan",
+        "https://www.tickettailor.com/events/hangmassive/364466/",
+        "https://lustscanner.com/klub-muzyczny-b17-in-poznan-what-to-expect-from-this-stadion-poznan-club-venue/",
+        "https://okpoznan.pl/aktualnosci/387_walentynkowy-koncert-epic-musiclove-14022026-r",
+        "https://ok.ru/video/1931543811",
+        "https://forum.mp3store.pl/topic/30331-dobry-koncert-rockmetal/",
+        "https://www.youtube.com/watch?v=PrsrOABvnOM",
+        "https://www.facebook.com/RadioEmausPoznan?v=wall",
+        "https://www.viator.com/tours/Poznan/The-Birthplace-of-Poland-A-Self-Guided-Audio-Tour-of-Poznan/d25742-110804P531",
+        "https://theplaceswherewego.podbean.com/e/things-to-do-in-poznan/",
+        "https://streema.com/radios/Radio_Sfera_Kanal_Old",
+        "https://fm-radio.live/poland/radio/radio-eska-poznan",
+        "https://tunein.com/radio/Stream-Polish-Radio-a33854/",
+        "https://radiospinner.com/pl/poznan-pl/",
+        "https://zip.radio/pl/poznan/radio-afera-98.6-mhz",
+        "https://www.youtube.com/watch?v=gmrANg-w5Mc",
+        "https://poznan.nowinylokalne.pl/poznanska-muzyka-wolnosci/",
+        "https://wiadomosci-gazeta-pl.nproxy.org/poznan",
+        "https://www.gazetasenior.pl/senioralni-poznan-2026",
+        "https://www.fakt.pl/temat/gazeta"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Rzeszów",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Poland",
+      "city": "Szczecin",
+      "raw_results": 80,
+      "direct_leads": 10,
+      "useful": 6,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "recovery_used": true
+    }
+  ]
+}

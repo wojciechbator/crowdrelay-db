@@ -171,6 +171,80 @@ def normalize_canonical_actions(headers: list[str], rows: list[list[object]], ca
     return out
 
 
+def find_header(ws) -> tuple[int, dict[str, int]]:
+    for r in range(1, min(ws.max_row, 10) + 1):
+        vals = [norm(ws.cell(r, col).value) for col in range(1, ws.max_column + 1)]
+        if "name" in vals or "email" in vals:
+            return r, {v: i + 1 for i, v in enumerate(vals) if v}
+    return 1, {}
+
+
+def canonical_row_key(sheet: str, ws, r: int, idx: dict[str, int]) -> tuple[str, ...] | None:
+    def v(name: str) -> str:
+        col = idx.get(name)
+        return norm(ws.cell(r, col).value) if col else ""
+    def u(name: str) -> str:
+        col = idx.get(name)
+        return canon_url(ws.cell(r, col).value) if col else ""
+
+    if sheet == "Venues":
+        name, city = v("name"), v("city")
+        return ("name_city", name, city) if name and city else None
+    if sheet == "Peer Bands":
+        name, city = v("name"), v("city")
+        return ("name_city", name, city) if name else None
+    if sheet == "Beacons":
+        kind, city, dest = v("kind"), v("city"), u("destination_url")
+        return ("kind_city_url", kind, city, dest) if kind and city and dest else None
+    if sheet == "Booking Agents":
+        name, agency = v("name"), v("agency")
+        if name and agency:
+            return ("name_agency", name, agency)
+        return ("name", name) if name else None
+    if sheet == "Contacts":
+        email, city, name, org = v("email"), v("city"), v("name"), v("organization")
+        if email and city:
+            return ("email_city", email, city)
+        if email:
+            return ("email", email)
+        if name and org:
+            return ("name_org", name, org)
+    return None
+
+
+def dedupe_canonical_workbook(wb) -> dict[str, int]:
+    removed: dict[str, int] = {}
+    for sheet in ("Venues", "Peer Bands", "Beacons", "Booking Agents", "Contacts"):
+        if sheet not in wb.sheetnames:
+            continue
+        ws = wb[sheet]
+        header_row, idx = find_header(ws)
+        seen: dict[tuple[str, ...], int] = {}
+        duplicates: list[tuple[int, int]] = []
+        for r in range(header_row + 1, ws.max_row + 1):
+            key = canonical_row_key(sheet, ws, r, idx)
+            if key is None:
+                continue
+            first = seen.get(key)
+            if first is None:
+                seen[key] = r
+            else:
+                duplicates.append((first, r))
+
+        if not duplicates:
+            continue
+
+        for first, dup in duplicates:
+            for col in range(1, ws.max_column + 1):
+                if not norm(ws.cell(first, col).value) and norm(ws.cell(dup, col).value):
+                    ws.cell(first, col).value = ws.cell(dup, col).value
+
+        for _, dup in sorted(duplicates, key=lambda p: p[1], reverse=True):
+            ws.delete_rows(dup, 1)
+        removed[sheet] = len(duplicates)
+    return removed
+
+
 def replace_sheet(wb, title: str, headers: list[str], rows: list[list[object]]) -> None:
     if title in wb.sheetnames:
         old = wb[title]
@@ -207,6 +281,7 @@ def main() -> None:
         raise SystemExit(f"missing payload sheets: {sorted(missing)}")
 
     wb = load_workbook(DB)
+    canonical_deduped = dedupe_canonical_workbook(wb)
     canonical_contacts = canonical_contact_keys(wb)
     stats = {}
 
@@ -225,7 +300,7 @@ def main() -> None:
     tmp = DB.with_suffix(".tmp.xlsx")
     wb.save(tmp)
     os.replace(tmp, DB)
-    print("FESTIVAL_MERGE_OK", stats)
+    print("FESTIVAL_MERGE_OK", {"festival_rows": stats, "canonical_duplicates_removed": canonical_deduped})
 
 
 if __name__ == "__main__":

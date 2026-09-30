@@ -1,17 +1,30 @@
 # SCOUT_PL daily persistence
 
-SCOUT POLSKA — VIRYA writes one current-run text payload to scout_runs/current.json. The Render SCOUT_PL snapshot workflow converts that payload into database_festivals.xlsx.
+SCOUT POLSKA — VIRYA writes one current-run text payload to `scout_runs/current.json`.
 
-database.xlsx remains the canonical workbook. The binary snapshot is generated only inside GitHub Actions, not by the automation connector.
+There is now **one workbook only**: `database.xlsx`.
 
-Every SCOUT_PL run must replace current.json and therefore replace database_festivals.xlsx. It must not append yesterday's research.
+The SCOUT merge workflow reads `scout_runs/current.json` and refreshes these operational sheets inside the canonical workbook:
 
-Required snapshot sheets: RUN_INFO, OPPORTUNITIES, ORGANIZERS, CONTACTS, CANONICAL_APPEND. SUPPORT_TARGETS is optional.
+- Festival Run Info
+- Festival Opportunities
+- Festival Organizers
+- Festival Contacts
+- Festival Canonical Append
+- Festival Support Targets (optional)
 
-Canonical changes continue through exact-schema CSV files in updates/pending/. The existing Apply database updates workflow owns all mutations of database.xlsx.
+`database_festivals.xlsx` is retired and must not be recreated.
 
-SCOUT automation must never upload or rebuild database.xlsx. It writes text deltas only.
+Before writing the festival sheets, the merge pass also deduplicates the canonical sheets using the same logical keys as the database importer:
 
-Success is write + render + package validation + snapshot validation + Apply validation/readback. A commit alone is not success.
+- Venues: Name + City
+- Peer Bands: Name + City
+- Beacons: Kind + City + canonical Destination_URL
+- Booking Agents: Name + Agency, fallback Name
+- Contacts: Email + City, fallback Email, fallback Name + Organization
 
-If a run has zero new or materially changed results, current.json must still be replaced with a valid zero-result snapshot so yesterday's data cannot masquerade as today's research.
+Festival sheets are independently deduplicated using stable URL/email/name keys. Canonical append rows for Contacts are normalized from `NEW_PENDING` to `UPDATE_PENDING` when that contact already exists in the canonical Contacts sheet.
+
+The Apply database updates workflow remains the owner of CSV mutations under `updates/pending/`.
+
+Success means: merge + logical dedupe + workbook validation + commit of `database.xlsx`.

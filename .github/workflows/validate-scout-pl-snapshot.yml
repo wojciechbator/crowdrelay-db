@@ -1,9 +1,9 @@
-name: Validate SCOUT_PL snapshot
+name: Validate unified SCOUT_PL database
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Render SCOUT_PL snapshot"]
+    workflows: ["Merge SCOUT_PL into canonical database"]
     types: [completed]
 
 permissions:
@@ -14,11 +14,13 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout rendered main
+      - name: Checkout merged branch
         uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validate current SCOUT_PL snapshot
+      - name: Install dependencies
+        run: python -m pip install openpyxl
+      - name: Validate unified database.xlsx
         run: python scripts/validate_scout_snapshot.py

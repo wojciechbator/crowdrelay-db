@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source": "SCOUT_SHARED_GMAIL_RECONCILIATION",
+  "source": "SCOUT_EUROPE",
   "snapshot_mode": "current_run_only",
   "run_date": "2026-10-01",
   "sheets": {
@@ -36,42 +36,7 @@
         "Source_URL",
         "Evidence"
       ],
-      "rows": [
-        [
-          "Rockin’ Memories 2027 — Band Application",
-          "Rockin’ Memories",
-          "FESTIVAL / BAND APPLICATION",
-          "Germany",
-          "Rottenburg am Neckar-Seebronn",
-          "WAITING — manual application recorded; email route bounced 550",
-          "2027 — exact dates TBA",
-          "",
-          "2027 current cycle",
-          "Official application route; manual submission recorded in live SCOUT",
-          "No application fee stated",
-          "Email 1a0f64c237a2411f bounced via DSN 1a0f64c2b8135604; separately recorded manual application remains valid state",
-          "Wait on manual application; never reuse bounced backstage@rockinmemories.de; reverify official contact only if follow-up is needed",
-          "https://www.rockinmemories.de/",
-          "Gmail full-thread delivery reconciliation checked 2026-10-01: 550 5.1.1 user does not exist."
-        ],
-        [
-          "Letnia Scena Muzyczna 2027 — Oława gateway monitor",
-          "Centrum Sztuki w Oławie",
-          "GATEWAY CONTEST / INSTITUTIONAL OPEN CALL",
-          "dolnośląskie",
-          "Oława",
-          "MONITOR — warm direct route",
-          "2027 cycle — exact event date TBA",
-          "",
-          "Official call expected March/April 2027",
-          "Exact 2027 rules/eligibility not yet published",
-          "UNKNOWN",
-          "Warm direct booking conversation; organizer explicitly redirected VIRYA to Letnia Scena Muzyczna",
-          "Monitor official site/FB in March–April 2027; apply through published route; no duplicate booking email",
-          "https://kultura.olawa.pl/",
-          "Gmail thread 1a06e52a010d312a; organizer reply 1a0f616325cde6a3 says no current slot but explicitly points to Letnia Scena announced March/April."
-        ]
-      ]
+      "rows": []
     },
     "ORGANIZERS": {
       "headers": [
@@ -84,28 +49,7 @@
         "Role/Fit",
         "Verification"
       ],
-      "rows": [
-        [
-          "Centrum Sztuki w Oławie",
-          "institution / venue / open-call organizer",
-          "Oława",
-          "dolnośląskie",
-          "https://kultura.olawa.pl/",
-          "ak@kultura.olawa.pl",
-          "Warm direct contact; recurring Letnia Scena Muzyczna gateway",
-          "CONFIRMED_CURRENT via direct Gmail"
-        ],
-        [
-          "Live Nation Poland",
-          "promoter",
-          "Warsaw",
-          "mazowieckie",
-          "https://www.livenation.pl/",
-          "gabriela.konska@livenation.pl",
-          "Warm referred decision route for COMASTATIC/VooDoo support",
-          "CONFIRMED_CURRENT via venue referral + sent Gmail"
-        ]
-      ]
+      "rows": []
     },
     "CONTACTS": {
       "headers": [
@@ -117,111 +61,7 @@
         "Source",
         "History/Notes"
       ],
-      "rows": [
-        [
-          "ak@kultura.olawa.pl",
-          "Adriana Krakowska",
-          "Centrum Sztuki w Oławie / Letnia Scena Muzyczna",
-          "Oława",
-          "warm booking/open-call contact",
-          "https://kultura.olawa.pl/",
-          "Thread 1a06e52a010d312a; replied 2026-10-01, no current booking slot, redirected VIRYA to Letnia Scena call."
-        ],
-        [
-          "gabriela.konska@livenation.pl",
-          "Gabriela Końska",
-          "Live Nation / COMASTATIC @ VooDoo",
-          "Warsaw",
-          "warm-referred support booking",
-          "https://www.livenation.pl/event/comastatic-warsaw-tickets-edp1699341",
-          "VooDoo referral; support enquiry sent 2026-09-30 Gmail 1a0f1ff0078ebf08; no reply as of 2026-10-01."
-        ],
-        [
-          "konrad.godloza@wp.pl",
-          "Konrad Godłoza",
-          "Rock na Bagnie 2027 — small stage",
-          "Goniądz",
-          "warm-referred small-stage booking",
-          "https://rocknabagnie.pl/",
-          "Main organizer referral; application sent Gmail/thread 1a0ed331dfbf3abb; no reply as of 2026-10-01."
-        ]
-      ]
-    },
-    "OUTREACH_LOG": {
-      "headers": [
-        "Recipient / Organization",
-        "Public Email",
-        "Subject / Thread",
-        "Date",
-        "Action",
-        "Result / Status",
-        "Reason / Next Step"
-      ],
-      "rows": [
-        [
-          "VooDoo Club / Jarek → Live Nation referral",
-          "kontakt@voodooclub.pl",
-          "tu byście pasowali na support w VooDoo",
-          "2026-09-29",
-          "Inbound support suggestion + VIRYA reply requesting promoter contact — Gmail",
-          "REPLIED / WARM REFERRAL / LIVE NATION CONTACT PROVIDED",
-          "Jarek proactively suggested VIRYA for COMASTATIC and provided the responsible Live Nation contact. VIRYA then sent the Live Nation support enquiry on 2026-09-30; preserve this as warm origin thread."
-        ],
-        [
-          "Antoniów Rock Fest / Grajmy Razem",
-          "GrajmyRazem.Biuro@gmail.com",
-          "VIRYA / Antoniów Rock Fest 2027 – zgłoszenie zespołu",
-          "2026-09-30",
-          "Booking / contest-route enquiry — sent",
-          "REPLIED / 2027 CONTEST CONFIRMED",
-          "Sent Gmail 1a0f3bfa80580a6f; organizer reply 1a0f3f7b5f2fae54 confirms 2027 contest and details in about 2–3 weeks. Do not duplicate."
-        ],
-        [
-          "Rockowa Przystań / GOKiR Siedliszcze",
-          "gokir@onet.pl",
-          "VIRYA / Rockowa Przystań 2027 – nabór zespołów",
-          "2026-09-30",
-          "Next-edition enquiry — sent",
-          "REPLIED / 2027 EDITION CONFIRMED",
-          "Sent Gmail 1a0f3ce777e59b26; reply 1a0f62c78c073879 confirms III edition in second half of June 2027; acknowledgement 1a0f64987f420785."
-        ],
-        [
-          "Live Nation / Gabriela Końska — COMASTATIC support",
-          "gabriela.konska@livenation.pl",
-          "VIRYA → support COMASTATIC / VooDoo / 8.02.2027",
-          "2026-09-30",
-          "Warm-referred support enquiry — sent",
-          "SENT / WAITING / WARM",
-          "VooDoo booking manager provided this exact route. Gmail 1a0f1ff0078ebf08; no reply found as of 2026-10-01. Do not duplicate."
-        ],
-        [
-          "Rock na Bagnie / Konrad Godłoza — small stage",
-          "konrad.godloza@wp.pl",
-          "VIRYA – zgłoszenie na małą scenę Rock na Bagnie 2027",
-          "2026-09-29",
-          "Direct small-stage application after organizer referral — sent",
-          "SENT / WAITING / WARM REFERRAL",
-          "Main organizer redirected VIRYA to Konrad. Gmail/thread 1a0ed331dfbf3abb; no reply found as of 2026-10-01. Do not resend."
-        ],
-        [
-          "Rockin’ Memories 2027",
-          "backstage@rockinmemories.de",
-          "Bandbewerbung Rockin’ Memories 2027 – VIRYA (Modern/Progressive Metal, PL)",
-          "2026-10-01",
-          "Band application email — sent; delivery failed",
-          "BOUNCED 550 / EMAIL INVALID",
-          "Message 1a0f64c237a2411f received DSN 1a0f64c2b8135604: 550 5.1.1. Preserve separately recorded manual application; reverify contact before email retry."
-        ],
-        [
-          "Centrum Sztuki w Oławie / Adriana Krakowska",
-          "ak@kultura.olawa.pl",
-          "Re: VIRYA – koncert w Oławie / zima–wiosna 2027",
-          "2026-10-01",
-          "Booking follow-up — sent; organizer replied",
-          "REPLIED / NO CURRENT SLOT / WARM FUTURE GATEWAY",
-          "Thread 1a06e52a010d312a; reply 1a0f616325cde6a3 redirects VIRYA to Letnia Scena Muzyczna Mar/Apr; acknowledgement 1a0f6484597756b2; final warm reply 1a0f651a62ec909d."
-        ]
-      ]
+      "rows": []
     },
     "RUN_INFO": {
       "headers": [
@@ -238,14 +78,14 @@
       "rows": [
         [
           "2026-10-01",
-          "Gmail history reconciliation + persistent outreach sync",
-          2,
-          2,
+          "SCOUT_EUROPE v2.5 PERSISTENCE E2E PROOF",
+          0,
+          0,
           "none",
-          "0 by reconciliation run",
-          "NO_MUTATION",
-          "PASS — Gmail full-thread reconciliation and SCOUT readback passed",
-          "Treat thread_id/message_id and delivery status as hard history. Never keep WAITING after human reply/bounce. Rockin email route invalid; Oława future gateway warm."
+          "0",
+          "READ_ONLY",
+          "PASS — canonical SCOUT row 321 read back after concurrency-safe append",
+          "Persistence-only proof; no research/outreach mutation. Continue latest SCOUT_EUROPE discovery continuation on next scheduled run."
         ]
       ]
     }

@@ -1,4 +1,4 @@
-name: Merge SCOUT_PL into canonical database
+name: Merge SCOUT into canonical database
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: python -m pip install openpyxl
 
-      - name: Merge current festival scout into database.xlsx
+      - name: Merge current Scout delta into database.xlsx
         run: python scripts/merge_festival_snapshot.py
 
       - name: Validate merged workbook
@@ -47,7 +47,7 @@ jobs:
             echo "No workbook change."
             exit 0
           fi
-          git commit -m "chore: merge SCOUT_PL into database.xlsx"
+          git commit -m "chore: merge SCOUT into database.xlsx"
           for _ in 1 2 3; do
             if git push; then exit 0; fi
             git pull --rebase

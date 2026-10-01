@@ -1,9 +1,9 @@
-name: Validate unified SCOUT_PL database
+name: Validate unified SCOUT database
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Merge SCOUT_PL into canonical database"]
+    workflows: ["Merge SCOUT into canonical database"]
     types: [completed]
 
 permissions:

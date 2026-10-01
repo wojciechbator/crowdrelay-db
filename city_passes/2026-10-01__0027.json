@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-01",
+  "research_version": 17,
+  "pass_id": 27,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Szczecin"
+    },
+    {
+      "country": "Poland",
+      "city": "Wrocław"
+    },
+    {
+      "country": "Germany",
+      "city": "Dortmund"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Szczecin",
+      "raw_results": 40,
+      "direct_leads": 5,
+      "useful": 6,
+      "useful_leads": 6,
+      "quality_ok": true,
+      "peer_candidates": 1,
+      "beacon_candidates": 5,
+      "contact_candidates": 0,
+      "new_peer_candidates": 1,
+      "new_beacon_candidates": 5,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "instagram_creator",
+        "local_music_resource",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "youtube_channel"
+      ],
+      "media_families": [],
+      "source_categories": [
+        "ecosystem",
+        "peers",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/groups/szczecineventy/?source_id=1388008494796715",
+        "https://www.ebilet.pl/muzyka/hard-heavy/tribute-to-metallica",
+        "https://www.bandsintown.com/ja/c/szczecin-poland?came_from=251",
+        "https://www.youtube.com/shorts/FB3wkB6AFmM",
+        "https://13muz.eu/event/27-10-szczecinskie-wierszogranie-u-studni/",
+        "https://radiomap.eu/pl/szczecin",
+        "https://www.electroempire.com/forum/index.php?thread/3892-robodrum-aka-electromonter-liveset-alter-ego-club-szczecin-poland-09-01-10/",
+        "https://www.ebilet.pl/klasyka/muzyka-filmowa/koncert-przy-swiecach-muzyka-filmowa",
+        "https://www.setlist.fm/venue/klub-pinokio-szczecin-poland-53d7c7c1.html",
+        "https://wszczecinie.pl/wydarzenia?from=2026-10-02&to=2026-10-04"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Poland",
+      "city": "Wrocław",
+      "raw_results": 40,
+      "direct_leads": 11,
+      "useful": 8,
+      "useful_leads": 8,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 12,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 11,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_music_resource",
+        "tiktok_creator",
+        "venue",
+        "youtube_channel"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.youtube.com/watch?v=04D40FMyKXg",
+        "https://www.youtube.com/watch?v=mEBPTqNY7Sw",
+        "https://www.wroclaw.pl/go",
+        "https://www.biletomat.pl/en/bilety/show-me-the-body-wroclaw-13035/",
+        "https://www.youtube.com/watch?v=muKYnO7pXb8",
+        "https://biletyna.pl/koncert/METALOWE-HALLOWEEN/Wroclaw",
+        "https://fm-radio.live/poland/radio/radio-z-ote-przeboje-wroc-aw",
+        "https://www.tiktok.com/discover/taco-hemingway-wroc%C5%82aw-merch-2026",
+        "https://www.tiktok.com/",
+        "https://www.songkick.com/concerts/43033631-nachtmahr-at-klub-lacznik",
+        "https://radionations.com/pl/radio-z-ote-przeboje/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "Dortmund",
+      "raw_results": 80,
+      "direct_leads": 27,
+      "useful": 29,
+      "useful_leads": 29,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 25,
+      "contact_candidates": 6,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 25,
+      "new_contact_candidates": 6,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "local_music_resource",
+        "podcast",
+        "tiktok_creator",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/DORTMUNDMUSIK/",
+        "https://www.facebook.com/VereinFuerNeueMusikDortmund/",
+        "https://www.facebook.com/44MUSIK/",
+        "https://www.facebook.com/KenexMusik/",
+        "https://www.facebook.com/Radiolifebrake/",
+        "https://www.mn-events.com/",
+        "https://ra.co/events/180707",
+        "https://www.youtube.com/watch?v=WuTnbYg4sIc",
+        "https://de.streema.com/radios/Dortmund-14582",
+        "https://de.pinterest.com/dortmunderkulturblog/dortmund/",
+        "https://open.spotify.com/show/6YepfYgaOJISLA0vkuxA6h",
+        "https://appradiofm.com/radio/eldoradio-93-0-dortmund-dortmund-germany-vmm4c",
+        "https://www.enaradio.com/de/location/Dortmund/",
+        "https://tunein.com/radio/Radio-912-s8923/",
+        "https://www.tarantababu.de/events/kategorie/kulturhaus/liste/",
+        "https://www.promotion-agentur.info/promoter-dortmund/",
+        "https://reconmap.org/de/result/80a0f0e513cfbabfc2576942655c4971",
+        "https://www.bild.de/",
+        "https://www.tiktok.com/discover/dortmund-clubs",
+        "https://ra.co/events/133501",
+        "https://ra.co/events/223097",
+        "https://www.tiktok.com/discover/dortmund-14-m%C3%A4rz-2026",
+        "https://www.the-hostess.de/en/promotion-agency/dortmund",
+        "https://www.in-muenchen.de/locations/kulturhaus-milbertshofen.html",
+        "https://www.dortmund.de/",
+        "https://www.tarantababu.de/events/liste/",
+        "https://dortmunder-u.de/dortmund-wird-zur-buehne-fuer-jugendkultur-nachtfrequenz-2026-mit-zehn-veranstaltungsorten/",
+        "https://www.blaumond24.de/promoter/promoter-dortmund/",
+        "https://www.literaturhaus-dortmund.de/offene-tueren-einladende-orte/",
+        "https://m.vkvideo.ru/video-3669512_166766573"
+      ],
+      "recovery_used": true
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "country": "Poland",
+      "city": "Rzeszów",
+      "raw_results": 36,
+      "direct_leads": 13,
+      "useful": 15,
+      "source_families": [
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media"
+      ],
+      "recovery_used": true
+    }
+  ]
+}

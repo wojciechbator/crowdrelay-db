@@ -1,0 +1,12 @@
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+Biletyna,facebook_page,Wrocław,,https://www.facebook.com/biletyna/,https://www.facebook.com/biletyna/,t,t,t,f,65,95,95
+Biletyna,tiktok_creator,Wrocław,,https://www.tiktok.com/@biletyna,https://www.tiktok.com/@biletyna,t,t,t,f,65,85,85
+Biletyna Pl,instagram_creator,Wrocław,,https://www.instagram.com/biletyna_pl/,https://www.instagram.com/biletyna_pl/,t,t,t,f,65,95,95
+@Biletyna,youtube_channel,Wrocław,,https://www.youtube.com/@biletyna,https://www.youtube.com/@biletyna,t,t,t,f,65,95,95
+TikTok - Make Your Day,event_calendar,Wrocław,,https://www.tiktok.com/discover/taco-hemingway-wroc%C5%82aw-merch-2026,https://www.tiktok.com/discover/taco-hemingway-wroc%C5%82aw-merch-2026,t,t,t,f,65,85,85
+TikTok - Make Your Day,venue,Wrocław,,https://www.tiktok.com/,https://www.tiktok.com/,t,t,t,f,65,75,75
+Sign up,local_music_resource,Wrocław,,https://accounts.songkick.com/signup/new?source_product=skweb&login_success_url=https%3A%2F%2Fwww.songkick.com%2Fconcerts%2F43033631-nachtmahr-at-klub-lacznik&locale=en,https://accounts.songkick.com/signup/new?source_product=skweb&login_success_url=https%3A%2F%2Fwww.songkick.com%2Fconcerts%2F43033631-nachtmahr-at-klub-lacznik&locale=en,t,t,t,f,65,95,95
+Log in to your account,local_music_resource,Wrocław,,https://accounts.songkick.com/session/new?source_product=skweb&login_success_url=https%3A%2F%2Fwww.songkick.com%2Fconcerts%2F43033631-nachtmahr-at-klub-lacznik&locale=en,https://accounts.songkick.com/session/new?source_product=skweb&login_success_url=https%3A%2F%2Fwww.songkick.com%2Fconcerts%2F43033631-nachtmahr-at-klub-lacznik&locale=en,t,t,t,f,65,95,95
+Flag a problem,local_music_resource,Wrocław,,https://support.songkick.com/hc/en-us/requests/new,https://support.songkick.com/hc/en-us/requests/new,t,t,t,f,65,95,95
+Songkick,facebook_page,Wrocław,,http://www.facebook.com/songkick,http://www.facebook.com/songkick,t,t,t,f,65,95,95
+"Radio Złote Przeboje Wrocław, Słuchaj Online | Radio Nations",independent_radio,Wrocław,,https://radionations.com/,https://radionations.com/pl/radio-z-ote-przeboje/,t,t,t,f,65,65,65

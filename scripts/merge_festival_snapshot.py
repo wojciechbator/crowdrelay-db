@@ -84,12 +84,16 @@ def row_identity(sheet: str, headers: list[str], row: list[object]) -> tuple[str
         return canon_url(row[i]) if i is not None and i < len(row) else ""
 
     if sheet == "RUN_INFO":
-        return ("run", get("Run_Date"))
+        return ("run", get("Run_Date"), get("Scope"))
     if sheet == "OPPORTUNITIES":
+        name = get("Name")
+        organizer = get("Organizer")
+        if name and organizer:
+            return ("name_org", name, organizer)
         source = get_url("Source_URL")
         if source:
             return ("url", source)
-        return ("name_org", get("Name"), get("Organizer"))
+        return ("name", name)
     if sheet == "ORGANIZERS":
         website = get_url("Website")
         email = get("Email")
@@ -119,10 +123,17 @@ def row_identity(sheet: str, headers: list[str], row: list[object]) -> tuple[str
             return ("target_url", target, source)
         return ("target_name_city", target, get("Name"), city)
     if sheet == "SUPPORT_TARGETS":
+        dedupe_key = get("Dedupe Key")
+        if dedupe_key:
+            return ("dedupe_key", dedupe_key)
+        artist = get("Band / Artist")
+        region = get("Region")
+        if artist or region:
+            return ("artist_region", artist, region)
         source = get_url("Public URL")
         if source:
             return ("url", source)
-        return ("artist_region", get("Band / Artist"), get("Region"))
+        return ("row",) + tuple(norm(x) for x in row)
     return tuple(norm(x) for x in row)
 
 
@@ -245,6 +256,55 @@ def dedupe_canonical_workbook(wb) -> dict[str, int]:
     return removed
 
 
+def read_existing_rows(wb, title: str, headers: list[str]) -> list[list[object]]:
+    if title not in wb.sheetnames:
+        return []
+    ws = wb[title]
+    actual_headers = [str(ws.cell(1, c).value or "") for c in range(1, len(headers) + 1)]
+    if actual_headers != headers:
+        raise SystemExit(
+            f"{title}: existing header drift; expected {headers!r}, got {actual_headers!r}"
+        )
+    rows: list[list[object]] = []
+    for r in range(2, ws.max_row + 1):
+        row = [ws.cell(r, c).value for c in range(1, len(headers) + 1)]
+        if any(norm(x) for x in row):
+            rows.append(row)
+    return rows
+
+
+def merge_state_rows(
+    sheet: str,
+    headers: list[str],
+    existing_rows: list[list[object]],
+    incoming_rows: list[list[object]],
+) -> list[list[object]]:
+    existing = dedupe_rows(sheet, headers, existing_rows)
+    incoming = dedupe_rows(sheet, headers, incoming_rows)
+
+    merged: dict[tuple[str, ...], list[object]] = {}
+    order: list[tuple[str, ...]] = []
+
+    for row in existing:
+        key = row_identity(sheet, headers, row)
+        if key not in merged:
+            merged[key] = list(row)
+            order.append(key)
+
+    for row in incoming:
+        key = row_identity(sheet, headers, row)
+        if key not in merged:
+            merged[key] = list(row)
+            order.append(key)
+            continue
+        current = merged[key]
+        for i, value in enumerate(row):
+            if norm(value):
+                current[i] = value
+
+    return [merged[k] for k in order]
+
+
 def replace_sheet(wb, title: str, headers: list[str], rows: list[list[object]]) -> None:
     if title in wb.sheetnames:
         old = wb[title]
@@ -290,12 +350,17 @@ def main() -> None:
             continue
         source = sheets[source_name]
         headers = list(source.get("headers") or [])
-        rows = [list(r) for r in (source.get("rows") or [])]
-        rows = dedupe_rows(source_name, headers, rows)
+        incoming_rows = [list(r) for r in (source.get("rows") or [])]
+        existing_rows = read_existing_rows(wb, target_name, headers)
+        rows = merge_state_rows(source_name, headers, existing_rows, incoming_rows)
         if source_name == "CANONICAL_APPEND":
             rows = normalize_canonical_actions(headers, rows, canonical_contacts)
         replace_sheet(wb, target_name, headers, rows)
-        stats[target_name] = len(rows)
+        stats[target_name] = {
+            "before": len(dedupe_rows(source_name, headers, existing_rows)),
+            "incoming": len(dedupe_rows(source_name, headers, incoming_rows)),
+            "after": len(rows),
+        }
 
     tmp = DB.with_suffix(".tmp.xlsx")
     wb.save(tmp)

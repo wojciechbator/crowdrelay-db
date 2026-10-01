@@ -46,7 +46,18 @@
         "VIRYA_History",
         "Next_Action",
         "Source_URL",
-        "Evidence"
+        "Evidence",
+        "Country",
+        "Contact_Email",
+        "Submission_Method",
+        "Free_To_Apply",
+        "Relevance_Score",
+        "Priority",
+        "Verification",
+        "Dedupe_Key",
+        "Source_Checked",
+        "Why_Fit",
+        "Red_Flags"
       ],
       "rows": [
         [
@@ -64,7 +75,18 @@
           "No prior MASTER / SCOUT / Gmail history found before this run.",
           "Review the official stage application once and submit through that route if terms are acceptable; do not bypass with generic email unless form unavailable.",
           "https://www.nerd-rock-festival.com/kopie-von-stage-act-anmeldung",
-          "Official 2027 NEXUS pages confirm 17–19 Sep 2027 at agra Messepark Leipzig, dedicated Rock/Metal Titanium Stage, active stage-act application route and OFFLINE Entertainment UG as organizer. Checked 2026-10-01."
+          "Official 2027 NEXUS pages confirm 17–19 Sep 2027 at agra Messepark Leipzig, dedicated Rock/Metal Titanium Stage, active stage-act application route and OFFLINE Entertainment UG as organizer. Checked 2026-10-01.",
+          "Germany",
+          "hype@offline-entertainment.de",
+          "Official stage-act application page / application form",
+          "UNKNOWN — no application fee stated",
+          "88",
+          "B",
+          "CONFIRMED_CURRENT — official 2027 event and application route",
+          "nexus-leipzig|2027|virya",
+          "Official NEXUS home/stage/application/impressum; checked 2026-10-01",
+          "Strong routing from Wrocław plus a dedicated Titanium Stage for Rock, Alternative, Nu-Metal and related heavy styles; NEXUS combines a rock/metal festival with a convention and advertises 30 bands/acts.",
+          "Hybrid nerd-convention format rather than a pure music festival; artist fee/travel/accommodation and application deadline are not published."
         ],
         [
           "CAMPUS FESTIVAL Bonn 2027 — Band Application",
@@ -81,7 +103,18 @@
           "No prior MASTER / SCOUT / Gmail history found before this run.",
           "Check June routing/availability and submit once through the official form before 2026-10-31 if economics make sense; no email bypass.",
           "https://natfak-festival.de/festival/mitmachen/bandbewerbung",
-          "Official NatFak-Festival e.V. call confirms 15–19 Jun 2027, 31 Oct 2026 deadline, form-only application, €150 allowance and possible travel/accommodation reimbursement. Checked 2026-10-01."
+          "Official NatFak-Festival e.V. call confirms 15–19 Jun 2027, 31 Oct 2026 deadline, form-only application, €150 allowance and possible travel/accommodation reimbursement. Checked 2026-10-01.",
+          "Germany",
+          "",
+          "Official web form only; email applications are not processed",
+          "Yes / no application fee stated",
+          "79",
+          "B",
+          "CONFIRMED_CURRENT — official 2027 band application",
+          "campus-festival-bonn|2027|virya",
+          "Official CAMPUS FESTIVAL / NatFak-Festival e.V. band application; checked 2026-10-01",
+          "Concrete newcomer-friendly festival-stage route with a fixed deadline and unusually clear economics; bands from outside the Cologne/Bonn region are explicitly eligible.",
+          "Broad multi-genre/non-metal festival and long standalone routing from Wrocław. Each band may play the festival only once; no metal-specific programming advantage is stated."
         ]
       ]
     },
@@ -94,7 +127,12 @@
         "Website",
         "Email",
         "Role/Fit",
-        "Verification"
+        "Verification",
+        "Country",
+        "Region",
+        "Relevance_Score",
+        "Dedupe_Key",
+        "Source_Checked"
       ],
       "rows": [
         [
@@ -105,7 +143,12 @@
           "https://www.nerd-rock-festival.com/",
           "hype@offline-entertainment.de",
           "Runs NEXUS; close-to-Wrocław rock/metal stage and active 2027 stage application.",
-          "CONFIRMED_CURRENT — official NEXUS home/stage/application/impressum checked 2026-10-01"
+          "CONFIRMED_CURRENT — official NEXUS home/stage/application/impressum checked 2026-10-01",
+          "Germany",
+          "Saxony",
+          "88",
+          "offline-entertainment-nexus|org",
+          "Official NEXUS home/stage/application/impressum; checked 2026-10-01"
         ],
         [
           "NatFak-Festival e.V. / CAMPUS FESTIVAL Bonn",
@@ -115,7 +158,12 @@
           "https://natfak-festival.de/",
           "",
           "Runs CAMPUS FESTIVAL; open 2027 band call with clear form-only route and economics.",
-          "CONFIRMED_CURRENT — official NatFak-Festival 2027 band call checked 2026-10-01"
+          "CONFIRMED_CURRENT — official NatFak-Festival 2027 band call checked 2026-10-01",
+          "Germany",
+          "North Rhine-Westphalia",
+          "79",
+          "natfak-campus-festival|org",
+          "Official CAMPUS FESTIVAL / NatFak-Festival e.V. band application; checked 2026-10-01"
         ]
       ]
     },

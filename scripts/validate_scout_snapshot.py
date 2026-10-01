@@ -249,6 +249,7 @@ def assert_north_star_payload_contract() -> None:
             "Name", "Organizer", "Type", "Country", "City", "Current_Status",
             "Source_URL", "Submission_Method", "Relevance_Score", "Priority",
             "Verification", "Dedupe_Key", "Source_Checked", "Why_Fit", "Red_Flags",
+            "Distance_Km", "Nights_Away", "Routing_Source",
         },
         "ORGANIZERS": {
             "Organization", "Type", "Website", "Email", "Verification",
@@ -292,6 +293,24 @@ def assert_north_star_payload_contract() -> None:
                     fail(f"{sheet_name} row {row_number}: Relevance_Score outside 0..100")
                 if value("Priority").upper() not in {"A", "B", "C", "D"}:
                     fail(f"{sheet_name} row {row_number}: invalid Priority")
+                distance = value("Distance_Km")
+                if distance:
+                    try:
+                        distance_km = int(distance)
+                    except ValueError:
+                        fail(f"{sheet_name} row {row_number}: Distance_Km is not an integer")
+                    if not 0 <= distance_km <= 20000:
+                        fail(f"{sheet_name} row {row_number}: Distance_Km outside 0..20000")
+                    if not value("Routing_Source"):
+                        fail(f"{sheet_name} row {row_number}: Distance_Km requires Routing_Source")
+                nights = value("Nights_Away")
+                if nights:
+                    try:
+                        nights_away = int(nights)
+                    except ValueError:
+                        fail(f"{sheet_name} row {row_number}: Nights_Away is not an integer")
+                    if not 0 <= nights_away <= 30:
+                        fail(f"{sheet_name} row {row_number}: Nights_Away outside 0..30")
             else:
                 for name in (
                     "Organization", "Type", "Country", "Verification",

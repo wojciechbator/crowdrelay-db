@@ -57,7 +57,10 @@
         "Dedupe_Key",
         "Source_Checked",
         "Why_Fit",
-        "Red_Flags"
+        "Red_Flags",
+        "Distance_Km",
+        "Nights_Away",
+        "Routing_Source"
       ],
       "rows": [
         [
@@ -86,7 +89,10 @@
           "nexus-leipzig|2027|virya",
           "Official NEXUS home/stage/application/impressum; checked 2026-10-01",
           "Strong routing from Wrocław plus a dedicated Titanium Stage for Rock, Alternative, Nu-Metal and related heavy styles; NEXUS combines a rock/metal festival with a convention and advertises 30 bands/acts.",
-          "Hybrid nerd-convention format rather than a pure music festival; artist fee/travel/accommodation and application deadline are not published."
+          "Hybrid nerd-convention format rather than a pure music festival; artist fee/travel/accommodation and application deadline are not published.",
+          "",
+          "",
+          ""
         ],
         [
           "CAMPUS FESTIVAL Bonn 2027 — Band Application",
@@ -114,7 +120,10 @@
           "campus-festival-bonn|2027|virya",
           "Official CAMPUS FESTIVAL / NatFak-Festival e.V. band application; checked 2026-10-01",
           "Concrete newcomer-friendly festival-stage route with a fixed deadline and unusually clear economics; bands from outside the Cologne/Bonn region are explicitly eligible.",
-          "Broad multi-genre/non-metal festival and long standalone routing from Wrocław. Each band may play the festival only once; no metal-specific programming advantage is stated."
+          "Broad multi-genre/non-metal festival and long standalone routing from Wrocław. Each band may play the festival only once; no metal-specific programming advantage is stated.",
+          "",
+          "",
+          ""
         ]
       ]
     },

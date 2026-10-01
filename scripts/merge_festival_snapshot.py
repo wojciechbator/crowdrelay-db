@@ -269,14 +269,26 @@ def read_existing_rows(wb, title: str, headers: list[str]) -> list[list[object]]
     if title not in wb.sheetnames:
         return []
     ws = wb[title]
-    actual_headers = [str(ws.cell(1, c).value or "") for c in range(1, len(headers) + 1)]
+    # Festival schemas evolve append-only. A newer current-run payload may add
+    # columns the persistent workbook does not have yet; old rows are projected
+    # into the wider schema with blanks, then the sheet is rewritten once.
+    # Reordering/renaming remains a hard failure so identity columns can never
+    # silently slide under different meanings.
+    actual_headers = [str(ws.cell(1, c).value or "") for c in range(1, ws.max_column + 1)]
+    while actual_headers and not norm(actual_headers[-1]):
+        actual_headers.pop()
     if actual_headers != headers:
-        raise SystemExit(
-            f"{title}: existing header drift; expected {headers!r}, got {actual_headers!r}"
-        )
+        if actual_headers != headers[: len(actual_headers)]:
+            raise SystemExit(
+                f"{title}: existing header drift; expected append-only evolution "
+                f"from {actual_headers!r} to {headers!r}"
+            )
     rows: list[list[object]] = []
     for r in range(2, ws.max_row + 1):
-        row = [ws.cell(r, c).value for c in range(1, len(headers) + 1)]
+        row = [
+            ws.cell(r, c).value if c <= ws.max_column else None
+            for c in range(1, len(headers) + 1)
+        ]
         if any(norm(x) for x in row):
             rows.append(row)
     return rows

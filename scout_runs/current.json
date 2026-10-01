@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source": "SCOUT_SHARED",
+  "source": "SCOUT_SHARED_RECOVERY",
   "snapshot_mode": "current_run_only",
   "run_date": "2026-10-01",
   "sheets": {
@@ -16,7 +16,52 @@
         "Source_URL",
         "Reason"
       ],
-      "rows": []
+      "rows": [
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Dom Kultury w Kozach",
+          "KozyNostra Rock Fest",
+          "Kozy",
+          "organizer / contest",
+          "https://kozynostra.pl/",
+          "Historical recovery from prior Scout snapshot; merge normalizer will convert to UPDATE_PENDING if canonical contact exists."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "zgloszenia@mck.tychy.pl",
+          "Miejskie Centrum Kultury w Tychach",
+          "Rock pod Żyrafą",
+          "Tychy",
+          "contest submissions",
+          "https://kultura.tychy.pl/",
+          "Historical recovery; existing VIRYA relationship documented."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "RCK Kołobrzeg",
+          "RoCK Festiwal",
+          "Kołobrzeg",
+          "contest submissions",
+          "https://rck.kolobrzeg.eu/",
+          "Historical official contact recovery."
+        ],
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "spi_nie_spi@okandaluzja.pl",
+          "Ośrodek Kultury „Andaluzja”",
+          "SPI NIE ŚPI",
+          "Piekary Śląskie",
+          "contest submissions",
+          "https://okandaluzja.pl/",
+          "Historical 2026 contact recovery."
+        ]
+      ]
     },
     "OPPORTUNITIES": {
       "headers": [
@@ -189,6 +234,91 @@
           "Reverify Backstage PRO slot and economics before any manual application",
           "https://www.backstagepro.de/",
           "Concert reverified 2026-10-01; open-support listing was last verified 2026-09-05."
+        ],
+        [
+          "KozyNostra Rock Fest — Przegląd Zespołów Rockowo-Metalowych",
+          "Dom Kultury w Kozach",
+          "CONTEST / FESTIVAL",
+          "śląskie",
+          "Kozy",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-22",
+          "2026-06-30",
+          "UNKNOWN — recheck from May 2027",
+          "Likely fit; 2026 allowed original rock/metal, no age limit; verify 2027 rules",
+          "Free entry; food provided to qualified bands in 2026",
+          "Applied 2026; not selected; existing Master record",
+          "Monitor official 2027 call from May; preserve existing relationship",
+          "https://kozynostra.pl/",
+          "Official festival + 2026 rules; 58 applications, 5 finalists; rock/metal focus."
+        ],
+        [
+          "Rock pod Żyrafą Festival Tychy — Konkurs Rocka pod Żyrafą",
+          "Miejskie Centrum Kultury w Tychach",
+          "CONTEST / FESTIVAL",
+          "śląskie",
+          "Tychy",
+          "CONFIRMED_HISTORICAL — 2026 closed; 2027 pathway evidenced",
+          "2026-09-05",
+          "2026 closed",
+          "2027 — exact call date not yet published",
+          "Strong stylistic fit; 65 nationwide applications in 2026",
+          "2026 finalists received 2500 PLN gross; winner 7000 PLN + 7000 PLN for 2027 performance",
+          "Applied 2026; VIRYA received honorary distinction",
+          "Re-open relationship before 2027 call; monitor MCK Tychy",
+          "https://kultura.tychy.pl/2026/09/07/kakol-zwyciezca-konkursu-rock-pod-zyrafa-festival-tychy-2026/",
+          "Official MCK result: VIRYA named among 17 honorary distinctions; winner receives 2027 main-stage slot."
+        ],
+        [
+          "RoCK Festiwal — Ogólnopolski Konkurs Muzyki Rockowej",
+          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
+          "CONTEST / FESTIVAL",
+          "zachodniopomorskie",
+          "Kołobrzeg",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-21",
+          "2026-06-28",
+          "Likely annual; 2027 call not yet evidenced",
+          "Strong fit: nationwide, rock and variants, min. 2 original songs, min. 2 members, age 16+",
+          "Free; 5000/3000/1000 PLN; winner invited to next edition",
+          "No verified Gmail history found in available exported records",
+          "Monitor 2027 call and map RCK booking/contest decision-maker",
+          "https://rck.kolobrzeg.eu/dzial-aktualnosci/428-ogolnopolski-konkurs-muzyki-rockowej-rock-festiwal-zgloszenia-otwarte",
+          "Official RCK: nationwide open rock contest, free entry, live final, winner invitation to next edition."
+        ],
+        [
+          "MATERIAFEST XIV — Konkurs Zespołów",
+          "MATERIAFEST / The Materia ecosystem",
+          "CONTEST / METAL FESTIVAL",
+          "zachodniopomorskie",
+          "Szczecinek",
+          "CONFIRMED_HISTORICAL — 2026 closed",
+          "2026-08-28",
+          "2026-05-31",
+          "Likely annual; 2027 call not yet evidenced",
+          "Very strong genre fit; metal/rock variants, original repertoire, >=2 members, no label contract",
+          "Gateway to Tower Stage next year; 2026 rules required 2 original recordings + live recording",
+          "No verified Gmail history found in available exported records",
+          "Monitor 2027 competition; verify current label-status rule before applying",
+          "https://materiafest.com/konkurs/",
+          "Official competition page: metal/rock, original repertoire, no label contract, winner gets next-year Tower Stage slot."
+        ],
+        [
+          "SPI NIE ŚPI XIV — Ogólnopolski Przegląd Twórczości Muzycznej",
+          "Ośrodek Kultury „Andaluzja” + Miasto Piekary Śląskie + Młodzieżowa Rada Miasta",
+          "CONTEST / SHOWCASE",
+          "śląskie",
+          "Piekary Śląskie",
+          "CONFIRMED_HISTORICAL — 2026 deadline passed",
+          "2026-11-07",
+          "2026-09-30",
+          "2027 unknown",
+          "Nationwide broad-genre 2026 call; exact future eligibility requires reverify",
+          "Free; financial/material prizes; possible Dni Miasta performance",
+          "No verified prior contact found in available exported records",
+          "Do not treat 2026 as active; monitor future official cycle only",
+          "https://piekary.pl/przegladspi-nie-spi-trwa-nabor-zgloszen/",
+          "Historical 2026 official call retained for network/history; deadline passed."
         ]
       ]
     },
@@ -283,6 +413,56 @@
           "gabriela.konska@livenation.pl",
           "Warm support decision route for COMASTATIC",
           "CONFIRMED_CURRENT"
+        ],
+        [
+          "Dom Kultury w Kozach",
+          "institution",
+          "Kozy",
+          "śląskie",
+          "https://kozynostra.pl/",
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Festival + contest organizer; strong rock/metal fit",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "Miejskie Centrum Kultury w Tychach",
+          "institution",
+          "Tychy",
+          "śląskie",
+          "https://kultura.tychy.pl/",
+          "zgloszenia@mck.tychy.pl",
+          "Rock pod Żyrafą; decision-maker; VIRYA honorary distinction history",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
+          "institution",
+          "Kołobrzeg",
+          "zachodniopomorskie",
+          "https://rck.kolobrzeg.eu/",
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "Runs RoCK Festiwal contest + festival",
+          "CONFIRMED_CURRENT/HISTORICAL"
+        ],
+        [
+          "MATERIAFEST / The Materia ecosystem",
+          "festival organizer",
+          "Szczecinek",
+          "zachodniopomorskie",
+          "https://materiafest.com/",
+          "UNKNOWN",
+          "Metal festival + gateway contest to Tower Stage",
+          "PARTIALLY_VERIFIED"
+        ],
+        [
+          "Ośrodek Kultury „Andaluzja”",
+          "institution",
+          "Piekary Śląskie",
+          "śląskie",
+          "https://okandaluzja.pl/",
+          "spi_nie_spi@okandaluzja.pl",
+          "Runs SPI NIE ŚPI",
+          "CONFIRMED_HISTORICAL"
         ]
       ]
     },
@@ -350,6 +530,42 @@
           "support booking referral",
           "https://www.livenation.pl/event/comastatic-warsaw-tickets-edp1699341",
           "Warm referral from VooDoo; support enquiry sent 2026-09-30."
+        ],
+        [
+          "kozynostrafestiwal@dk.kozy.pl",
+          "Dom Kultury w Kozach",
+          "KozyNostra Rock Fest",
+          "Kozy",
+          "organizer",
+          "https://kozynostra.pl/",
+          "Prior Master application exists; preserve relationship history"
+        ],
+        [
+          "zgloszenia@mck.tychy.pl",
+          "Miejskie Centrum Kultury w Tychach",
+          "Rock pod Żyrafą",
+          "Tychy",
+          "contest submissions",
+          "https://kultura.tychy.pl/",
+          "VIRYA 2026 application + honorary distinction; not a cold lead"
+        ],
+        [
+          "rock.festiwal@rck.kolobrzeg.eu",
+          "RCK Kołobrzeg",
+          "RoCK Festiwal",
+          "Kołobrzeg",
+          "contest submissions",
+          "https://rck.kolobrzeg.eu/",
+          "Historical official contest contact"
+        ],
+        [
+          "spi_nie_spi@okandaluzja.pl",
+          "Ośrodek Kultury Andaluzja",
+          "SPI NIE ŚPI",
+          "Piekary Śląskie",
+          "contest submissions",
+          "https://okandaluzja.pl/",
+          "Historical 2026 submission route; future cycle requires reverify"
         ]
       ]
     },
@@ -410,6 +626,17 @@
           "APPLIED for Paletstock earlier today; later hardening steps NO_MUTATION; Drive structural proof PASS",
           "PASS — canonical Sheet readback/validations/dedupe verified",
           "Continue latest SCOUT_PL and SCOUT_EUROPE continuations; do not duplicate existing submissions; reverify Aralez support listing before manual action."
+        ],
+        [
+          "2026-10-01",
+          "GitHub persistence regression recovery — restore 2026-09-29 festival rows lost by former replace semantics",
+          5,
+          5,
+          "none",
+          "0",
+          "NO_MUTATION",
+          "PASS",
+          "Upsert invariant test: today's 9 opportunities must remain while five recovered prior rows are added; future current-run deltas must not erase persistent Festival sheets."
         ]
       ]
     }

@@ -18,6 +18,7 @@ The canonical GitHub workbook is **`database.xlsx`**. `database_festivals.xlsx` 
 - Festival Contacts
 - Festival Canonical Append
 - Festival Support Targets (optional)
+- Festival Outreach Log (optional, persistent relationship/delivery history)
 
 Rows already present in `database.xlsx` are preserved when absent from the current-run delta. Incoming non-empty fields update the matched persistent row. This prevents a Poland or Europe run from deleting state written by the other scout.
 
@@ -29,6 +30,7 @@ Festival sheets use stable identities appropriate to their role:
 - Organizers: Website, then Email, then Organization + City
 - Contacts: Email + City, then Email, then Name + Organization/Event + City
 - Support Targets: Dedupe Key, then Band/Artist + Region, then Public URL
+- Outreach Log: Public Email + Subject/Thread, fallback Recipient + Subject/Thread + Date; replies/bounces update the persistent thread row rather than creating contradictory states
 - Canonical Append: Target_Sheet + contact/url identity
 
 Canonical append Contacts are normalized from `NEW_PENDING` to `UPDATE_PENDING` when the canonical Contacts sheet already contains the contact.
@@ -40,7 +42,7 @@ A GitHub sync is PASS only when:
 2. GitHub Actions **Merge current Scout delta** succeeds.
 3. **Validate merged workbook** succeeds.
 4. **Commit unified database workbook** succeeds.
-5. The validator confirms every non-empty field from the current payload is present in the merged workbook.
+5. The validator confirms every non-empty field from the current payload is present in the merged workbook, including outreach history when supplied.
 6. Existing persistent festival state is not erased merely because it was absent from the delta.
 
 The `crowdrelay-database-apply` concurrency group serializes Scout merges with the canonical database update workflow.

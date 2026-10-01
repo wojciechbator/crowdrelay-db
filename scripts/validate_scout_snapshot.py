@@ -19,6 +19,7 @@ SHEET_MAP = {
     "CONTACTS": "Festival Contacts",
     "CANONICAL_APPEND": "Festival Canonical Append",
     "SUPPORT_TARGETS": "Festival Support Targets",
+    "OUTREACH_LOG": "Festival Outreach Log",
 }
 
 FESTIVAL_SHEETS = {
@@ -28,7 +29,7 @@ FESTIVAL_SHEETS = {
     "Festival Contacts",
     "Festival Canonical Append",
 }
-OPTIONAL_FESTIVAL_SHEETS = {"Festival Support Targets"}
+OPTIONAL_FESTIVAL_SHEETS = {"Festival Support Targets", "Festival Outreach Log"}
 
 
 def norm(v: object) -> str:
@@ -144,6 +145,20 @@ def assert_unique_festival(wb) -> None:
         seen.add(key)
 
 
+    if "Festival Outreach Log" in wb.sheetnames:
+        ws = wb["Festival Outreach Log"]; _, idx, rr = rows(ws)
+        seen = set()
+        for r in rr:
+            email = norm(ws.cell(r, idx.get("public email", 0)).value) if idx.get("public email") else ""
+            subject = norm(ws.cell(r, idx.get("subject / thread", 0)).value) if idx.get("subject / thread") else ""
+            recipient = norm(ws.cell(r, idx.get("recipient / organization", 0)).value) if idx.get("recipient / organization") else ""
+            date = norm(ws.cell(r, idx.get("date", 0)).value) if idx.get("date") else ""
+            key = ("email_subject", email, subject) if email and subject else ("recipient_subject_date", recipient, subject, date)
+            if key in seen:
+                fail(f"Festival Outreach Log duplicate: {key}")
+            seen.add(key)
+
+
 def assert_no_false_new_contacts(wb) -> None:
     ws = wb["Contacts"]; hr, idx = header(ws)
     keys = set()
@@ -207,6 +222,12 @@ def payload_key(sheet: str, headers: list[str], row: list[object]) -> tuple[str,
             return ("target_email", target, email)
         source = get_url("Source_URL")
         return ("target_url", target, source) if source else ("target_name_city", target, get("Name"), city)
+    if sheet == "OUTREACH_LOG":
+        email, subject = get("Public Email"), get("Subject / Thread")
+        recipient, date = get("Recipient / Organization"), get("Date")
+        if email and subject:
+            return ("email_subject", email, subject)
+        return ("recipient_subject_date", recipient, subject, date)
     if sheet == "SUPPORT_TARGETS":
         dedupe_key = get("Dedupe Key")
         if dedupe_key:

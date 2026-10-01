@@ -22,6 +22,7 @@ SHEET_MAP = {
     "CONTACTS": "Festival Contacts",
     "CANONICAL_APPEND": "Festival Canonical Append",
     "SUPPORT_TARGETS": "Festival Support Targets",
+    "OUTREACH_LOG": "Festival Outreach Log",
 }
 
 REQUIRED = {"RUN_INFO", "OPPORTUNITIES", "ORGANIZERS", "CONTACTS", "CANONICAL_APPEND"}
@@ -122,6 +123,14 @@ def row_identity(sheet: str, headers: list[str], row: list[object]) -> tuple[str
         if source:
             return ("target_url", target, source)
         return ("target_name_city", target, get("Name"), city)
+    if sheet == "OUTREACH_LOG":
+        email = get("Public Email")
+        subject = get("Subject / Thread")
+        recipient = get("Recipient / Organization")
+        date = get("Date")
+        if email and subject:
+            return ("email_subject", email, subject)
+        return ("recipient_subject_date", recipient, subject, date)
     if sheet == "SUPPORT_TARGETS":
         dedupe_key = get("Dedupe Key")
         if dedupe_key:

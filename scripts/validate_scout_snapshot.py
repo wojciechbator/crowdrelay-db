@@ -240,6 +240,75 @@ def payload_key(sheet: str, headers: list[str], row: list[object]) -> tuple[str,
     return tuple(norm(x) for x in row)
 
 
+def assert_north_star_payload_contract() -> None:
+    payload = json.loads(PAYLOAD.read_text(encoding="utf-8"))
+    sheets = payload.get("sheets") or {}
+
+    required_headers = {
+        "OPPORTUNITIES": {
+            "Name", "Organizer", "Type", "Country", "City", "Current_Status",
+            "Source_URL", "Submission_Method", "Relevance_Score", "Priority",
+            "Verification", "Dedupe_Key", "Source_Checked", "Why_Fit", "Red_Flags",
+        },
+        "ORGANIZERS": {
+            "Organization", "Type", "Website", "Email", "Verification",
+            "Country", "Relevance_Score", "Dedupe_Key", "Source_Checked",
+        },
+    }
+
+    for sheet_name, required in required_headers.items():
+        source = sheets.get(sheet_name)
+        if source is None:
+            fail(f"{sheet_name}: missing from current-run payload")
+        headers = list(source.get("headers") or [])
+        header_set = set(headers)
+        missing = required - header_set
+        if missing:
+            fail(f"{sheet_name}: north-star columns missing: {sorted(missing)}")
+
+        idx = {h: i for i, h in enumerate(headers)}
+        for row_number, raw in enumerate(source.get("rows") or [], start=2):
+            row = list(raw) + [""] * max(0, len(headers) - len(raw))
+            if not any(norm(v) for v in row):
+                continue
+
+            def value(name: str) -> str:
+                return str(row[idx[name]] or "").strip()
+
+            if sheet_name == "OPPORTUNITIES":
+                for name in (
+                    "Name", "Organizer", "Type", "Country", "City",
+                    "Current_Status", "Source_URL", "Submission_Method",
+                    "Priority", "Verification", "Dedupe_Key", "Source_Checked",
+                    "Why_Fit",
+                ):
+                    if not value(name):
+                        fail(f"{sheet_name} row {row_number}: required {name} is blank")
+                try:
+                    score = float(value("Relevance_Score"))
+                except ValueError:
+                    fail(f"{sheet_name} row {row_number}: Relevance_Score is not numeric")
+                if not 0 <= score <= 100:
+                    fail(f"{sheet_name} row {row_number}: Relevance_Score outside 0..100")
+                if value("Priority").upper() not in {"A", "B", "C", "D"}:
+                    fail(f"{sheet_name} row {row_number}: invalid Priority")
+            else:
+                for name in (
+                    "Organization", "Type", "Country", "Verification",
+                    "Dedupe_Key", "Source_Checked",
+                ):
+                    if not value(name):
+                        fail(f"{sheet_name} row {row_number}: required {name} is blank")
+                if not value("Website") and not value("Email"):
+                    fail(f"{sheet_name} row {row_number}: organizer has no public route")
+                try:
+                    score = float(value("Relevance_Score"))
+                except ValueError:
+                    fail(f"{sheet_name} row {row_number}: Relevance_Score is not numeric")
+                if not 0 <= score <= 100:
+                    fail(f"{sheet_name} row {row_number}: Relevance_Score outside 0..100")
+
+
 def assert_payload_landed(wb) -> None:
     if not PAYLOAD.exists():
         fail("scout_runs/current.json missing")
@@ -295,6 +364,7 @@ def main() -> None:
     assert_unique_canonical(wb)
     assert_unique_festival(wb)
     assert_no_false_new_contacts(wb)
+    assert_north_star_payload_contract()
     assert_payload_landed(wb)
     print("UNIFIED_DATABASE_QA_OK", {
         "festival_sheets": sorted(FESTIVAL_SHEETS & set(wb.sheetnames)),

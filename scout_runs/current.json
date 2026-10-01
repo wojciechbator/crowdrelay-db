@@ -16,7 +16,19 @@
         "Source_URL",
         "Reason"
       ],
-      "rows": []
+      "rows": [
+        [
+          "Contacts",
+          "NEW_PENDING",
+          "hype@offline-entertainment.de",
+          "Ricki Wölbling / NEXUS",
+          "OFFLINE Entertainment UG / NEXUS",
+          "Leipzig",
+          "festival organizer / stage application",
+          "https://www.nerd-rock-festival.com/impressum",
+          "Official organizer contact; repo + MASTER + SCOUT + Gmail dedupe clean. Official stage-application route remains preferred over generic email."
+        ]
+      ]
     },
     "OPPORTUNITIES": {
       "headers": [
@@ -36,7 +48,42 @@
         "Source_URL",
         "Evidence"
       ],
-      "rows": []
+      "rows": [
+        [
+          "NEXUS 2027 — Titanium Stage / Band Application",
+          "OFFLINE Entertainment UG / NEXUS",
+          "Festival / rock-metal stage application",
+          "Germany / Saxony",
+          "Leipzig",
+          "Ręczne zgłoszenie",
+          "2027-09-17 to 2027-09-19",
+          "",
+          "2027",
+          "Active stage-act application; no residency restriction found on current official route.",
+          "UNKNOWN — artist fee, travel and accommodation terms not published.",
+          "No prior MASTER / SCOUT / Gmail history found before this run.",
+          "Review the official stage application once and submit through that route if terms are acceptable; do not bypass with generic email unless form unavailable.",
+          "https://www.nerd-rock-festival.com/kopie-von-stage-act-anmeldung",
+          "Official 2027 NEXUS pages confirm 17–19 Sep 2027 at agra Messepark Leipzig, dedicated Rock/Metal Titanium Stage, active stage-act application route and OFFLINE Entertainment UG as organizer. Checked 2026-10-01."
+        ],
+        [
+          "CAMPUS FESTIVAL Bonn 2027 — Band Application",
+          "NatFak-Festival e.V. / CAMPUS FESTIVAL Bonn",
+          "Festival / open call",
+          "Germany / North Rhine-Westphalia",
+          "Bonn",
+          "Ręczne zgłoszenie",
+          "2027-06-15 to 2027-06-19",
+          "2026-10-31",
+          "2027",
+          "Open to bands outside Cologne/Bonn; each band may play the festival only once.",
+          "€150 expense allowance; travel, accommodation and other costs may be reimbursed by arrangement.",
+          "No prior MASTER / SCOUT / Gmail history found before this run.",
+          "Check June routing/availability and submit once through the official form before 2026-10-31 if economics make sense; no email bypass.",
+          "https://natfak-festival.de/festival/mitmachen/bandbewerbung",
+          "Official NatFak-Festival e.V. call confirms 15–19 Jun 2027, 31 Oct 2026 deadline, form-only application, €150 allowance and possible travel/accommodation reimbursement. Checked 2026-10-01."
+        ]
+      ]
     },
     "ORGANIZERS": {
       "headers": [
@@ -49,7 +96,28 @@
         "Role/Fit",
         "Verification"
       ],
-      "rows": []
+      "rows": [
+        [
+          "OFFLINE Entertainment UG / NEXUS",
+          "Festival promoter / rock-metal convention organizer",
+          "Leipzig",
+          "Germany / Saxony",
+          "https://www.nerd-rock-festival.com/",
+          "hype@offline-entertainment.de",
+          "Runs NEXUS; close-to-Wrocław rock/metal stage and active 2027 stage application.",
+          "CONFIRMED_CURRENT — official NEXUS home/stage/application/impressum checked 2026-10-01"
+        ],
+        [
+          "NatFak-Festival e.V. / CAMPUS FESTIVAL Bonn",
+          "Nonprofit festival organizer / newcomer open-call",
+          "Bonn",
+          "Germany / North Rhine-Westphalia",
+          "https://natfak-festival.de/",
+          "",
+          "Runs CAMPUS FESTIVAL; open 2027 band call with clear form-only route and economics.",
+          "CONFIRMED_CURRENT — official NatFak-Festival 2027 band call checked 2026-10-01"
+        ]
+      ]
     },
     "CONTACTS": {
       "headers": [
@@ -61,7 +129,17 @@
         "Source",
         "History/Notes"
       ],
-      "rows": []
+      "rows": [
+        [
+          "hype@offline-entertainment.de",
+          "Ricki Wölbling / NEXUS",
+          "OFFLINE Entertainment UG / NEXUS 2027",
+          "Leipzig",
+          "festival organizer / general contact; official stage application preferred",
+          "https://www.nerd-rock-festival.com/impressum",
+          "No prior Gmail history found. Use official stage application route first; do not cold-email around it."
+        ]
+      ]
     },
     "RUN_INFO": {
       "headers": [
@@ -78,14 +156,25 @@
       "rows": [
         [
           "2026-10-01",
-          "SCOUT_EUROPE v2.5 PERSISTENCE E2E PROOF",
-          0,
-          0,
-          "none",
+          "SCOUT_EUROPE v2.5 FULL ACCEPTANCE RUN — fresh Drive/Gmail preflight, MASTER recovery/dedupe, current official-web CZ/DE/AT/SK/CEE pass, Gmail reconciliation",
+          2,
+          2,
+          "CAMPUS FESTIVAL Bonn — 2026-10-31",
           "0",
           "READ_ONLY",
-          "PASS — canonical SCOUT row 321 read back after concurrency-safe append",
-          "Persistence-only proof; no research/outreach mutation. Continue latest SCOUT_EUROPE discovery continuation on next scheduled run."
+          "PASS — canonical SCOUT OPPORTUNITIES rows 137–138, META_TARGETS rows 139–140 and RUN_INFO rows 322–323 live-read back; Priority/Status validation preserved",
+          "Continue CZ/AT/SK official 2027 calls and Prague/Brno/Vienna/Bratislava + Dresden/Leipzig support/routing. Do not repeat NEXUS/CAMPUS/Kulturspektakel or known submitted/waiting leads without new first-party/Gmail state."
+        ],
+        [
+          "2026-10-01",
+          "SCOUT_EUROPE CONTINUATION — CZ / DE / AT / CEE",
+          0,
+          0,
+          "CAMPUS Bonn manual-decision deadline 2026-10-31",
+          "0",
+          "READ_ONLY",
+          "PASS",
+          "Next: deepen Czech/Austrian/Slovak 2027 official open calls and support/Vorband routes near Prague, Brno, Vienna, Bratislava plus Dresden/Leipzig routing bundles; recheck NEXUS economics/deadline only before manual submission."
         ]
       ]
     }

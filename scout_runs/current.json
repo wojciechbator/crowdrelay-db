@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source": "SCOUT_SHARED_RECOVERY",
+  "source": "SCOUT_SHARED_GMAIL_RECONCILIATION",
   "snapshot_mode": "current_run_only",
   "run_date": "2026-10-01",
   "sheets": {
@@ -16,52 +16,7 @@
         "Source_URL",
         "Reason"
       ],
-      "rows": [
-        [
-          "Contacts",
-          "NEW_PENDING",
-          "kozynostrafestiwal@dk.kozy.pl",
-          "Dom Kultury w Kozach",
-          "KozyNostra Rock Fest",
-          "Kozy",
-          "organizer / contest",
-          "https://kozynostra.pl/",
-          "Historical recovery from prior Scout snapshot; merge normalizer will convert to UPDATE_PENDING if canonical contact exists."
-        ],
-        [
-          "Contacts",
-          "NEW_PENDING",
-          "zgloszenia@mck.tychy.pl",
-          "Miejskie Centrum Kultury w Tychach",
-          "Rock pod Żyrafą",
-          "Tychy",
-          "contest submissions",
-          "https://kultura.tychy.pl/",
-          "Historical recovery; existing VIRYA relationship documented."
-        ],
-        [
-          "Contacts",
-          "NEW_PENDING",
-          "rock.festiwal@rck.kolobrzeg.eu",
-          "RCK Kołobrzeg",
-          "RoCK Festiwal",
-          "Kołobrzeg",
-          "contest submissions",
-          "https://rck.kolobrzeg.eu/",
-          "Historical official contact recovery."
-        ],
-        [
-          "Contacts",
-          "NEW_PENDING",
-          "spi_nie_spi@okandaluzja.pl",
-          "Ośrodek Kultury „Andaluzja”",
-          "SPI NIE ŚPI",
-          "Piekary Śląskie",
-          "contest submissions",
-          "https://okandaluzja.pl/",
-          "Historical 2026 contact recovery."
-        ]
-      ]
+      "rows": []
     },
     "OPPORTUNITIES": {
       "headers": [
@@ -83,242 +38,38 @@
       ],
       "rows": [
         [
-          "Pure Fucking Metal Festevil 2027",
-          "Pure Fucking Metal Festevil",
-          "FESTIVAL / OPEN CALL",
-          "Germany",
-          "Laberweinting",
-          "CLOSED — 2027 lineup full",
-          "2027-07-09 to 2027-07-10",
-          "2026-09-30",
-          "2028 applications: 2027-08-01 to 2027-09-01",
-          "Previously accepted into applicant pool; 2027 now closed",
-          "No public artist economics verified",
-          "VIRYA had organizer acknowledgement in applicant list",
-          "Close 2027; do not follow up; monitor 2028 window",
-          "https://www.metal-festevil.de/bandbewerbung",
-          "Official page rechecked 2026-10-01: 2027 lineup full; 2028 window published."
-        ],
-        [
-          "KUFSTEIN unlimited 2027",
-          "KUFSTEIN unlimited",
-          "FESTIVAL / OFFICIAL FORM",
-          "Austria",
-          "Kufstein",
-          "SUBMITTED / WAITING",
-          "2027-06-11 to 2027-06-12",
-          "2026-12-15",
-          "2027 current cycle",
-          "Official form route; email applications ignored",
-          "No application fee stated",
-          "VIRYA manually submitted official form 2026-10-01",
-          "Wait for organizer response; do not resubmit/email",
-          "https://www.kufsteinunlimited.at/de/die-stadt-ist-die-buehne-band-bewerbungen.html",
-          "SCOUT readback 2026-10-01 confirms official-form submission and hard dedupe."
-        ],
-        [
-          "be! openair 2027",
-          "be! openair",
-          "FESTIVAL / BAND APPLICATION",
-          "Germany",
-          "Parsberg",
-          "WAITING — application sent",
-          "2027-05-28 to 2027-05-29",
-          "2026-10-01",
-          "2027 current cycle",
-          "Broad youth/newcomer call; heavier metal fit is weaker if no clean vocals",
-          "No public artist economics verified",
-          "VIRYA applied 2026-09-13 via official email",
-          "Wait; no duplicate follow-up unless requested/new proof",
-          "https://be-openair.de/bewerbung/",
-          "Official call/source retained; deadline 2026-10-01."
-        ],
-        [
-          "Antoniów Rock Fest 2027",
-          "GrajmyRazem / Hubert Kitliński",
-          "FESTIVAL / GATEWAY CONTEST",
-          "świętokrzyskie",
-          "Radoszyce",
-          "MONITOR — 2027 contest confirmed",
-          "2027-07-02 to 2027-07-03",
-          "",
-          "2027 contest details expected mid-Oct 2026",
-          "Prior edition used contest/gateway slot; strong rock/metal fit",
-          "UNKNOWN",
-          "Organizer replied 2026-09-30 confirming 2027 band contest",
-          "Monitor official channels; apply only when rules publish; no duplicate email",
-          "https://swietokrzyskie.travel/informator_turystyczny/wydarzenia/antoniow_rock_fest_1",
-          "Gmail organizer reply checked 2026-10-01; details expected in about 2–3 weeks."
-        ],
-        [
-          "Rockowa Przystań 2027",
-          "GOK Siedliszcze",
-          "FESTIVAL / LOCAL ROCK CONTEST",
-          "lubelskie",
-          "Majdan Zahorodyński",
-          "MONITOR — 2027 edition confirmed",
-          "second half of June 2027",
-          "",
-          "2027 current future cycle",
-          "Recurring local rock contest; route confirmed directly",
-          "UNKNOWN",
-          "Organizer replied 2026-10-01 confirming third edition",
-          "Wait for official band call; no duplicate email",
-          "https://www.gok.siedliszcze.pl/",
-          "Gmail reply checked 2026-10-01 confirms III edition in second half of June 2027."
-        ],
-        [
-          "Rockin’ Memories 2027",
+          "Rockin’ Memories 2027 — Band Application",
           "Rockin’ Memories",
           "FESTIVAL / BAND APPLICATION",
           "Germany",
           "Rottenburg am Neckar-Seebronn",
-          "SUBMITTED / WAITING",
+          "WAITING — manual application recorded; email route bounced 550",
           "2027 — exact dates TBA",
           "",
-          "2027 current application route",
-          "Official public band-application route",
-          "No application fee stated",
-          "Manual application + email completed 2026-10-01",
-          "Wait; no further submission/follow-up now",
-          "https://www.rockinmemories.de/",
-          "SCOUT/Gmail state checked 2026-10-01; Gmail message 1a0f64c237a2411f."
-        ],
-        [
-          "Paletstock 2027",
-          "Paletstock",
-          "FESTIVAL / OFFICIAL FORM",
-          "lubelskie",
-          "Bełżyce",
-          "PREPARE / REVIEW TERMS",
-          "2027-08-13 to 2027-08-14",
-          "",
           "2027 current cycle",
-          "DIY heavy/alternative fit; official live-band form",
-          "Application free per current Scout; full economics require review",
-          "New verified opportunity; no outreach by Scout",
-          "Review terms/economics, then prepare for user approval",
-          "https://paletstock.pl/",
-          "Official site checked 2026-10-01 confirms dates and application form."
+          "Official application route; manual submission recorded in live SCOUT",
+          "No application fee stated",
+          "Email 1a0f64c237a2411f bounced via DSN 1a0f64c2b8135604; separately recorded manual application remains valid state",
+          "Wait on manual application; never reuse bounced backstage@rockinmemories.de; reverify official contact only if follow-up is needed",
+          "https://www.rockinmemories.de/",
+          "Gmail full-thread delivery reconciliation checked 2026-10-01: 550 5.1.1 user does not exist."
         ],
         [
-          "COMASTATIC @ VooDoo 2027 — warm support route",
-          "Live Nation Poland / VooDoo",
-          "SUPPORT / WARM REFERRAL",
-          "mazowieckie",
-          "Warsaw",
-          "WAITING — support enquiry sent",
-          "2027-02-08",
+          "Letnia Scena Muzyczna 2027 — Oława gateway monitor",
+          "Centrum Sztuki w Oławie",
+          "GATEWAY CONTEST / INSTITUTIONAL OPEN CALL",
+          "dolnośląskie",
+          "Oława",
+          "MONITOR — warm direct route",
+          "2027 cycle — exact event date TBA",
           "",
-          "2027 current event",
-          "Explicit warm venue-booker referral; alt-rock/heavier-guitar overlap",
+          "Official call expected March/April 2027",
+          "Exact 2027 rules/eligibility not yet published",
           "UNKNOWN",
-          "VooDoo booking manager referred VIRYA to Live Nation; enquiry sent 2026-09-30",
-          "Wait for Live Nation reply; no duplicate outreach",
-          "https://www.livenation.pl/event/comastatic-warsaw-tickets-edp1699341",
-          "Official Live Nation/VooDoo event reverified 2026-10-01 + Gmail warm thread 1a0ecd80ec134401 / sent 1a0f1ff0078ebf08."
-        ],
-        [
-          "Aralez — Release of Illusion 2026 — support slot reverify",
-          "Aralez / HD – Die Rock & Metal Bar",
-          "SUPPORT / DIRECT SLOT — REVERIFY",
-          "Germany",
-          "Dresden",
-          "MONITOR / REQUIRES MANUAL REVERIFY",
-          "2026-10-24",
-          "",
-          "Current event; support listing needs reverify",
-          "Dresden routing + doom/progressive overlap",
-          "Historical listing indicated doordeal/profit-share; current slot availability unverified",
-          "No Gmail history found",
-          "Reverify Backstage PRO slot and economics before any manual application",
-          "https://www.backstagepro.de/",
-          "Concert reverified 2026-10-01; open-support listing was last verified 2026-09-05."
-        ],
-        [
-          "KozyNostra Rock Fest — Przegląd Zespołów Rockowo-Metalowych",
-          "Dom Kultury w Kozach",
-          "CONTEST / FESTIVAL",
-          "śląskie",
-          "Kozy",
-          "CONFIRMED_HISTORICAL — 2026 closed",
-          "2026-08-22",
-          "2026-06-30",
-          "UNKNOWN — recheck from May 2027",
-          "Likely fit; 2026 allowed original rock/metal, no age limit; verify 2027 rules",
-          "Free entry; food provided to qualified bands in 2026",
-          "Applied 2026; not selected; existing Master record",
-          "Monitor official 2027 call from May; preserve existing relationship",
-          "https://kozynostra.pl/",
-          "Official festival + 2026 rules; 58 applications, 5 finalists; rock/metal focus."
-        ],
-        [
-          "Rock pod Żyrafą Festival Tychy — Konkurs Rocka pod Żyrafą",
-          "Miejskie Centrum Kultury w Tychach",
-          "CONTEST / FESTIVAL",
-          "śląskie",
-          "Tychy",
-          "CONFIRMED_HISTORICAL — 2026 closed; 2027 pathway evidenced",
-          "2026-09-05",
-          "2026 closed",
-          "2027 — exact call date not yet published",
-          "Strong stylistic fit; 65 nationwide applications in 2026",
-          "2026 finalists received 2500 PLN gross; winner 7000 PLN + 7000 PLN for 2027 performance",
-          "Applied 2026; VIRYA received honorary distinction",
-          "Re-open relationship before 2027 call; monitor MCK Tychy",
-          "https://kultura.tychy.pl/2026/09/07/kakol-zwyciezca-konkursu-rock-pod-zyrafa-festival-tychy-2026/",
-          "Official MCK result: VIRYA named among 17 honorary distinctions; winner receives 2027 main-stage slot."
-        ],
-        [
-          "RoCK Festiwal — Ogólnopolski Konkurs Muzyki Rockowej",
-          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
-          "CONTEST / FESTIVAL",
-          "zachodniopomorskie",
-          "Kołobrzeg",
-          "CONFIRMED_HISTORICAL — 2026 closed",
-          "2026-08-21",
-          "2026-06-28",
-          "Likely annual; 2027 call not yet evidenced",
-          "Strong fit: nationwide, rock and variants, min. 2 original songs, min. 2 members, age 16+",
-          "Free; 5000/3000/1000 PLN; winner invited to next edition",
-          "No verified Gmail history found in available exported records",
-          "Monitor 2027 call and map RCK booking/contest decision-maker",
-          "https://rck.kolobrzeg.eu/dzial-aktualnosci/428-ogolnopolski-konkurs-muzyki-rockowej-rock-festiwal-zgloszenia-otwarte",
-          "Official RCK: nationwide open rock contest, free entry, live final, winner invitation to next edition."
-        ],
-        [
-          "MATERIAFEST XIV — Konkurs Zespołów",
-          "MATERIAFEST / The Materia ecosystem",
-          "CONTEST / METAL FESTIVAL",
-          "zachodniopomorskie",
-          "Szczecinek",
-          "CONFIRMED_HISTORICAL — 2026 closed",
-          "2026-08-28",
-          "2026-05-31",
-          "Likely annual; 2027 call not yet evidenced",
-          "Very strong genre fit; metal/rock variants, original repertoire, >=2 members, no label contract",
-          "Gateway to Tower Stage next year; 2026 rules required 2 original recordings + live recording",
-          "No verified Gmail history found in available exported records",
-          "Monitor 2027 competition; verify current label-status rule before applying",
-          "https://materiafest.com/konkurs/",
-          "Official competition page: metal/rock, original repertoire, no label contract, winner gets next-year Tower Stage slot."
-        ],
-        [
-          "SPI NIE ŚPI XIV — Ogólnopolski Przegląd Twórczości Muzycznej",
-          "Ośrodek Kultury „Andaluzja” + Miasto Piekary Śląskie + Młodzieżowa Rada Miasta",
-          "CONTEST / SHOWCASE",
-          "śląskie",
-          "Piekary Śląskie",
-          "CONFIRMED_HISTORICAL — 2026 deadline passed",
-          "2026-11-07",
-          "2026-09-30",
-          "2027 unknown",
-          "Nationwide broad-genre 2026 call; exact future eligibility requires reverify",
-          "Free; financial/material prizes; possible Dni Miasta performance",
-          "No verified prior contact found in available exported records",
-          "Do not treat 2026 as active; monitor future official cycle only",
-          "https://piekary.pl/przegladspi-nie-spi-trwa-nabor-zgloszen/",
-          "Historical 2026 official call retained for network/history; deadline passed."
+          "Warm direct booking conversation; organizer explicitly redirected VIRYA to Letnia Scena Muzyczna",
+          "Monitor official site/FB in March–April 2027; apply through published route; no duplicate booking email",
+          "https://kultura.olawa.pl/",
+          "Gmail thread 1a06e52a010d312a; organizer reply 1a0f616325cde6a3 says no current slot but explicitly points to Letnia Scena announced March/April."
         ]
       ]
     },
@@ -335,134 +86,24 @@
       ],
       "rows": [
         [
-          "Pure Fucking Metal Festevil",
-          "festival organizer",
-          "Laberweinting",
-          "Germany",
-          "https://www.metal-festevil.de/",
-          "info@metal-festevil.de",
-          "Metal festival booking/application node",
-          "CONFIRMED_CURRENT"
+          "Centrum Sztuki w Oławie",
+          "institution / venue / open-call organizer",
+          "Oława",
+          "dolnośląskie",
+          "https://kultura.olawa.pl/",
+          "ak@kultura.olawa.pl",
+          "Warm direct contact; recurring Letnia Scena Muzyczna gateway",
+          "CONFIRMED_CURRENT via direct Gmail"
         ],
         [
-          "KUFSTEIN unlimited",
-          "festival organizer",
-          "Kufstein",
-          "Austria",
-          "https://www.kufsteinunlimited.at/",
-          "",
-          "Official 2027 web-form booking route",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "be! openair",
-          "festival organizer",
-          "Parsberg",
-          "Germany",
-          "https://be-openair.de/",
-          "bewerbung@be-openair.de",
-          "Youth/newcomer festival booking route",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "GrajmyRazem / Antoniów Rock Fest",
-          "festival organizer",
-          "Radoszyce",
-          "świętokrzyskie",
-          "https://swietokrzyskie.travel/informator_turystyczny/wydarzenia/antoniow_rock_fest_1",
-          "GrajmyRazem.Biuro@gmail.com",
-          "2027 contest route confirmed directly",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "GOK Siedliszcze / Rockowa Przystań",
-          "institution / festival organizer",
-          "Siedliszcze",
-          "lubelskie",
-          "https://www.gok.siedliszcze.pl/",
-          "gokir@onet.pl",
-          "2027 third edition confirmed directly",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "Rockin’ Memories",
-          "festival organizer",
-          "Rottenburg am Neckar-Seebronn",
-          "Germany",
-          "https://www.rockinmemories.de/",
-          "backstage@rockinmemories.de",
-          "Official band-application route",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "Paletstock",
-          "festival organizer",
-          "Bełżyce",
-          "lubelskie",
-          "https://paletstock.pl/",
-          "",
-          "Official 2027 band-application form",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "Live Nation Poland / VooDoo",
-          "promoter / venue booking",
+          "Live Nation Poland",
+          "promoter",
           "Warsaw",
           "mazowieckie",
           "https://www.livenation.pl/",
           "gabriela.konska@livenation.pl",
-          "Warm support decision route for COMASTATIC",
-          "CONFIRMED_CURRENT"
-        ],
-        [
-          "Dom Kultury w Kozach",
-          "institution",
-          "Kozy",
-          "śląskie",
-          "https://kozynostra.pl/",
-          "kozynostrafestiwal@dk.kozy.pl",
-          "Festival + contest organizer; strong rock/metal fit",
-          "CONFIRMED_CURRENT/HISTORICAL"
-        ],
-        [
-          "Miejskie Centrum Kultury w Tychach",
-          "institution",
-          "Tychy",
-          "śląskie",
-          "https://kultura.tychy.pl/",
-          "zgloszenia@mck.tychy.pl",
-          "Rock pod Żyrafą; decision-maker; VIRYA honorary distinction history",
-          "CONFIRMED_CURRENT/HISTORICAL"
-        ],
-        [
-          "Regionalne Centrum Kultury im. Zbigniewa Herberta w Kołobrzegu",
-          "institution",
-          "Kołobrzeg",
-          "zachodniopomorskie",
-          "https://rck.kolobrzeg.eu/",
-          "rock.festiwal@rck.kolobrzeg.eu",
-          "Runs RoCK Festiwal contest + festival",
-          "CONFIRMED_CURRENT/HISTORICAL"
-        ],
-        [
-          "MATERIAFEST / The Materia ecosystem",
-          "festival organizer",
-          "Szczecinek",
-          "zachodniopomorskie",
-          "https://materiafest.com/",
-          "UNKNOWN",
-          "Metal festival + gateway contest to Tower Stage",
-          "PARTIALLY_VERIFIED"
-        ],
-        [
-          "Ośrodek Kultury „Andaluzja”",
-          "institution",
-          "Piekary Śląskie",
-          "śląskie",
-          "https://okandaluzja.pl/",
-          "spi_nie_spi@okandaluzja.pl",
-          "Runs SPI NIE ŚPI",
-          "CONFIRMED_HISTORICAL"
+          "Warm referred decision route for COMASTATIC/VooDoo support",
+          "CONFIRMED_CURRENT via venue referral + sent Gmail"
         ]
       ]
     },
@@ -478,128 +119,107 @@
       ],
       "rows": [
         [
-          "info@metal-festevil.de",
-          "Pure Fucking Metal Festevil",
-          "Pure Fucking Metal Festevil 2027",
-          "Laberweinting",
-          "festival application",
-          "https://www.metal-festevil.de/bandbewerbung",
-          "Existing applicant history; 2027 now closed."
-        ],
-        [
-          "bewerbung@be-openair.de",
-          "be! openair",
-          "be! openair 2027",
-          "Parsberg",
-          "band applications",
-          "https://be-openair.de/bewerbung/",
-          "VIRYA applied 2026-09-13; wait."
-        ],
-        [
-          "GrajmyRazem.Biuro@gmail.com",
-          "Hubert Kitliński / GrajmyRazem",
-          "Antoniów Rock Fest 2027",
-          "Radoszyce",
-          "organizer / contest",
-          "https://swietokrzyskie.travel/informator_turystyczny/wydarzenia/antoniow_rock_fest_1",
-          "Human reply 2026-09-30 confirms 2027 contest."
-        ],
-        [
-          "gokir@onet.pl",
-          "GOK Siedliszcze",
-          "Rockowa Przystań 2027",
-          "Siedliszcze",
-          "organizer / contest",
-          "https://www.gok.siedliszcze.pl/",
-          "Human reply 2026-10-01 confirms third edition."
-        ],
-        [
-          "backstage@rockinmemories.de",
-          "Rockin’ Memories",
-          "Rockin’ Memories 2027",
-          "Rottenburg am Neckar-Seebronn",
-          "band applications",
-          "https://www.rockinmemories.de/",
-          "Application email sent 2026-10-01; hard dedupe."
+          "ak@kultura.olawa.pl",
+          "Adriana Krakowska",
+          "Centrum Sztuki w Oławie / Letnia Scena Muzyczna",
+          "Oława",
+          "warm booking/open-call contact",
+          "https://kultura.olawa.pl/",
+          "Thread 1a06e52a010d312a; replied 2026-10-01, no current booking slot, redirected VIRYA to Letnia Scena call."
         ],
         [
           "gabriela.konska@livenation.pl",
           "Gabriela Końska",
           "Live Nation / COMASTATIC @ VooDoo",
           "Warsaw",
-          "support booking referral",
+          "warm-referred support booking",
           "https://www.livenation.pl/event/comastatic-warsaw-tickets-edp1699341",
-          "Warm referral from VooDoo; support enquiry sent 2026-09-30."
+          "VooDoo referral; support enquiry sent 2026-09-30 Gmail 1a0f1ff0078ebf08; no reply as of 2026-10-01."
         ],
         [
-          "kozynostrafestiwal@dk.kozy.pl",
-          "Dom Kultury w Kozach",
-          "KozyNostra Rock Fest",
-          "Kozy",
-          "organizer",
-          "https://kozynostra.pl/",
-          "Prior Master application exists; preserve relationship history"
-        ],
-        [
-          "zgloszenia@mck.tychy.pl",
-          "Miejskie Centrum Kultury w Tychach",
-          "Rock pod Żyrafą",
-          "Tychy",
-          "contest submissions",
-          "https://kultura.tychy.pl/",
-          "VIRYA 2026 application + honorary distinction; not a cold lead"
-        ],
-        [
-          "rock.festiwal@rck.kolobrzeg.eu",
-          "RCK Kołobrzeg",
-          "RoCK Festiwal",
-          "Kołobrzeg",
-          "contest submissions",
-          "https://rck.kolobrzeg.eu/",
-          "Historical official contest contact"
-        ],
-        [
-          "spi_nie_spi@okandaluzja.pl",
-          "Ośrodek Kultury Andaluzja",
-          "SPI NIE ŚPI",
-          "Piekary Śląskie",
-          "contest submissions",
-          "https://okandaluzja.pl/",
-          "Historical 2026 submission route; future cycle requires reverify"
+          "konrad.godloza@wp.pl",
+          "Konrad Godłoza",
+          "Rock na Bagnie 2027 — small stage",
+          "Goniądz",
+          "warm-referred small-stage booking",
+          "https://rocknabagnie.pl/",
+          "Main organizer referral; application sent Gmail/thread 1a0ed331dfbf3abb; no reply as of 2026-10-01."
         ]
       ]
     },
-    "SUPPORT_TARGETS": {
+    "OUTREACH_LOG": {
       "headers": [
-        "Band / Artist",
-        "Region",
-        "Public URL",
-        "Fit",
-        "Status",
-        "Reason",
-        "Dedupe Key",
-        "Checked"
+        "Recipient / Organization",
+        "Public Email",
+        "Subject / Thread",
+        "Date",
+        "Action",
+        "Result / Status",
+        "Reason / Next Step"
       ],
       "rows": [
         [
-          "COMASTATIC",
-          "Poland / Warsaw",
-          "https://www.livenation.pl/event/comastatic-warsaw-tickets-edp1699341",
-          "A / warm explicit referral",
-          "WAITING",
-          "VooDoo booking manager referred VIRYA to Live Nation; existing enquiry must not be duplicated.",
-          "comastatic-voodoo|support|virya",
-          "2026-10-01"
+          "VooDoo Club / Jarek → Live Nation referral",
+          "kontakt@voodooclub.pl",
+          "tu byście pasowali na support w VooDoo",
+          "2026-09-29",
+          "Inbound support suggestion + VIRYA reply requesting promoter contact — Gmail",
+          "REPLIED / WARM REFERRAL / LIVE NATION CONTACT PROVIDED",
+          "Jarek proactively suggested VIRYA for COMASTATIC and provided the responsible Live Nation contact. VIRYA then sent the Live Nation support enquiry on 2026-09-30; preserve this as warm origin thread."
         ],
         [
-          "Aralez — Release of Illusion",
-          "Germany / Dresden",
-          "https://www.backstagepro.de/",
-          "B / prog-doom overlap",
-          "MONITOR / REVERIFY",
-          "Concert current; historical support slot needs current platform reverify before applying.",
-          "aralez-dresden|2026-10-24|virya",
-          "2026-10-01"
+          "Antoniów Rock Fest / Grajmy Razem",
+          "GrajmyRazem.Biuro@gmail.com",
+          "VIRYA / Antoniów Rock Fest 2027 – zgłoszenie zespołu",
+          "2026-09-30",
+          "Booking / contest-route enquiry — sent",
+          "REPLIED / 2027 CONTEST CONFIRMED",
+          "Sent Gmail 1a0f3bfa80580a6f; organizer reply 1a0f3f7b5f2fae54 confirms 2027 contest and details in about 2–3 weeks. Do not duplicate."
+        ],
+        [
+          "Rockowa Przystań / GOKiR Siedliszcze",
+          "gokir@onet.pl",
+          "VIRYA / Rockowa Przystań 2027 – nabór zespołów",
+          "2026-09-30",
+          "Next-edition enquiry — sent",
+          "REPLIED / 2027 EDITION CONFIRMED",
+          "Sent Gmail 1a0f3ce777e59b26; reply 1a0f62c78c073879 confirms III edition in second half of June 2027; acknowledgement 1a0f64987f420785."
+        ],
+        [
+          "Live Nation / Gabriela Końska — COMASTATIC support",
+          "gabriela.konska@livenation.pl",
+          "VIRYA → support COMASTATIC / VooDoo / 8.02.2027",
+          "2026-09-30",
+          "Warm-referred support enquiry — sent",
+          "SENT / WAITING / WARM",
+          "VooDoo booking manager provided this exact route. Gmail 1a0f1ff0078ebf08; no reply found as of 2026-10-01. Do not duplicate."
+        ],
+        [
+          "Rock na Bagnie / Konrad Godłoza — small stage",
+          "konrad.godloza@wp.pl",
+          "VIRYA – zgłoszenie na małą scenę Rock na Bagnie 2027",
+          "2026-09-29",
+          "Direct small-stage application after organizer referral — sent",
+          "SENT / WAITING / WARM REFERRAL",
+          "Main organizer redirected VIRYA to Konrad. Gmail/thread 1a0ed331dfbf3abb; no reply found as of 2026-10-01. Do not resend."
+        ],
+        [
+          "Rockin’ Memories 2027",
+          "backstage@rockinmemories.de",
+          "Bandbewerbung Rockin’ Memories 2027 – VIRYA (Modern/Progressive Metal, PL)",
+          "2026-10-01",
+          "Band application email — sent; delivery failed",
+          "BOUNCED 550 / EMAIL INVALID",
+          "Message 1a0f64c237a2411f received DSN 1a0f64c2b8135604: 550 5.1.1. Preserve separately recorded manual application; reverify contact before email retry."
+        ],
+        [
+          "Centrum Sztuki w Oławie / Adriana Krakowska",
+          "ak@kultura.olawa.pl",
+          "Re: VIRYA – koncert w Oławie / zima–wiosna 2027",
+          "2026-10-01",
+          "Booking follow-up — sent; organizer replied",
+          "REPLIED / NO CURRENT SLOT / WARM FUTURE GATEWAY",
+          "Thread 1a06e52a010d312a; reply 1a0f616325cde6a3 redirects VIRYA to Letnia Scena Muzyczna Mar/Apr; acknowledgement 1a0f6484597756b2; final warm reply 1a0f651a62ec909d."
         ]
       ]
     },
@@ -618,25 +238,14 @@
       "rows": [
         [
           "2026-10-01",
-          "Shared SCOUT daily delta: Poland + Europe + Drive/data-contract repair; sourced from canonical SCOUT after live acceptance readback",
-          0,
-          9,
-          "be! openair — 2026-10-01; KUFSTEIN unlimited — 2026-12-15",
-          "0 by this sync",
-          "APPLIED for Paletstock earlier today; later hardening steps NO_MUTATION; Drive structural proof PASS",
-          "PASS — canonical Sheet readback/validations/dedupe verified",
-          "Continue latest SCOUT_PL and SCOUT_EUROPE continuations; do not duplicate existing submissions; reverify Aralez support listing before manual action."
-        ],
-        [
-          "2026-10-01",
-          "GitHub persistence regression recovery — restore 2026-09-29 festival rows lost by former replace semantics",
-          5,
-          5,
+          "Gmail history reconciliation + persistent outreach sync",
+          2,
+          2,
           "none",
-          "0",
+          "0 by reconciliation run",
           "NO_MUTATION",
-          "PASS",
-          "Upsert invariant test: today's 9 opportunities must remain while five recovered prior rows are added; future current-run deltas must not erase persistent Festival sheets."
+          "PASS — Gmail full-thread reconciliation and SCOUT readback passed",
+          "Treat thread_id/message_id and delivery status as hard history. Never keep WAITING after human reply/bounce. Rockin email route invalid; Oława future gateway warm."
         ]
       ]
     }

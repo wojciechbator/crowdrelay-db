@@ -1,0 +1,8 @@
+Name,Kind,City,Email,Destination_URL,Source_URL,Active,Verified,Accepts_Outreach,Do_Not_Contact,Relationship_Score,Relevance_Pct,Confidence_Pct
+Alamy,facebook_page,Frankfurt am Main,,https://www.facebook.com/Alamy/,https://www.facebook.com/Alamy/,t,t,t,f,65,95,95
+Alamyltd,instagram_creator,Frankfurt am Main,,https://www.instagram.com/alamyltd/,https://www.instagram.com/alamyltd/,t,t,t,f,65,95,95
+Alamy.Com,tiktok_creator,Frankfurt am Main,,https://www.tiktok.com/@alamy.com/,https://www.tiktok.com/@alamy.com/,t,t,t,f,65,85,85
+FRANKFURT.DE - DAS OFFIZIELLE STADTPORTAL,local_media,Frankfurt am Main,,https://frankfurt.de/,https://frankfurt.de/,t,t,t,f,65,65,65
+FRANKFURT.DE - DAS OFFIZIELLE STADTPORTAL,event_calendar,Frankfurt am Main,,https://frankfurt.de/,https://frankfurt.de/,t,t,t,f,65,65,65
+Stadt Ffm,facebook_page,Frankfurt am Main,,https://www.facebook.com/StadtFFM,https://www.facebook.com/StadtFFM,t,t,t,f,65,95,95
+Frankfurt.De,instagram_creator,Frankfurt am Main,,https://www.instagram.com/frankfurt.de/,https://www.instagram.com/frankfurt.de/,t,t,t,f,65,95,95

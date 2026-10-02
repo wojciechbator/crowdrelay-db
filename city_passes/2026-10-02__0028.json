@@ -1,0 +1,213 @@
+{
+  "date": "2026-10-02",
+  "research_version": 17,
+  "pass_id": 28,
+  "batch_size_requested": 4,
+  "batch_complete": true,
+  "candidate_window": 4,
+  "cities": [
+    {
+      "country": "Poland",
+      "city": "Rzeszów"
+    },
+    {
+      "country": "Germany",
+      "city": "Frankfurt am Main"
+    },
+    {
+      "country": "Germany",
+      "city": "Köln"
+    },
+    {
+      "country": "Germany",
+      "city": "München"
+    }
+  ],
+  "summary": [
+    {
+      "country": "Poland",
+      "city": "Rzeszów",
+      "raw_results": 40,
+      "direct_leads": 5,
+      "useful": 4,
+      "useful_leads": 4,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 5,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 5,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "independent_radio",
+        "instagram_creator",
+        "podcast",
+        "venue"
+      ],
+      "social_families": [
+        "instagram_creator"
+      ],
+      "media_families": [
+        "independent_radio",
+        "podcast"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/lukabandpoland/",
+        "https://www.youtube.com/watch?v=u4iOCZpmne4",
+        "https://www.youtube.com/watch?v=TtfiUFF-eac",
+        "https://www.facebook.com/tvp.rzeszow/videos/muzyka-jaros%C5%82aw/874826073328932/",
+        "https://www.youtube.com/watch?v=sFJe_4S486k",
+        "https://www.ebilet.pl/muzyka/hard-heavy/tribute-to-metallica",
+        "https://twitter.com/sunnypodcast",
+        "https://radiospinner.com/pl/rzeszow-pl/",
+        "https://grokipedia.com/page/hala_podpromie"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "Frankfurt am Main",
+      "raw_results": 40,
+      "direct_leads": 6,
+      "useful": 6,
+      "useful_leads": 6,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 7,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 7,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "facebook_page",
+        "instagram_creator",
+        "local_media",
+        "tiktok_creator"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "local_media"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/baluunddufrankfurt/",
+        "https://www.youtube.com/watch?v=Ta-2xq1Ho7s",
+        "https://www.gutefrage.net/frage/hard-rock-cafe-in-frankfurt-am-main",
+        "https://www.alamy.com/frankfurt-am-main-germany-9th-april-2018-derya-sipahi-miss-hesse-2018-poses-together-with-the-finnish-heavy-metal-band-hevisaurus-on-the-red-carpet-the-prg-live-entertainment-award-prg-lea-takes-place-in-the-festhalle-frankfurt-the-award-honours-event-organisers-venue-owners-artist-managers-and-concert-agents-for-outstanding-achievements-during-the-event-season-2017-photo-andreas-arnolddpa-credit-dpa-picture-alliancealamy-live-news-image179109903.html",
+        "https://frankfurt.de/"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "Köln",
+      "raw_results": 40,
+      "direct_leads": 4,
+      "useful": 4,
+      "useful_leads": 4,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 4,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 4,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "event_calendar",
+        "independent_radio",
+        "instagram_creator",
+        "local_music_resource"
+      ],
+      "social_families": [
+        "instagram_creator"
+      ],
+      "media_families": [
+        "independent_radio"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.rundschau-online.de/koeln/koeln-diese-veranstaltungen-stehen-in-der-woche-vom-20-bis-26-juli-an-1326842",
+        "https://www.radiokoeln.de/programm/musik"
+      ],
+      "recovery_used": false
+    },
+    {
+      "country": "Germany",
+      "city": "München",
+      "raw_results": 40,
+      "direct_leads": 18,
+      "useful": 12,
+      "useful_leads": 12,
+      "quality_ok": true,
+      "peer_candidates": 0,
+      "beacon_candidates": 18,
+      "contact_candidates": 0,
+      "new_peer_candidates": 0,
+      "new_beacon_candidates": 18,
+      "new_contact_candidates": 0,
+      "source_families": [
+        "facebook_page",
+        "independent_radio",
+        "instagram_creator",
+        "local_media",
+        "tiktok_creator",
+        "venue"
+      ],
+      "social_families": [
+        "facebook_page",
+        "instagram_creator",
+        "tiktok_creator",
+        "youtube_channel"
+      ],
+      "media_families": [
+        "independent_radio",
+        "local_media"
+      ],
+      "source_categories": [
+        "ecosystem",
+        "media",
+        "social"
+      ],
+      "evidence_urls": [
+        "https://www.facebook.com/Gesang.Musik.Muenchen",
+        "https://www.facebook.com/anjaandfriendsmusic",
+        "https://m.soundcloud.com/radiomuenchen/bach-anfang-und-ende-aller-musik",
+        "https://www.mixcloud.com/DJ_Muenchen/",
+        "https://www.facebook.com/radioarabellamuenchen/",
+        "https://www.youtube.com/shorts/daxckKHllVA",
+        "https://www.welt.de/vermischtes/article245750424/Rammstein-in-Muenchen-Ohne-Pussy-und-Riesen-Penis.html",
+        "https://ra.co/events/1479258",
+        "https://www.tiqets.com/cs/mnichovske-koncerty-vstupenky-l252832/",
+        "https://www.munich.travel/en/categories/discover/eat-drink/nightlife-munich",
+        "https://www.youtube.com/watch?v=L_UKD1uUuEw",
+        "https://deutsche-radio.de/",
+        "https://www.sueddeutsche.de/muenchen/kulturzentrum-miteinander-statt-nur-dabei-1.5419738",
+        "https://www.abendzeitung-muenchen.de/muenchen/geruechtekueche-brodelt-gibt-lady-gaga-2026-vier-konzerte-in-muenchen-art-1094466",
+        "https://www.eventim.de/event/ue30-party-welcome-2026-angie-s-live-music-club-hamburg-angie-s-live-music-club-20755727/",
+        "https://www.youtube.com/watch?v=qtvAK33g5u0",
+        "https://www.rollingstone.de/nach-muenchen-konzert-rammstein-saenger-till-lindemann-soll-hotelgast-verletzt-haben-1719349/"
+      ],
+      "recovery_used": false
+    }
+  ],
+  "rejected_candidates": []
+}

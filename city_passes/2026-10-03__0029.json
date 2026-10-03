@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-03",
+  "research_version": 17,
+  "pass_id": 29,
+  "batch_size_requested": 4,
+  "batch_complete": false,
+  "candidate_window": 4,
+  "cities": [],
+  "summary": [],
+  "rejected_candidates": [
+    {
+      "country": "Germany",
+      "city": "Nürnberg",
+      "raw_results": 2,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Germany",
+      "city": "Stuttgart",
+      "raw_results": 22,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Liberec",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    },
+    {
+      "country": "Czechia",
+      "city": "Olomouc",
+      "raw_results": 0,
+      "direct_leads": 0,
+      "useful": 0,
+      "source_families": [],
+      "social_families": [],
+      "media_families": [],
+      "recovery_used": true
+    }
+  ],
+  "no_progress": false,
+  "scanned_count": 4
+}
